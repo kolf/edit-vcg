@@ -9,6 +9,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Button } from 'antd';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Home.css';
 
@@ -40,6 +41,9 @@ class Home extends React.Component {
               />
             </article>
           ))}
+          <Button type="primary">按钮</Button>
+          <Button type="primary">按钮</Button>
+          <Button type="primary">按钮</Button>
         </div>
       </div>
     );
