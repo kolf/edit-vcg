@@ -28,22 +28,8 @@ class Home extends React.Component {
     return (
       <div className={s.root}>
         <div className={s.container}>
-          <h1>React.js News</h1>
-          {this.props.news.map(item => (
-            <article key={item.link} className={s.newsItem}>
-              <h1 className={s.newsTitle}>
-                <a href={item.link}>{item.title}</a>
-              </h1>
-              <div
-                className={s.newsDesc}
-                // eslint-disable-next-line react/no-danger
-                dangerouslySetInnerHTML={{ __html: item.content }}
-              />
-            </article>
-          ))}
-          <Button type="primary">按钮</Button>
-          <Button type="primary">按钮</Button>
-          <Button type="primary">按钮</Button>
+          <a href="/topic/update/11">专题管理</a>
+          <Button>bnt</Button>
         </div>
       </div>
     );

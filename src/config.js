@@ -17,10 +17,13 @@ if (process.env.BROWSER) {
 
 module.exports = {
   // Node.js app
-  port: process.env.PORT || 3000,
+  port: process.env.PORT || 3100,
 
   // https://expressjs.com/en/guide/behind-proxies.html
-  trustProxy: process.env.TRUST_PROXY || 'loopback',
+  trustProxy: {
+    edit: 'editservice.vcg.com',
+    topic: 'cms.vcg.com',
+  },
 
   // API Gateway
   api: {
@@ -29,7 +32,7 @@ module.exports = {
     // API URL to be used in the server-side code
     serverUrl:
       process.env.API_SERVER_URL ||
-      `http://localhost:${process.env.PORT || 3000}`,
+      `http://localhost:${process.env.PORT || 3100}`,
   },
 
   // Database
@@ -43,7 +46,9 @@ module.exports = {
 
   // Authentication
   auth: {
-    jwt: { secret: process.env.JWT_SECRET || 'React Starter Kit' },
+    jwt: {
+      secret: process.env.JWT_SECRET || 'VCG',
+    },
 
     // https://developers.facebook.com/
     facebook: {

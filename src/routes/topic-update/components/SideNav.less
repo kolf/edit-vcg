@@ -1,0 +1,50 @@
+.root{
+  background: #fff;
+  padding: 30px 0;
+  width: 200px;
+  // min-height: 2400px;
+  // margin-right: 10px;
+  border: 1px solid #ccc;
+  margin-bottom: 30px;
+
+  &:hover{
+    border-color: #f84949
+  }
+}
+
+.root :global{
+  .ant-menu-submenu-title{
+    height: 30px;
+    line-height: 30px;
+    font-size: 14px;
+    font-weight: 700
+  }
+
+  .ant-menu-light{
+    border:none;
+
+    &>.ant-menu-item{
+      font-size: 14px;
+      font-weight: 700
+    }
+  }
+}
+
+
+.subMenu :global{
+  .ant-menu{
+    min-width: none;
+    padding: 10px;
+    // display: inline-block;
+    max-width: 600px;
+  }
+
+  .ant-menu-item{
+    float: left;
+    line-height: 28px;
+    height: 28px;
+    padding-top:0;
+    padding-bottom: 0;
+    margin: 0 !important;
+  }
+}

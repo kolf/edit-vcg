@@ -16,8 +16,8 @@ import run from './run';
 // GitHub Pages
 const remote = {
   name: 'github',
-  url: 'https://github.com/<user>/<repo>.git',
-  branch: 'gh-pages',
+  url: 'https://github.com/kolf/edit-vcg',
+  branch: 'master',
   website: 'https://<user>.github.io/<repo>/',
   static: true,
 };

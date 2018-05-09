@@ -10,7 +10,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import s from './NotFound.css';
+import s from './NotFound.less';
 
 class NotFound extends React.Component {
   static propTypes = {
@@ -20,10 +20,8 @@ class NotFound extends React.Component {
   render() {
     return (
       <div className={s.root}>
-        <div className={s.container}>
-          <h1>{this.props.title}</h1>
-          <p>Sorry, the page you were trying to view does not exist.</p>
-        </div>
+        <h1 className={s.title}>404</h1>
+        <p>很抱歉，您要访问的页面不存在！</p>
       </div>
     );
   }

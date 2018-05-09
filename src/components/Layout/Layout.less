@@ -1,0 +1,43 @@
+:global {
+  .ant {
+    &-layout {
+      overflow-x: hidden;
+      min-height: 100vh;
+
+      &-content{
+        margin:0 15px;
+
+        &>.ant-breadcrumb{
+          margin: 15px 0;
+        }
+      }
+    }
+  }
+}
+
+.brand {
+  float: left;
+  height: 46px;
+  line-height: 46px;
+  color: #fff;
+  font-size: 14px;
+
+  > img {
+    max-width: 100%;
+    margin-right: 5px;
+  }
+}
+
+.star{
+  background-color:#696565;
+  height: 46px;
+  overflow: hidden;
+
+  :global{
+    .anticon{
+      margin-right: 0;
+      font-size: 20px;
+      line-height: 44px;
+    }
+  }
+}

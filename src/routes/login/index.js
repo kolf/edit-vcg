@@ -8,21 +8,15 @@
  */
 
 import React from 'react';
-import Layout from '../../components/Layout';
 import Login from './Login';
 
-const title = 'Log In';
-
-function action() {
-  return {
-    chunks: ['login'],
-    title,
-    component: (
-      <Layout>
-        <Login title={title} />
-      </Layout>
-    ),
-  };
+async function action({ fetch, query }) {
+  if (query.token) {
+    const res = await fetch(`/api/edit/user/viewByToken?token=${query.token}`);
+    console.log(res.json());
+  }
+  // const res = await fetch('/')
+  return { title: '登陆', chunks: ['login'], component: <Login /> };
 }
 
 export default action;

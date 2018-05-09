@@ -1,0 +1,6 @@
+{
+  "name": "CategorySelect",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./CategorySelect.js"
+}

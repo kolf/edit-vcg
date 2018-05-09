@@ -1,0 +1,60 @@
+.root {
+  min-height: 120px;
+  background-color: #f2f2f2;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+
+  &:hover{
+    border-color: #f84949
+  }
+}
+
+.root :global  {
+  .ant-tabs-tab {
+    padding-left: 22px !important;
+    margin-right: 0 !important;
+    font-weight: 700;
+    font-size: 14px;
+    padding:18px;
+
+    &.ant-tabs-tab-active{
+      font-weight: 700
+    }
+
+    .anticon{
+      margin-left: 4px;
+    }
+  }
+
+  .ant-tabs-content{
+    padding: 0 16px 16px;
+  }
+
+  .ant-tag{
+    // font-size: 14px;
+
+    border:none;
+    margin-bottom: 4px;
+    margin-right: 4px;
+    background-color:transparent;
+
+    .anticon-cross{
+      margin-left: 0
+    }
+  }
+}
+
+.item{
+  margin-bottom: 10px;
+
+  :global{
+    .ant-form-item-control, .ant-form-item-label{
+      line-height: 22px;
+    }
+
+    .ant-form-item-label{
+      font-weight: 700;
+      padding-right: 10px;
+    }
+  }
+}

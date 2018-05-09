@@ -19,9 +19,10 @@ import configureStore from './store/configureStore';
 import history from './history';
 import { updateMeta } from './DOMUtils';
 import router from './router';
+// import antTheme from './components/antTheme.less';
 
-// Global (context) variables that can be easily accessed from any React component
-// https://facebook.github.io/react/docs/context.html
+// antTheme._insertCss();
+
 const context = {
   // Enables critical path CSS rendering
   // https://github.com/kriasoft/isomorphic-style-loader

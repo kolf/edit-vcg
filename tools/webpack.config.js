@@ -13,23 +13,15 @@ import webpack from 'webpack';
 import WebpackAssetsManifest from 'webpack-assets-manifest';
 import nodeExternals from 'webpack-node-externals';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
-import MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import lessToJS from 'less-vars-to-js';
 import overrideRules from './lib/overrideRules';
 import pkg from '../package.json';
+import lessToJS from 'less-vars-to-js';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 
 const ROOT_DIR = path.resolve(__dirname, '..');
 const resolvePath = (...args) => path.resolve(ROOT_DIR, ...args);
 const SRC_DIR = resolvePath('src');
 const BUILD_DIR = resolvePath('build');
-const antThemeVars = lessToJS(
-  fs
-    .readFileSync(
-      path.resolve(SRC_DIR, 'components/antThemeVariables.scss'),
-      'utf8',
-    )
-    .replace(/\$/gi, '@'),
-);
 
 const isDebug = !process.argv.includes('--release');
 const isVerbose = process.argv.includes('--verbose');
@@ -53,6 +45,12 @@ const minimizeCssOptions = {
 // Common configuration chunk to be used for both
 // client-side (client.js) and server-side (server.js) bundles
 // -----------------------------------------------------------------------------
+const antThemeVars = lessToJS(
+  fs.readFileSync(
+    path.resolve(__dirname, '../src/components/antTheme.less'),
+    'utf8',
+  ),
+);
 
 const config = {
   context: ROOT_DIR,
@@ -132,26 +130,22 @@ const config = {
           ],
         },
       },
-
-      // Compile Less to CSS
-      // https://github.com/webpack-contrib/less-loader
-      // Install dependencies before uncommenting: yarn add --dev less-loader less
       {
         test: /\.less$/,
         include: [
           /[\\/]node_modules[\\/].*antd/,
-          ...(isDebug
-            ? [
-                resolvePath(SRC_DIR, 'components/antThemeLoader.less'),
-                resolvePath(SRC_DIR, 'components/sassVarsToLess.js'),
-                resolvePath(SRC_DIR, 'components/antThemeVariables.scss'),
-              ]
-            : []),
+          resolvePath(SRC_DIR, 'components/antTheme.less'),
         ],
         use: [
-          ...(isDebug ? ['style-loader'] : [MiniCssExtractPlugin.loader]),
-
-          'css-loader',
+          MiniCssExtractPlugin.loader,
+          // 'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              sourceMap: isDebug,
+              minimize: isDebug ? false : minimizeCssOptions,
+            },
+          },
           {
             loader: 'postcss-loader',
             options: {
@@ -163,34 +157,11 @@ const config = {
           {
             loader: 'less-loader',
             options: {
-              ...(isDebug
-                ? {
-                    javascriptEnabled: true,
-                  }
-                : {
-                    modifyVars: antThemeVars,
-                  }),
+              modifyVars: antThemeVars,
+              javascriptEnabled: true,
             },
           },
         ],
-      },
-
-      // Tell the DEFAULT sass-rule to ignore being used for sass imports in less files (sounds weird)
-      {
-        test: /\.scss$/,
-        issuer: {
-          exclude: /\.less$/,
-        },
-      },
-
-      // Define a second rule for only being used from less files
-      // This rule will only be used for converting our sass-variables to less-variables
-      {
-        test: /\.scss$/,
-        issuer: /\.less$/,
-        use: {
-          loader: resolvePath(SRC_DIR, 'components/sassVarsToLess.js'), // Change path if necessary
-        },
       },
 
       // Rules for Style Sheets
@@ -198,9 +169,8 @@ const config = {
         test: reStyle,
         exclude: [
           /[\\/]node_modules[\\/].*antd/,
-          resolvePath(SRC_DIR, 'components/antThemeLoader.less'),
-          resolvePath(SRC_DIR, 'components/sassVarsToLess.js'),
-          resolvePath(SRC_DIR, 'components/antThemeVariables.scss'),
+          resolvePath(SRC_DIR, 'components/antTheme.less'),
+          // /antTheme.less$/,
         ],
         rules: [
           // Convert CSS into JS module
@@ -246,6 +216,15 @@ const config = {
               },
             },
           },
+
+          // Compile Less to CSS
+          // https://github.com/webpack-contrib/less-loader
+          // Install dependencies before uncommenting: yarn add --dev less-loader less
+          // {
+          //   test: /\.less$/,
+          //   loader: 'less-loader',
+          //   options: { javascriptEnabled: true },
+          // },
 
           // Compile Sass to CSS
           // https://github.com/webpack-contrib/sass-loader
@@ -435,12 +414,6 @@ const clientConfig = {
   optimization: {
     splitChunks: {
       cacheGroups: {
-        styles: {
-          name: 'styles',
-          test: /\.s?css$/,
-          chunks: 'all',
-          enforce: true,
-        },
         commons: {
           chunks: 'initial',
           test: /[\\/]node_modules[\\/]/,
@@ -551,6 +524,7 @@ const serverConfig = {
     // https://webpack.js.org/plugins/define-plugin/
     new webpack.DefinePlugin({
       'process.env.BROWSER': false,
+      'process.env.PORT': 3100,
       __DEV__: isDebug,
     }),
 
@@ -577,14 +551,7 @@ const serverConfig = {
 
 clientConfig.module.rules[0].options.plugins = [
   ...clientConfig.module.rules[0].options.plugins,
-  [
-    'import',
-    {
-      libraryName: 'antd',
-      libraryDirectory: 'es',
-      ...(!isDebug ? { style: true } : {}),
-    },
-  ],
+  ['import', { libraryName: 'antd', style: true }],
 ];
 
 export default [clientConfig, serverConfig];

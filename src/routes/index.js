@@ -17,34 +17,29 @@ const routes = {
   children: [
     {
       path: '',
-      load: () => import(/* webpackChunkName: 'home' */ './home'),
+      load: () => import(/* webpackChunkName: 'topics' */ './topics'),
     },
     {
-      path: '/contact',
-      load: () => import(/* webpackChunkName: 'contact' */ './contact'),
+      path: '/topics',
+      load: () => import(/* webpackChunkName: 'topics' */ './topics'),
+    },
+    {
+      path: '/auto-topics',
+      load: () => import(/* webpackChunkName: 'auto-topics' */ './auto-topics'),
+    },
+    {
+      path: '/topic/update/:id',
+      load: () =>
+        import(/* webpackChunkName: 'topic-update' */ './topic-update'),
+    },
+    {
+      path: '/topic/:id',
+      load: () => import(/* webpackChunkName: 'topic' */ './topic'),
     },
     {
       path: '/login',
       load: () => import(/* webpackChunkName: 'login' */ './login'),
     },
-    {
-      path: '/register',
-      load: () => import(/* webpackChunkName: 'register' */ './register'),
-    },
-    {
-      path: '/about',
-      load: () => import(/* webpackChunkName: 'about' */ './about'),
-    },
-    {
-      path: '/privacy',
-      load: () => import(/* webpackChunkName: 'privacy' */ './privacy'),
-    },
-    {
-      path: '/admin',
-      load: () => import(/* webpackChunkName: 'admin' */ './admin'),
-    },
-
-    // Wildcard routes, e.g. { path: '(.*)', ... } (must go last)
     {
       path: '(.*)',
       load: () => import(/* webpackChunkName: 'not-found' */ './not-found'),
@@ -56,7 +51,7 @@ const routes = {
     const route = await next();
 
     // Provide default values for title, description etc.
-    route.title = `${route.title || 'Untitled Page'} - www.reactstarterkit.com`;
+    route.title = `${route.title || ''} - 视觉中国`;
     route.description = route.description || '';
 
     return route;

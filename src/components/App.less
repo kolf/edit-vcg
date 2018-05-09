@@ -1,0 +1,117 @@
+@import '../../node_modules/antd/lib/style/v2-compatible-reset';
+
+:global {
+  .ant-form-horizontal {
+    .ant-form-item {
+      margin-bottom: 5px;
+    }
+  }
+
+  .ant-radio-group {
+    &.border-0 {
+      // background: red;
+      .ant-radio-button-wrapper {
+        border: none !important;
+        box-shadow: none;
+
+        &:before {
+          display: none;
+        }
+
+        &:first-child {
+          padding-left: 0;
+        }
+      }
+
+      .ant-radio-button-wrapper-checked {
+        font-weight: 700;
+      }
+    }
+  }
+}
+
+.table {
+  margin: 15px 0;
+
+  :global {
+    table {
+      padding: 0 !important;
+    }
+
+    .ant-table-thead {
+      th {
+        background: #404040 !important;
+        color: #ccc;
+      }
+    }
+  }
+}
+
+// layout
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.textRight {
+  text-align: right;
+}
+
+.fRight {
+  float: right;
+}
+
+.fLeft {
+  float: left;
+}
+
+
+.mr-5 {
+  margin-right: 5px;
+}
+
+.divider {
+  &-sm {
+    margin: 2px 0;
+  }
+}
+
+.btns {
+  & > * {
+    margin: 0 2px;
+  }
+}
+
+// text
+.text {
+  &-center {
+    text-align: center;
+  }
+}
+// utils
+.pad {
+  padding: 15px;
+
+  &-x2 {
+    padding: 30px;
+  }
+
+  &-v {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
+  &-h {
+    padding-top: 15px;
+    padding-bottom: 15px;
+  }
+}
+
+.gap {
+  margin: 15px;
+
+  &-left {
+    margin-left: 15px;
+  }
+}

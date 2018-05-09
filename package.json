@@ -21,16 +21,17 @@
     "express-jwt": "^5.3.1",
     "graphql": "^0.13.2",
     "history": "^4.7.2",
+    "http-proxy-middleware": "^0.18.0",
     "immutable": "^3.8.2",
     "isomorphic-style-loader": "^4.0.0",
     "jsonwebtoken": "^8.2.0",
+    "moment": "^2.22.1",
     "node-fetch": "^2.1.1",
-    "normalize.css": "^8.0.0",
     "passport": "^0.4.0",
     "passport-facebook": "^2.1.1",
     "pretty-error": "^2.1.1",
     "prop-types": "^15.6.1",
-    "query-string": "^6.0.0",
+    "query-string": "^6.1.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-redux": "^5.0.6",
@@ -43,7 +44,7 @@
     "source-map-support": "^0.5.4",
     "sqlite3": "^4.0.0",
     "universal-router": "^6.0.0",
-    "whatwg-fetch": "^2.0.3"
+    "whatwg-fetch": "^2.0.4"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.42",
@@ -135,7 +136,6 @@
     "*.{css,less,styl,scss,sass,sss}": ["stylelint --fix", "git add --force"]
   },
   "scripts": {
-    "precommit": "lint-staged",
     "lint-js": "eslint --ignore-path .gitignore --ignore-pattern \"!**/.*\" .",
     "lint-css": "stylelint \"src/**/*.{css,less,styl,scss,sass,sss}\"",
     "lint": "yarn run lint-js && yarn run lint-css",

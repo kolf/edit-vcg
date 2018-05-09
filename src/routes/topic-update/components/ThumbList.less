@@ -1,0 +1,85 @@
+.root {
+  padding: 32px 16px 16px;
+  border: 1px solid #ccc;
+  margin-bottom: 16px;
+
+  &:hover{
+    border-color: #f84949
+  }
+}
+
+.root :global {
+  .ant-tabs-tab {
+    margin-right: 0 !important;
+    padding-left: 25px !important;
+    font-weight: 700 !important;
+  }
+
+  .ant-pagination-simple {
+    padding-top: 10px;
+  }
+
+  .ant-pagination-simple-pager,
+  .ant-pagination-item-link,
+  .ant-pagination-item-link::after {
+    height: 34px !important;
+    line-height: 34px !important;
+  }
+
+  .ant-pagination-item-link {
+    background-color: #eee !important;
+  }
+}
+
+.list{
+  min-height: 200px;
+}
+
+.item {
+  padding: 10px;
+}
+
+.picture {
+  text-align: center;
+  height: 170px;
+  background-color: #eee;
+  vertical-align: bottom;
+  display: table-cell;
+  // border: 1px solid #ccc;
+  & > img {
+    max-height: 100%;
+    max-width: 100%;
+  }
+
+  &:hover {
+    // background: #eee
+  }
+}
+
+.title {
+  color: #999;
+  padding-top: 8px;
+  margin-bottom: 5px;
+}
+
+.caption {
+  font-size: 12px;
+  line-height: 1.4;
+  height: 52px;
+  overflow: hidden;
+}
+
+.bar{
+  overflow: hidden;
+}
+
+.selects{
+  margin-right: 10px;
+
+  :global{
+    .ant-btn{
+      // border: none;
+      // padding: 0 5px;
+    }
+  }
+}

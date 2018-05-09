@@ -49,12 +49,38 @@ global.navigator.userAgent = global.navigator.userAgent || 'all';
 
 const app = express();
 
-//
 // If you are using proxy from external machine, you can set TRUST_PROXY env
 // Default is to trust proxy headers only from loopback interface.
 // -----------------------------------------------------------------------------
-app.set('trust proxy', config.trustProxy);
+// app.set('trust proxy', config.trustProxy);
 
+const proxyMiddleware = require('http-proxy-middleware');
+
+const proxys = config.trustProxy;
+const { NODE_ENV } = process.env;
+
+console.log(proxys);
+
+let prefix = '';
+if (NODE_ENV === 'development') {
+  prefix = 'dev-';
+} else if (NODE_ENV === 'test') {
+  prefix = 'test-';
+}
+
+Object.keys(proxys).forEach(key => {
+  const target = `http://${prefix}${proxys[key]}`;
+
+  app.use(
+    `/api/${key}/*`,
+    proxyMiddleware({
+      target,
+      changeOrigin: true,
+      logLevel: 'debug',
+      pathRewrite: (path, req) => path.replace(`/api/${key}`, ''),
+    }),
+  );
+});
 //
 // Register Node.js middleware
 // -----------------------------------------------------------------------------
@@ -105,19 +131,6 @@ app.get(
     res.cookie('id_token', token, { maxAge: 1000 * expiresIn, httpOnly: true });
     res.redirect('/');
   },
-);
-
-//
-// Register API middleware
-// -----------------------------------------------------------------------------
-app.use(
-  '/graphql',
-  expressGraphQL(req => ({
-    schema,
-    graphiql: __DEV__,
-    rootValue: { request: req },
-    pretty: __DEV__,
-  })),
 );
 
 //

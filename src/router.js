@@ -11,7 +11,7 @@ import UniversalRouter from 'universal-router';
 import routes from './routes';
 
 export default new UniversalRouter(routes, {
-  resolveRoute(context, params) {
+  resolveRoute(context, params, query) {
     if (typeof context.route.load === 'function') {
       return context.route
         .load()
