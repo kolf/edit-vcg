@@ -39,7 +39,7 @@ export function fetchTopics(
   return dispatch => {
     dispatch(fetchTopicsRequest(creds));
     return fetch(
-      '/api/edit/group/pageList?token=ST-79-dc869de0148e490da302387e010a89286',
+      '/api/edit/group/pageList?token=ST-67-7bee4999d46f886d56782a15c24e76362',
       {
         method: 'POST',
         headers: {

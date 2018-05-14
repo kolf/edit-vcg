@@ -15,8 +15,6 @@ import nodeExternals from 'webpack-node-externals';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import overrideRules from './lib/overrideRules';
 import pkg from '../package.json';
-import lessToJS from 'less-vars-to-js';
-import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 
 const ROOT_DIR = path.resolve(__dirname, '..');
 const resolvePath = (...args) => path.resolve(ROOT_DIR, ...args);
@@ -31,7 +29,6 @@ const isAnalyze =
 const reScript = /\.(js|jsx|mjs)$/;
 const reStyle = /\.(css|less|styl|scss|sass|sss)$/;
 const reImage = /\.(bmp|gif|jpg|jpeg|png|svg)$/;
-
 const staticAssetName = isDebug
   ? '[path][name].[ext]?[hash:8]'
   : '[hash:8].[ext]';
@@ -45,12 +42,6 @@ const minimizeCssOptions = {
 // Common configuration chunk to be used for both
 // client-side (client.js) and server-side (server.js) bundles
 // -----------------------------------------------------------------------------
-const antThemeVars = lessToJS(
-  fs.readFileSync(
-    path.resolve(__dirname, '../src/components/antTheme.less'),
-    'utf8',
-  ),
-);
 
 const config = {
   context: ROOT_DIR,
@@ -130,48 +121,21 @@ const config = {
           ],
         },
       },
+
       {
-        test: /\.less$/,
-        include: [
-          /[\\/]node_modules[\\/].*antd/,
-          resolvePath(SRC_DIR, 'components/antTheme.less'),
-        ],
-        use: [
-          MiniCssExtractPlugin.loader,
-          // 'style-loader',
-          {
-            loader: 'css-loader',
-            options: {
-              sourceMap: isDebug,
-              minimize: isDebug ? false : minimizeCssOptions,
-            },
-          },
-          {
-            loader: 'postcss-loader',
-            options: {
-              config: {
-                path: './tools/postcss.config.js',
-              },
-            },
-          },
-          {
-            loader: 'less-loader',
-            options: {
-              modifyVars: antThemeVars,
-              javascriptEnabled: true,
-            },
-          },
+        test: /antTheme.less$/,
+        loaders: [
+          'isomorphic-style-loader',
+          `css-loader?${
+            isDebug ? 'sourceMap&' : 'minimize&'
+          }modules&localIdentName=[local]&importLoaders=2`,
+          `less-loader?{"sourceMap":true,"javascriptEnabled":true}`,
         ],
       },
-
       // Rules for Style Sheets
       {
         test: reStyle,
-        exclude: [
-          /[\\/]node_modules[\\/].*antd/,
-          resolvePath(SRC_DIR, 'components/antTheme.less'),
-          // /antTheme.less$/,
-        ],
+        exclude: [/antTheme.less$/],
         rules: [
           // Convert CSS into JS module
           {
@@ -223,7 +187,6 @@ const config = {
           // {
           //   test: /\.less$/,
           //   loader: 'less-loader',
-          //   options: { javascriptEnabled: true },
           // },
 
           // Compile Sass to CSS
@@ -351,11 +314,6 @@ const clientConfig = {
   },
 
   plugins: [
-    new MiniCssExtractPlugin({
-      filename: '[name].css',
-      chunkFilename: '[name].css',
-    }),
-
     // Define free variables
     // https://webpack.js.org/plugins/define-plugin/
     new webpack.DefinePlugin({
@@ -524,7 +482,6 @@ const serverConfig = {
     // https://webpack.js.org/plugins/define-plugin/
     new webpack.DefinePlugin({
       'process.env.BROWSER': false,
-      'process.env.PORT': 3100,
       __DEV__: isDebug,
     }),
 
@@ -548,10 +505,5 @@ const serverConfig = {
     __dirname: false,
   },
 };
-
-clientConfig.module.rules[0].options.plugins = [
-  ...clientConfig.module.rules[0].options.plugins,
-  ['import', { libraryName: 'antd', style: true }],
-];
 
 export default [clientConfig, serverConfig];

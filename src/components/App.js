@@ -10,7 +10,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Provider as ReduxProvider } from 'react-redux';
-import './App.less';
+// import './App.less';
 
 const ContextType = {
   // Enables critical path CSS rendering

@@ -10,14 +10,14 @@ class FilterPager extends React.Component {
     total: PropTypes.number,
     pageOptions: PropTypes.array,
     pageNum: PropTypes.number,
-    pageSize: PropTypes.pageSize,
+    pageSize: PropTypes.number,
   };
 
   static defaultProps = {
     total: 0,
     pageNum: 1,
     pageSize: 60,
-    pageOptions: ['60', '100', '200'],
+    pageOptions: ['60', '120', '240'],
   };
 
   constructor(props) {
