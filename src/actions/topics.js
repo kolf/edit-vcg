@@ -1,10 +1,12 @@
-/* eslint-disable import/prefer-default-export */
+const queryString = require('query-string');
 
-import {
-  FETCH_TOPICS_REQUEST,
-  FETCH_TOPICS_ERROR,
-  FETCH_TOPICS_SUCCESS,
-} from '../constants';
+console.log(queryString);
+
+export const FETCH_TOPICS_REQUEST = 'FETCH_TOPICS_REQUEST';
+export const FETCH_TOPICS_FAILURE = 'FETCH_TOPICS_FAILURE';
+export const FETCH_TOPICS_SUCCESS = 'FETCH_TOPICS_SUCCESS';
+
+export const UPDATE_TOPIC = 'UPDATE_TOPIC';
 
 function fetchTopicsRequest(creds) {
   return {
@@ -14,11 +16,11 @@ function fetchTopicsRequest(creds) {
   };
 }
 
-function fetchTopicsError(msg) {
+function fetchTopicsError(message) {
   return {
-    type: FETCH_TOPICS_ERROR,
+    type: FETCH_TOPICS_FAILURE,
     isFetching: false,
-    msg,
+    message,
   };
 }
 
@@ -27,6 +29,16 @@ function fetchTopicsSuccess(payload) {
     type: FETCH_TOPICS_SUCCESS,
     isFetching: false,
     payload,
+  };
+}
+
+export function updateTopic(id, data) {
+  return {
+    type: UPDATE_TOPIC,
+    payload: {
+      id,
+      data,
+    },
   };
 }
 
@@ -39,7 +51,9 @@ export function fetchTopics(
   return dispatch => {
     dispatch(fetchTopicsRequest(creds));
     return fetch(
-      '/api/edit/group/pageList?token=ST-67-7bee4999d46f886d56782a15c24e76362',
+      `/api/xuefeng/topic/topicPageList?token=${localStorage.getItem(
+        'id_token',
+      )}`,
       {
         method: 'POST',
         headers: {
@@ -59,7 +73,9 @@ export function fetchTopics(
           return Promise.reject(payload);
         }),
       )
-      .catch(err => console.log('Error', err));
+      .catch(err => {
+        dispatch(fetchTopicsError(JSON.stringify(err)));
+        return Promise.reject(err);
+      });
   };
-  console.log(this);
 }

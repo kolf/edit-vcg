@@ -1,9 +1,6 @@
-/* eslint-disable import/prefer-default-export */
-import {
-  FETCH_CATEGORY_REQUEST,
-  FETCH_CATEGORY_ERROR,
-  FETCH_CATEGORY_SUCCESS,
-} from '../constants';
+export const FETCH_CATEGORY_REQUEST = 'FETCH_CATEGORY_REQUEST';
+export const FETCH_CATEGORY_ERROR = 'FETCH_CATEGORY_ERROR';
+export const FETCH_CATEGORY_SUCCESS = 'FETCH_CATEGORY_SUCCESS';
 
 function fetchCategoryRequest(creds) {
   return {

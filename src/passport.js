@@ -16,8 +16,66 @@
 import passport from 'passport';
 import { Strategy as FacebookStrategy } from 'passport-facebook';
 import { User, UserLogin, UserClaim, UserProfile } from './data/models';
+import nodeFetch from 'node-fetch';
+import createFetch from './createFetch';
 import config from './config';
 
+const TokenStrategy = require('passport-http-oauth').TokenStrategy;
+
+const fetch = createFetch(nodeFetch, {
+  baseUrl: config.api.serverUrl,
+});
+
+passport.use(
+  'token',
+  new TokenStrategy(
+    (consumerKey, done) => {
+      fetch(`/api/edit/user/viewByToken?token=${consumerKey}`)
+        .then(res => {
+          return done(res);
+          console.log(res);
+        })
+        .catch(err => done(err));
+      // db.clients.findByConsumerKey(consumerKey, (err, client) => {
+      //   if (err) {
+      //     return done(err);
+      //   }
+      //   if (!client) {
+      //     return done(null, false);
+      //   }
+      //   return done(null, client, client.consumerSecret);
+      // });
+    },
+
+    (accessToken, done) => {
+      fetch(`/api/edit/user/viewByToken?token=${accessToken}`)
+        .then(res => {
+          return done(res);
+          console.log(res);
+        })
+        .catch(err => done(err));
+      // db.accessTokens.find(accessToken, (err, token) => {
+      //   if (err) {
+      //     return done(err);
+      //   }
+      //   db.users.find(token.userID, (err, user) => {
+      //     if (err) {
+      //       return done(err);
+      //     }
+      //     if (!user) {
+      //       return done(null, false);
+      //     }
+      //     // to keep this example simple, restricted scopes are not implemented
+      //     var info = { scope: '*' };
+      //     done(null, user, token.secret, info);
+      //   });
+      // });
+    },
+    (timestamp, nonce, done) => {
+      done(null, true);
+    },
+  ),
+);
 /**
  * Sign in with Facebook.
  */

@@ -16,12 +16,13 @@ import FilterForm from 'components/FilterForm';
 import FilterPager from 'components/FilterPager';
 import filterData from 'components/FilterForm/filterData';
 import DropdownSelect from 'components/DropdownSelect';
-import SetAutoRuleModal from './components/SetAutoRuleModal';
-import CreateTopicModal from './components/CreateTopicModal';
+import { getOptionName } from 'data/optionsMaps';
+import TopicSettingModal from './components/TopicSettingModal';
+import TopicModal from './components/TopicModal';
 
 import gs from 'components/App.less';
 import s from './Topics.less';
-import { fetchTopics } from '../../actions/topics';
+import { fetchTopics } from 'actions/topics';
 
 const confirm = Modal.confirm;
 const Search = Input.Search;
@@ -50,8 +51,8 @@ class Topics extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      setAutoRuleVisible: false,
-      createTopicModalVisible: false,
+      topicSettingVisible: false,
+      topicModalVisible: false,
       query: {
         pageNum: 1,
         pageSize: 60,
@@ -65,7 +66,7 @@ class Topics extends React.Component {
   }
 
   addTopic = item => {
-    this.setState({ createTopicModalVisible: true });
+    this.setState({ topicModalVisible: true });
   };
 
   reload = () => {
@@ -86,16 +87,17 @@ class Topics extends React.Component {
     window.open('/topic/update/1');
   };
 
-  handlerClickSetRult = e => {
-    this.setState({ setAutoRuleVisible: true });
+  handlerClickTopicSetting = topicId => {
+    this.topicId = topicId;
+    this.setState({ topicSettingVisible: true });
   };
 
   closeAutoRuleModal = () => {
-    this.setState({ setAutoRuleVisible: false });
+    this.setState({ topicSettingVisible: false });
   };
 
-  closeCreateTopicModal = () => {
-    this.setState({ createTopicModalVisible: false });
+  closeTopicModal = () => {
+    this.setState({ topicModalVisible: false });
   };
 
   handlerClickOffline = item => {
@@ -117,23 +119,18 @@ class Topics extends React.Component {
   };
 
   render() {
-    const {
-      setAutoRuleVisible,
-      createTopicModalVisible,
-      list,
-      query,
-    } = this.state;
+    const { topicSettingVisible, topicModalVisible, query } = this.state;
 
     const columns = [
       {
         title: '序号',
         dataIndex: 'index',
-        width: 50,
+        width: 46,
       },
       {
         title: '专题ID',
-        dataIndex: 'id',
-        width: 80,
+        dataIndex: 'topicId',
+        width: 76,
       },
       {
         title: '专题名称',
@@ -142,51 +139,64 @@ class Topics extends React.Component {
       },
       {
         title: '频道',
-        dataIndex: 'categoryNames',
-        width: 100,
+        dataIndex: 'channelId',
+        width: 70,
+        render: (text, record) => getOptionName('categotys', text + ''),
       },
       {
         title: '创建时间/发布时间',
-        dataIndex: 'createdTime',
-        width: 140,
+        dataIndex: 'time1',
+        width: 130,
+        render: (text, record) => {
+          const { createDate, publishDate } = record;
+          return [createDate, publishDate].map(name => (
+            <p className={gs.gap0}>{name}</p>
+          ));
+        },
       },
       {
         title: '专题状态',
-        dataIndex: 'onlineType',
+        dataIndex: 'status',
         width: 70,
-        // width: 80,
+        render: (text, record) => getOptionName('topicState', text + ''),
       },
       {
         title: '编审人',
-        dataIndex: 'name',
+        dataIndex: 'updatedBy',
         width: 70,
-        render() {
-          return '姜小婧';
-        },
+        render: text => text || '---',
       },
       {
         title: '抓取状态',
-        dataIndex: 'age',
+        dataIndex: 'runningStatus',
         width: 70,
-        render() {
-          return '抓取完成';
-        },
+        render: (text, record) => getOptionName('runningStatus', text + ''),
       },
       {
         title: '抓取时间',
-        dataIndex: 'createdTime1',
-        width: 80,
+        dataIndex: 'time2',
+        width: 130,
+        render: (text, record) => {
+          const { uploadBeginTime, uploadEndTime } = record;
+          return [
+            <p className={gs.gap0}>{uploadBeginTime || '---'}</p>,
+            <p className={gs.gap0}>{uploadEndTime || '---'}</p>,
+          ];
+        },
       },
       {
         title: '操作',
         dataIndex: 'btns',
-        width: 274,
-        render: () => (
+        // width: 274,
+        render: (text, record) => (
           <div className={s.settingBtns}>
             <Button size="small" onClick={this.handleClickView}>
               网站设置
             </Button>
-            <Button size="small" onClick={this.handlerClickSetRult}>
+            <Button
+              size="small"
+              onClick={() => this.handlerClickTopicSetting(record.topicId)}
+            >
               抓取设置
             </Button>
             <Button size="small" onClick={this.handlerClickOffline}>
@@ -202,12 +212,14 @@ class Topics extends React.Component {
 
     return (
       <div className={s.root}>
-        <CreateTopicModal
-          onClose={this.closeCreateTopicModal}
-          visible={createTopicModalVisible}
+        <TopicModal
+          id={this.topicId}
+          onClose={this.closeTopicModal}
+          visible={topicModalVisible}
         />
-        <SetAutoRuleModal
-          visible={setAutoRuleVisible}
+        <TopicSettingModal
+          id={this.topicId}
+          visible={topicSettingVisible}
           onClose={this.closeAutoRuleModal}
         />
         <div
@@ -221,9 +233,6 @@ class Topics extends React.Component {
             onSearch={value => console.log(value)}
             size="large"
             enterButton="搜索"
-            style={{
-              width: 800,
-            }}
           />
         </div>
         <FilterForm saveBtn formItems={formItems} />
@@ -259,6 +268,7 @@ class Topics extends React.Component {
           className={gs.table}
           bordered
           size="small"
+          scroll={{ x: 1000 }}
           columns={columns}
           dataSource={this.props.list}
           onChange={this.fetchTopics}

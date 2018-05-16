@@ -15,7 +15,7 @@ import Link from 'components/Link';
 
 import s from './Layout.less';
 import menuData from './menuData';
-import logoUrl from './logo_Dark.svg';
+import logoUrl from './logo.svg';
 
 const { Header, Sider, Content, Footer } = Layout;
 const SubMenu = Menu.SubMenu;
@@ -41,8 +41,8 @@ class UserLayout extends React.Component {
     const { openKeys, selectedKeys } = this.state;
 
     return (
-      <Layout className={s.root}>
-        <Header style={{ height: 46, padding: '0 24px' }}>
+      <div className={s.root + ' ant-layout'}>
+        <div className={s.header + ' ant-layout-header'}>
           <span className={s.brand}>
             <img src={logoUrl} alt="logo" width="50" />
             VCG 内容管理系统
@@ -52,70 +52,59 @@ class UserLayout extends React.Component {
             mode="horizontal"
             style={{ height: 46, float: 'right' }}
           >
-            <Menu.Item key="h2" className={s.star}>
+            <Menu.Item key="star" className={s.star}>
               <Icon type="star" />
             </Menu.Item>
             <SubMenu key="h1" title="姜婧婧">
               <Menu.Item key="h11">退出</Menu.Item>
             </SubMenu>
           </Menu>
-        </Header>
-        <Layout style={{ backgroundColor: '#fff' }}>
-          <Sider
-            width={190}
-            style={{ background: '#f8f8f8', borderRight: '1px solid #ccc' }}
-          >
-            <Menu
-              mode="inline"
-              style={{
-                height: '100%',
-                borderRight: 0,
-                backgroundColor: '#f2f2f2',
-              }}
-              onSelect={this.changeSelect}
-              openKeys={openKeys}
-              selectedKeys={selectedKeys}
-            >
-              {menuData.map(m => {
-                if (m.children) {
+        </div>
+        <div className="ant-layout ant-layout-has-sider">
+          <div className={s.sider + ' ant-layout-sider'}>
+            <div className="ant-layout-sider-children">
+              <Menu
+                className={s.siderMenu}
+                mode="inline"
+                onSelect={this.changeSelect}
+                openKeys={openKeys}
+                selectedKeys={selectedKeys}
+              >
+                {menuData.map(m => {
+                  if (m.children) {
+                    return (
+                      <SubMenu
+                        key={m.id}
+                        title={
+                          <span>
+                            <Icon type={m.icon} />
+                            <span>{m.text}</span>
+                          </span>
+                        }
+                      >
+                        {m.children.map(c => (
+                          <Menu.Item key={c.id}>
+                            <Link to={c.path}>{c.text}</Link>
+                          </Menu.Item>
+                        ))}
+                      </SubMenu>
+                    );
+                  }
                   return (
-                    <SubMenu
-                      key={m.id}
-                      title={
-                        <span>
-                          <Icon type={m.icon} />
-                          <span>{m.text}</span>
-                        </span>
-                      }
-                    >
-                      {m.children.map(c => (
-                        <Menu.Item key={c.id}>
-                          <Link to={c.path}>{c.text}</Link>
-                        </Menu.Item>
-                      ))}
-                    </SubMenu>
+                    <Menu.Item key={m.id}>
+                      <Icon type={m.icon} />
+                      <Link to={m.path}>{m.text}</Link>
+                    </Menu.Item>
                   );
-                }
-                return (
-                  <Menu.Item key={m.id}>
-                    <Icon type={m.icon} />
-                    <Link to={m.path}>{m.text}</Link>
-                  </Menu.Item>
-                );
-              })}
-            </Menu>
-          </Sider>
-          <Content
-            style={{
-              padding: 24,
-              margin: 0,
-              minHeight: 280,
-            }}
-          >
+                })}
+              </Menu>
+            </div>
+          </div>
+          <div className={s.content + ' ant-layout-content'}>
             {this.props.children}
-          </Content>
-        </Layout>
-      </Layout>
+          </div>
+        </div>
+      </div>
     );
   }
 }

@@ -11,12 +11,13 @@ class DropdownSelect extends React.Component {
 
   static defaultProps = {
     onChange: null,
+    options: [],
+    value: '',
   };
 
   handleMenuClick = e => {
     const { onChange } = this.props;
     const value = e.key * 1;
-    console.log(value);
     onChange(value);
   };
 

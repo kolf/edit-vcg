@@ -58,7 +58,11 @@ class Html extends React.Component {
           ))}
         </head>
         <body>
-          <div id="app" dangerouslySetInnerHTML={{ __html: children }} />
+          <div
+            id="app"
+            style={{ height: '100%' }}
+            dangerouslySetInnerHTML={{ __html: children }}
+          />
           <script
             dangerouslySetInnerHTML={{ __html: `window.App=${serialize(app)}` }}
           />

@@ -1,18 +1,31 @@
-:global {
-  .ant {
-    &-layout {
-      overflow-x: hidden;
-      min-height: 100vh;
+.root {
+  overflow-x: hidden;
+  min-height: 100vh;
+}
 
-      &-content{
-        margin:0 15px;
+.header {
+  height: 46px;
+  padding: 0 16px;
+}
 
-        &>.ant-breadcrumb{
-          margin: 15px 0;
-        }
-      }
-    }
-  }
+.content {
+  padding: 24px;
+  margin: 0;
+  min-height: 280px;
+  background-color: #fff;
+  flex: 1
+}
+
+.sider {
+  width: 190px !important;
+  background: #f8f8f8;
+  border-right: 1px solid #ccc;
+}
+
+.siderMenu {
+  height: 100%;
+  border-right: 0;
+  background-color: #f2f2f2;
 }
 
 .brand {
@@ -28,13 +41,13 @@
   }
 }
 
-.star{
-  background-color:#696565;
+.star {
+  background-color: #696565;
   height: 46px;
   overflow: hidden;
 
-  :global{
-    .anticon{
+  :global {
+    .anticon {
       margin-right: 0;
       font-size: 20px;
       line-height: 44px;

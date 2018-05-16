@@ -7,7 +7,7 @@ import FilterPager from 'components/FilterPager';
 import gs from 'components/App.less';
 import s from './ThumbList.less';
 
-import { fetchTopics } from 'actions/topics';
+import { fetchTopics, updateTopic } from 'actions/topics';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -24,6 +24,24 @@ const assetOptions = [
     label: '全部',
   },
 ];
+
+function Item({ onClick, oss176, id, title, selected }) {
+  return (
+    <div className={s.item} onClick={() => onClick(id, selected)}>
+      <div className={s.picture}>
+        <img src={oss176} alt="" />
+      </div>
+      <h5 className={s.title}>2018-02-09 22:43:32</h5>
+      <p className={s.caption}>
+        ID：{id}
+        <br />
+        {title}
+      </p>
+      <p>{selected ? '已选' : '未选'}</p>
+    </div>
+  );
+}
+
 class ThumbList extends React.Component {
   static defaultProps = {
     list: [],
@@ -55,6 +73,14 @@ class ThumbList extends React.Component {
     });
   };
 
+  handlerClickItem = (id, selected) => {
+    this.props.dispatch(
+      updateTopic(id, {
+        selected: !selected,
+      }),
+    );
+  };
+
   fetchTopics = param => {
     const { dispatch } = this.props;
     const { query } = this.state;
@@ -70,6 +96,8 @@ class ThumbList extends React.Component {
     const { query } = this.state;
 
     const spanSize = row;
+
+    console.error('----------', this.props);
 
     return (
       <div className={s.root}>
@@ -103,18 +131,8 @@ class ThumbList extends React.Component {
         >
           <Row>
             {this.props.list.map((img, index) => (
-              <Col span={spanSize} key={`img${index}`}>
-                <div className={s.item}>
-                  <div className={s.picture}>
-                    <img src={img.oss176} alt="" />
-                  </div>
-                  <h5 className={s.title}>2018-02-09 22:43:32</h5>
-                  <p className={s.caption}>
-                    ID：{img.id}
-                    <br />
-                    {img.title}
-                  </p>
-                </div>
+              <Col span={spanSize}>
+                <Item {...img} onClick={this.handlerClickItem} />
               </Col>
             ))}
           </Row>

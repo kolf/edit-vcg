@@ -4,7 +4,6 @@
  */
 
 import React from 'react';
-import Layout from '../../components/Layout/BlankLayout';
 import Topic from './Topic';
 
 const title = 'VCG专题';

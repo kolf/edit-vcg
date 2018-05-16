@@ -1,0 +1,49 @@
+.root {
+  // background: #e5e5e5 url(https://goss.vcg.com/static/img/reg-bg.jpg) no-repeat;
+  background-color: #e5e5e5;
+  background-size: cover;
+  height: 100%;
+  display: flex;
+}
+
+.container {
+  width: 360px;
+  margin: auto;
+  background-color: #fff;
+  padding: 24px;
+
+  :global {
+    .ant-tabs .ant-tabs-bar {
+      border-bottom: 0;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .ant-form-item {
+      margin-bottom: 24px;
+    }
+  }
+}
+
+.logo{
+  // width: 100px;
+  height: 140px;
+  text-align: center;
+  padding: 30px 0;
+  &>img{
+    display: inline-block;
+    width: 120px;
+  }
+}
+
+.prefixIcon {
+  font-size: 16px;
+}
+
+.submit {
+  width: 100%;
+}
+
+.forgot{
+  float:right;
+}

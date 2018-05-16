@@ -1,4 +1,7 @@
-import { FETCH_CATEGORY_REQUEST, FETCH_CATEGORY_SUCCESS } from '../constants';
+import {
+  FETCH_CATEGORY_REQUEST,
+  FETCH_CATEGORY_SUCCESS,
+} from '../actions/category';
 
 const loop = (data, level) =>
   data.map((item, i) => {

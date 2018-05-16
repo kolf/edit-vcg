@@ -215,7 +215,6 @@ class AutoTopics extends React.Component {
             onSearch={value => console.log(value)}
             size="large"
             enterButton="搜索"
-            style={{ width: 800 }}
           />
         </div>
         <FilterForm saveBtn formItems={formItems} />

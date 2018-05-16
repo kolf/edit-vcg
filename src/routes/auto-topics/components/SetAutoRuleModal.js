@@ -20,6 +20,7 @@ import {
 import TagFormGroup from 'components/TagFormGroup';
 import CategorySelect from 'components/CategorySelect';
 
+import gs from 'components/App.less';
 import s from './SetAutoRuleModal.less';
 
 const FormItem = Form.Item;
@@ -142,7 +143,12 @@ const SetAutoRuleModal = Form.create()(
                     required: true,
                   },
                 ],
-              })(<RangePicker placeholder={['起始日期', '结束日期']} />)}
+              })(
+                <RangePicker
+                  style={{ width: '100%' }}
+                  placeholder={['起始日期', '结束日期']}
+                />,
+              )}
             </FormItem>
             <FormItem {...formItemLayout} label="抓取分类">
               {getFieldDecorator('f2', {
@@ -171,12 +177,8 @@ const SetAutoRuleModal = Form.create()(
               )}
             </FormItem>
             <FormItem {...tailFormItemLayout}>
-              <div className="btns">
-                <Button
-                  type="primary"
-                  className="mr-5"
-                  onClick={this.handlerClickSubmit}
-                >
+              <div className={gs.btns}>
+                <Button type="primary" onClick={this.handlerClickSubmit}>
                   提交
                 </Button>
                 <Button onClick={this.handlerClickStop}>结束抓取</Button>
@@ -194,4 +196,4 @@ const SetAutoRuleModal = Form.create()(
   },
 );
 
-export default withStyles(s)(SetAutoRuleModal);
+export default withStyles(gs, s)(SetAutoRuleModal);

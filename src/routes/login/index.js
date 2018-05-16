@@ -10,13 +10,12 @@
 import React from 'react';
 import Login from './Login';
 
-async function action({ fetch, query }) {
-  if (query.token) {
-    const res = await fetch(`/api/edit/user/viewByToken?token=${query.token}`);
-    console.log(res.json());
-  }
-  // const res = await fetch('/')
-  return { title: '登陆', chunks: ['login'], component: <Login /> };
+async function action({ query }) {
+  return {
+    title: '登陆',
+    chunks: ['login'],
+    component: <Login token={query.token} />,
+  };
 }
 
 export default action;
