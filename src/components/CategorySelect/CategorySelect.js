@@ -20,8 +20,12 @@ class CategorySelect extends React.Component {
   }
 
   onChange = value => {
-    console.log('onChange ', value);
-    this.setState({ value });
+    if (this.props.value) {
+      console.log(value);
+      this.props.onChange(value);
+    } else {
+      this.setState({ value });
+    }
   };
 
   render() {
@@ -29,7 +33,7 @@ class CategorySelect extends React.Component {
       filterTreeNode,
       treeData: this.props.treeData,
       labelInValue: true,
-      value: this.state.value,
+      value: this.props.value || this.state.value,
       onChange: this.onChange,
       treeCheckable: true,
       showCheckedStrategy: SHOW_PARENT,

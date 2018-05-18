@@ -187,7 +187,7 @@ class Topics extends React.Component {
       {
         title: '操作',
         dataIndex: 'btns',
-        // width: 274,
+        width: 274,
         render: (text, record) => (
           <div className={s.settingBtns}>
             <Button size="small" onClick={this.handleClickView}>

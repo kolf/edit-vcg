@@ -27,10 +27,6 @@ class TopicUpdate extends React.Component {
     title: PropTypes.string.isRequired,
   };
 
-  constructor(props) {
-    super(props);
-  }
-
   componentDidMount() {
     storage.set('topicModules', JSON.stringify(this.modulesValue));
   }
