@@ -2,7 +2,7 @@ const filters = [
   {
     id: '1',
     label: '频道',
-    field: 'f1',
+    field: 'cid',
     formType: 'radio',
     options: [
       {
@@ -55,27 +55,27 @@ const filters = [
   {
     id: '2',
     label: '专题状态',
-    field: 'f2',
+    field: 'status',
     formType: 'radio',
     options: [
       {
         label: '未发布',
-        value: '1',
+        value: '0',
       },
       {
         label: '已发布',
-        value: '2',
+        value: '1',
       },
       {
         label: '已下线',
-        value: '3',
+        value: '2',
       },
     ],
   },
   {
     id: '3',
     label: '创建时间',
-    field: 'f3',
+    field: 'createdTime',
     formType: 'radioTime',
     options: [
       {
@@ -95,7 +95,7 @@ const filters = [
   {
     id: '4',
     label: '发布时间',
-    field: 'f4',
+    field: 'publishTime',
     formType: 'radioTime',
     options: [
       {
@@ -115,27 +115,27 @@ const filters = [
   {
     id: '5',
     label: '编审人',
-    field: 'f5',
+    field: 'updatedBy',
     placeholder: '请输入供稿人',
     fieldType: 'searchInput',
   },
   {
     id: '6',
     label: '抓取状态',
-    field: 'f6',
+    field: 'runningStatus',
     formType: 'radio',
     options: [
       {
         label: '未抓取',
-        value: '1',
+        value: '0',
       },
       {
         label: '抓取中',
-        value: '2',
+        value: '1',
       },
       {
         label: '抓取结束',
-        value: '3',
+        value: '2',
       },
     ],
   },

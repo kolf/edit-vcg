@@ -22,11 +22,12 @@ import {
 } from 'antd';
 import TagFormGroup from 'components/TagFormGroup';
 import CategorySelect from 'components/CategorySelect';
-import { fetchTopicSetting, updateTopicSetting } from 'actions/topicSetting';
-import { getOptionName } from 'data/optionsMaps';
+import { fetchAutoGroupRule, updateAutoGroupRule } from 'actions/autoGroupRule';
+// import { stopGroup } from 'actions/autoGroup';
+import { getOptionName, getOptions } from 'data/optionsMaps';
 import moment from 'moment';
 import gs from 'components/App.less';
-import s from './TopicSettingModal.less';
+import s from './AutoGroupRuleModal.less';
 
 const FormItem = Form.Item;
 const MonthPicker = DatePicker.MonthPicker;
@@ -59,52 +60,16 @@ const tailFormItemLayout = {
   },
 };
 
-const assetOptions = [
-  {
-    value: '1',
-    label: '时效',
-  },
-  {
-    value: '2',
-    label: '资料',
-  },
-];
-
-const statusOptions = [
-  {
-    value: '1',
-    label: '已上线/审核',
-  },
-  {
-    value: '2',
-    label: '已上线/自动',
-  },
-  {
-    value: '3',
-    label: '未上线/未编审',
-  },
-];
-
-const rangeOptions = [
-  {
-    value: '1',
-    label: '关键词/组关键词',
-  },
-  {
-    value: '2',
-    label: '图说/组说',
-  },
-];
-
 const defaultName = '---';
 const getTime = date => new Date(date).getTime();
-class TopicSettingModal extends React.Component {
+
+class GroupRuleModal extends React.Component {
   static propsTypes = {};
 
   static defaultProps = {
     confirmLoading: false,
     isFetching: false,
-    topic: {},
+    group: {},
     id: '',
   };
 
@@ -117,119 +82,114 @@ class TopicSettingModal extends React.Component {
     if (
       nextProps.visible === true &&
       this.props.visible === false &&
-      nextProps.id
+      nextProps.groupId
     ) {
-      this.getTopicSetting(nextProps.id);
+      this.getGroupRule(nextProps.groupId);
     }
   }
 
-  getTopicSetting = id => {
-    this.props.dispatch(fetchTopicSetting({ id })).then(topicSetting => {
-      if (!topicSetting) {
+  getGroupRule = id => {
+    this.props.dispatch(fetchAutoGroupRule({ id })).then(groupRule => {
+      console.log(groupRule)
+      if (!groupRule) {
         return;
       }
       let {
         category,
-        timeliness,
-        resUploadBeginTime,
-        resUploadEndTime,
-        providerId,
-      } = topicSetting;
+        uploadBeginTime,
+        uploadEndTime,
+        isOnline,
+        allContainKeywords,
+        anyContainKeywords,
+        notContainKeywords,
+      } = groupRule;
 
-      const keywords = [
-        'allContainKeywords',
-        'anyContainKeywords',
-        'notContainKeywords',
-      ].map(key => (topicSetting[key] ? topicSetting[key] : []));
-
-      console.log(keywords);
-
+      keywords: [(allContainKeywords || '').split(','), (anyContainKeywords || '').split(','), (notContainKeywords || '').split(',')],
       this.props.form.setFieldsValue({
-        keywords,
-        timeliness: timeliness.split(','),
-        runTime: [moment(resUploadBeginTime), moment(resUploadEndTime)],
-        providerId,
+        isOnline: isOnline === '1',
+        runTime: [moment(uploadBeginTime), uploadEndTime ? moment(uploadEndTime) : null],
+        category: /\d+/.test(category + '') ? category.match(/\d+/g) : []
       });
     });
   };
 
-  handleSubmit = e => {
+  handlerSubmit = e => {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        let {
-          keywords,
-          category,
-          status,
-          timeliness,
-          isOnline,
-          runTime,
-          providerId,
-        } = values;
+        let { keywords, category, isOnline, runTime } = values;
         let [allKeywords, anyOneKeywords, notContainKeywords] = keywords.map(
           k => (k && k.length > 0 ? k.toString() : ''),
         );
+
+        // console.log()
+        let categoryIds = isNaN(category) ? category.map(c => c.value) : category;
+
         const creds = {
           allKeywords,
           anyOneKeywords,
           notContainKeywords,
-          category: category.map(c => c.value).toString(),
-          status: status.toString(),
-          timeliness: timeliness.toString(),
+          category: categoryIds.join(','),
           isOnline: isOnline ? '1' : '0',
           endTime: getTime(runTime[0]),
           beginTime: getTime(runTime[1]),
-          topicId: this.props.id + '',
-          providerId,
+          groupId: this.props.groupId + '',
+          topicId: this.props.group.topicId
         };
-        this.props
-          .dispatch(updateTopicSetting(creds))
-          .then(msg => message.success('专题规则更新成功'));
+        this.props.dispatch(updateAutoGroupRule(creds)).then(msg => {
+          message.success('专题规则更新成功');
+          this.props.onOk();
+        });
       }
     });
   };
 
-  handlerClickSubmit = e => {
-    const { onClose } = this.props;
-    onClose();
-  };
-
   handlerClickStop = e => {
-    const { onClose } = this.props;
-    onClose();
+    // this.props
+    //   .dispatch(
+    //     stopGroup({
+    //       id: this.props.groupId,
+    //     }),
+    //   )
+    //   .then(data => {
+    //     message.success(data.message);
+    //   });
   };
 
   render() {
-    const { visible, onClose, topic } = this.props;
+    const { visible, onCancel, onOk, group } = this.props;
     const { getFieldDecorator, getFieldsValue } = this.props.form;
 
     const props = {
       width: 800,
-      title: '编辑抓取规则',
+      title: '修改抓取规则',
       visible,
       okText: '提交',
       cancelText: '取消',
-      onCancel: onClose,
+      onCancel,
+      onOk,
       footer: null,
       destroyOnClose: true,
     };
+
+    console.log('group-------------', group);
 
     return (
       <Modal {...props} className={s.root}>
         <Spin spinning={this.props.isFetching}>
           <Row className={s.info}>
-            <Col span="6">专题ID：{topic.topicId}</Col>
-            <Col span="15">专题名称：{topic.title} </Col>
+            <Col span="6">组照ID: {group.groupId}</Col>
+            <Col span="15">组照名称: {group.title} </Col>
             <Col span="3">
-              状态：{getOptionName('runningStatus', topic.runningStatus + '')}
+              状态：{getOptionName('runningStatus', group.runningStatus + '')}
             </Col>
             <Col span="10">
-              任务抓取开始时间：{topic.uploadBeginTime || defaultName}
+              任务抓取开始时间：{group.uploadBeginTime || defaultName}
             </Col>
             <Col span="10">
-              任务抓取结束时间: {topic.uploadEndTime || defaultName}
+              任务抓取结束时间: {group.uploadEndTime || defaultName}
             </Col>
-            <Col span="4">抓取结果：--- </Col>
+            <Col span="4">抓取数量：--- </Col>
           </Row>
           <Form>
             <Divider>抓取规则</Divider>
@@ -259,38 +219,6 @@ class TopicSettingModal extends React.Component {
                 ],
               })(<CategorySelect />)}
             </FormItem>
-            <FormItem {...formItemLayout} label="抓取供应商">
-              {getFieldDecorator('providerId', {
-                rules: [
-                  {
-                    required: true,
-                    message: '请输入抓取供应商',
-                  },
-                ],
-              })(<Input placeholder="请输入供应商名称" />)}
-            </FormItem>
-
-            <FormItem {...formItemLayout} label="抓取状态">
-              {getFieldDecorator('status', {
-                rules: [
-                  {
-                    required: true,
-                    message: '请选择抓取状态',
-                  },
-                ],
-              })(<CheckboxGroup options={statusOptions} />)}
-            </FormItem>
-
-            <FormItem {...formItemLayout} label="抓取范围">
-              {getFieldDecorator('range', {
-                rules: [
-                  {
-                    required: true,
-                    message: '请选择抓取范围',
-                  },
-                ],
-              })(<CheckboxGroup options={rangeOptions} />)}
-            </FormItem>
 
             <FormItem {...formItemLayout} label="抓取关键词">
               {getFieldDecorator('keywords', {
@@ -304,33 +232,28 @@ class TopicSettingModal extends React.Component {
               })(<TagFormGroup />)}
             </FormItem>
 
-            <FormItem {...formItemLayout} label="抓取时效/资料">
-              {getFieldDecorator('timeliness', {
-                rules: [
-                  {
-                    required: true,
-                    message: '请选择类型',
-                  },
-                ],
-              })(<CheckboxGroup options={assetOptions} />)}
-            </FormItem>
-            <Divider className={s.divider} />
+            <Divider className={gs.divider} />
             <FormItem {...tailFormItemLayout}>
-              {getFieldDecorator('isOnline', {})(
-                <Checkbox>抓取完成后将未上线的图片做上线操作</Checkbox>,
-              )}
+              {getFieldDecorator('isOnline', {
+                valuePropName: 'checked',
+              })(<Checkbox>抓取完成后将未上线的图片做上线操作</Checkbox>)}
             </FormItem>
             <FormItem {...tailFormItemLayout}>
               <div className={gs.btns}>
                 <Button
                   type="primary"
                   className="mr-5"
-                  onClick={this.handleSubmit}
+                  onClick={this.handlerSubmit}
                   loading={this.props.confirmLoading}
                 >
                   提交
                 </Button>
-                <Button onClick={this.handlerClickStop}>结束抓取</Button>
+                <Button
+                  loading={this.props.stopGroupFetching}
+                  onClick={this.handlerClickStop}
+                >
+                  结束抓取
+                </Button>
               </div>
               <Alert
                 message="注：修改抓取规则提交后，之前进行中的任务结束，按新规则重新进行抓取，之前抓取的组照还在该专题下。如果抓取任务正在进行，可点击结束抓取来终止自动抓取行为"
@@ -347,12 +270,13 @@ class TopicSettingModal extends React.Component {
 
 function mapStateToProps(state, props) {
   return {
-    isFetching: state.topicSetting.isFetching,
-    confirmLoading: state.topicSetting.confirmLoading,
-    topic: state.topics.list.find(item => item.topicId === props.id),
+    isFetching: state.autoGroupRule.isFetching,
+    confirmLoading: state.autoGroupRule.confirmLoading,
+    group: state.autoGroups.list.find(item => item.groupId == props.groupId),
+    stopGroupFetching: state.autoGroup.isFetching,
   };
 }
 
 export default connect(mapStateToProps)(
-  Form.create()(withStyles(gs, s)(TopicSettingModal)),
+  Form.create()(withStyles(gs, s)(GroupRuleModal)),
 );

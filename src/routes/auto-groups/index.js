@@ -9,17 +9,17 @@
 
 import React from 'react';
 import Layout from '../../components/Layout';
-import AutoTopics from './AutoTopics';
+import AutoGroups from './AutoGroups';
 
-const title = '专题管理';
+const title = '自动成组管理';
 
 function action() {
   return {
-    chunks: ['auto-topics'],
+    chunks: ['auto-groups'],
     title,
     component: (
       <Layout>
-        <AutoTopics title={title} />
+        <AutoGroups title={title} />
       </Layout>
     ),
   };

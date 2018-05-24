@@ -22,32 +22,30 @@ const formItemLayout = {
   },
 };
 
-function control(formItem) {
-  const { formType, options, placeholder } = formItem;
-  switch (formType) {
-    case 'radio':
-      return (
-        <RadioGroup className="border-0">
-          {options.map(option => (
-            <RadioButton value={option.value} key={option.value}>
-              {option.label}
-            </RadioButton>
-          ))}
-        </RadioGroup>
-      );
-    case 'radioTime':
-      return <XTimeGroup />;
-    default:
-      return <Input placeholder={placeholder} style={{ width: 360 }} />;
+function Radios({ onChange, value, options }) {
+  function handleChange(e) {
+    console.log(e)
+    onChange(e.target.value)
   }
+
+  return <RadioGroup className="border-0" onChange={handleChange}>
+    {options.map(option => (
+      <RadioButton value={option.value} key={option.value}>
+        {option.label}
+      </RadioButton>
+    ))}
+  </RadioGroup>
 }
 
 class FilterForm extends React.Component {
   static propTypes = {
     formItems: PropTypes.array,
+    onClick: PropTypes.func.isRequire
   };
 
-  static defaultProps = {};
+  static defaultProps = {
+    onChange: () => { }
+  };
 
   constructor(props) {
     super(props);
@@ -55,19 +53,24 @@ class FilterForm extends React.Component {
       expand: false,
     };
 
-    this.handlerClickExpend = this.handlerClickExpend.bind(this);
   }
 
-  handlerClickExpend() {
+  handleClickExpend = () => {
     const expand = !this.state.expand;
     this.setState({
       expand,
     });
   }
 
-  clickTag = () => {
+  handleClickTag = () => {
     console.log();
   };
+
+  handleChange = (field, value) => {
+    const { onClick, form } = this.props;
+    const values = form.getFieldsValue();
+    onClick({field, value});
+  }
 
   render() {
     const { formItems, form } = this.props;
@@ -77,24 +80,40 @@ class FilterForm extends React.Component {
     return (
       <React.Fragment>
         <div className={s.tools}>
-          <FilterRss form={form} onTag={this.clickTag} />
+          <FilterRss form={form} onTag={this.handleClickTag} />
           <Button
             icon={expand ? 'up' : 'down'}
-            onClick={this.handlerClickExpend}
+            onClick={this.handleClickExpend}
           >
             展开筛选
           </Button>
         </div>
         <Form className={s.wrap} style={{ display: expand ? 'block' : 'none' }}>
-          {formItems.map(formItem => (
-            <FormItem
+          {formItems.map((formItem, index) => {
+            const { formType, options, placeholder } = formItem;
+            let control = null;
+            switch (formType) {
+              case 'radio':
+                control = <Radios options={options} />
+                break;
+              case 'radioTime':
+                control = <XTimeGroup />
+                break;
+              default:
+                control = <Input placeholder={placeholder} style={{ width: 360 }} />
+            }
+
+            return <FormItem
+              key={s + index}
               {...formItemLayout}
               className={s.item}
               label={formItem.label}
             >
-              {getFieldDecorator(formItem.field)(control(formItem))}
+              {getFieldDecorator(formItem.field, {
+                onChange: value => this.handleChange(formItem.field, value)
+              })(control)}
             </FormItem>
-          ))}
+          })}
         </Form>
       </React.Fragment>
     );

@@ -1,0 +1,6 @@
+{
+  "name": "KeywordSelect",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./KeywordSelect.js"
+}

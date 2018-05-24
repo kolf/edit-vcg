@@ -1,5 +1,5 @@
 const optionsMap = {
-  categotys: [
+  categorys: [
     {
       label: '国内新闻',
       value: '220634',
@@ -87,14 +87,56 @@ const optionsMap = {
       label: '抓取结束',
     },
   ],
+  ranges: [
+    {
+      value: '1',
+      label: '图关键词',
+    },
+    {
+      value: '2',
+      label: '组关键词',
+    },
+    {
+      value: '3',
+      label: '图说',
+    },
+    {
+      value: '4',
+      label: '组说',
+    },
+  ],
+  assets: [
+    {
+      value: '1',
+      label: '时效',
+    },
+    {
+      value: '2',
+      label: '资料',
+    },
+  ],
+  imageStatus: [
+    {
+      value: '1',
+      label: '已上线/审核',
+    },
+    {
+      value: '2',
+      label: '已上线/自动',
+    },
+    {
+      value: '3',
+      label: '未上线/未编审',
+    },
+  ],
 };
 
 function getOptions(optionsName) {
-  return optionsMap[optionsName];
+  return optionsMap[optionsName] || [];
 }
 
-function getOptionName(optionsName, value) {
-  const names = optionsMap[optionsName].reduce((result, option) => {
+function getOptionName(options, value) {
+  const names = (typeof options === 'string' ? optionsMap[options] : options).reduce((result, option) => {
     if (option.value === value) {
       result.push(option.label);
     }

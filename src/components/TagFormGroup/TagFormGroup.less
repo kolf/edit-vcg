@@ -1,22 +1,25 @@
-.root{
+.root {
   position: relative;
 }
 
-.item{
-  display: flex
+.item {
+  display: flex;
 }
 
-.label{
-  width:130px;
-  padding-right:10px;
+.label {
+  width: 130px;
+  padding-right: 10px;
   text-align: right;
 }
 
-.control{
-  flex: 1
+.control :global {
+  .ant-form-item-control {
+    line-height: 0;
+    padding-top: 3px;
+  }
 }
 
-.btn{
+.btn {
   position: absolute;
   top: 0px;
   right: -34px;

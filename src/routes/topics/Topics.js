@@ -17,12 +17,13 @@ import FilterPager from 'components/FilterPager';
 import filterData from 'components/FilterForm/filterData';
 import DropdownSelect from 'components/DropdownSelect';
 import { getOptionName } from 'data/optionsMaps';
-import TopicSettingModal from './components/TopicSettingModal';
+import TopicRuleModal from './components/TopicRuleModal';
 import TopicModal from './components/TopicModal';
 
 import gs from 'components/App.less';
 import s from './Topics.less';
 import { fetchTopics } from 'actions/topics';
+import { fetchCategory } from 'actions/category';
 
 const confirm = Modal.confirm;
 const Search = Input.Search;
@@ -31,11 +32,11 @@ const formItems = filterData.list('1', '2', '3', '4', '5', '6');
 
 const timeOptions = [
   {
-    value: 1,
+    value: '1',
     label: '创建时间从新到旧',
   },
   {
-    value: 2,
+    value: '2',
     label: '创建时间从旧到新',
   },
 ];
@@ -56,16 +57,18 @@ class Topics extends React.Component {
       query: {
         pageNum: 1,
         pageSize: 60,
-        desc: 1,
+        desc: '1',
       },
     };
   }
 
   componentDidMount() {
     this.fetchTopics();
+    this.props.dispatch(fetchCategory());
   }
 
   addTopic = item => {
+    this.topicId = '';
     this.setState({ topicModalVisible: true });
   };
 
@@ -87,20 +90,32 @@ class Topics extends React.Component {
     window.open('/topic/update/1');
   };
 
-  handlerClickTopicSetting = topicId => {
+  handleClickTopicSetting = topicId => {
     this.topicId = topicId;
     this.setState({ topicSettingVisible: true });
   };
 
-  closeAutoRuleModal = () => {
-    this.setState({ topicSettingVisible: false });
+  onOkTopicRuleModal = () => {
+    this.state.topicSettingVisible = false;
+    this.reload();
   };
 
-  closeTopicModal = () => {
+  onCancelTopicRuleModal = () => {
+    this.setState({
+      topicSettingVisible: false,
+    });
+  };
+
+  onCancelTopicModal = () => {
     this.setState({ topicModalVisible: false });
   };
 
-  handlerClickOffline = item => {
+  onOkTopicModal = () => {
+    this.state.topicModalVisible = false;
+    this.reload();
+  };
+
+  handleClickOffline = item => {
     confirm({
       title: '确定下线该专题？',
       content: '请确认是否下线该专题，下线后前台页面、搜索不再展示该专题',
@@ -112,11 +127,30 @@ class Topics extends React.Component {
     });
   };
 
-  handlerClickOpenGroup = item => {
+  handleClickTitle = topicId => {
+    this.topicId = topicId;
+    this.setState({ topicModalVisible: true });
+  };
+
+  handleClickOpenGroup = item => {
     window.open(
       'https://edit.vcg.com/zh/group/update/edit/503808611?groupId=503808611',
     );
   };
+
+  handleClickFilter = ({ field, value }) => {
+    this.fetchTopics({
+      pageNum: 1,
+      [field]: value
+    })
+  }
+
+  handleClickSearch = (value) => {
+    this.fetchTopics({
+      pageNum: 1,
+      title: value
+    })
+  }
 
   render() {
     const { topicSettingVisible, topicModalVisible, query } = this.state;
@@ -135,23 +169,24 @@ class Topics extends React.Component {
       {
         title: '专题名称',
         dataIndex: 'title',
+        render: (text, record) => (
+          <a onClick={() => this.handleClickTitle(record.topicId)}>{text}</a>
+        ),
         // width: 200,
       },
       {
         title: '频道',
         dataIndex: 'channelId',
         width: 70,
-        render: (text, record) => getOptionName('categotys', text + ''),
+        render: (text, record) => getOptionName('categorys', text + ''),
       },
       {
         title: '创建时间/发布时间',
         dataIndex: 'time1',
-        width: 130,
+        width: 136,
         render: (text, record) => {
           const { createDate, publishDate } = record;
-          return [createDate, publishDate].map(name => (
-            <p className={gs.gap0}>{name}</p>
-          ));
+          return [createDate, publishDate].map(name => <p className={gs.gap0}>{name}</p>);
         },
       },
       {
@@ -175,7 +210,7 @@ class Topics extends React.Component {
       {
         title: '抓取时间',
         dataIndex: 'time2',
-        width: 130,
+        width: 136,
         render: (text, record) => {
           const { uploadBeginTime, uploadEndTime } = record;
           return [
@@ -195,14 +230,14 @@ class Topics extends React.Component {
             </Button>
             <Button
               size="small"
-              onClick={() => this.handlerClickTopicSetting(record.topicId)}
+              onClick={() => this.handleClickTopicSetting(record.topicId)}
             >
               抓取设置
             </Button>
-            <Button size="small" onClick={this.handlerClickOffline}>
+            <Button size="small" onClick={this.handleClickOffline}>
               下线
             </Button>
-            <Button size="small" onClick={this.handlerClickOpenGroup}>
+            <Button size="small" onClick={this.handleClickOpenGroup}>
               查看组照
             </Button>
           </div>
@@ -214,13 +249,15 @@ class Topics extends React.Component {
       <div className={s.root}>
         <TopicModal
           id={this.topicId}
-          onClose={this.closeTopicModal}
+          onCancel={this.onCancelTopicModal}
+          onOk={this.onOkTopicModal}
           visible={topicModalVisible}
         />
-        <TopicSettingModal
+        <TopicRuleModal
           id={this.topicId}
           visible={topicSettingVisible}
-          onClose={this.closeAutoRuleModal}
+          onOk={this.onOkTopicRuleModal}
+          onCancel={this.onCancelTopicRuleModal}
         />
         <div
           style={{
@@ -230,12 +267,12 @@ class Topics extends React.Component {
           <Search
             className={s.search}
             placeholder="输入专题名称或ID进行搜索"
-            onSearch={value => console.log(value)}
+            onSearch={value => this.handleClickSearch(value)}
             size="large"
             enterButton="搜索"
           />
         </div>
-        <FilterForm saveBtn formItems={formItems} />
+        <FilterForm formItems={formItems} onClick={this.handleClickFilter} />
         <Row>
           <Col span="16">
             <div className={s.btns}>

@@ -70,12 +70,9 @@ export function fetchTopics(
           }
           const payload = data.data;
           dispatch(fetchTopicsSuccess(payload));
-          return Promise.reject(payload);
+          return Promise.resolve(payload);
         }),
       )
-      .catch(err => {
-        dispatch(fetchTopicsError(JSON.stringify(err)));
-        return Promise.reject(err);
-      });
+      .catch(err => console.error(err));
   };
 }

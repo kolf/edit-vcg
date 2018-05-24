@@ -2,7 +2,18 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { Form, DatePicker, Button, Modal, Input, Select, Radio } from 'antd';
+import {
+  Form,
+  DatePicker,
+  Button,
+  Modal,
+  Input,
+  Select,
+  Radio,
+  message,
+} from 'antd';
+import moment from 'moment';
+
 import { getOptions } from 'data/optionsMaps';
 import { createTopic } from 'actions/topic';
 
@@ -36,12 +47,39 @@ const tailFormItemLayout = {
   },
 };
 
-const categoryOptions = getOptions('categotys');
+const categoryOptions = getOptions('categorys');
 const timelinesOptions = getOptions('timelines');
-
+// const getMilliseconds =
 class TopicModal extends React.Component {
   static propsTypes = {
     isFetching: PropTypes.bool,
+  };
+
+  componentWillReceiveProps(nextProps) {
+    if (
+      nextProps.visible === true &&
+      this.props.visible === false &&
+      nextProps.id
+    ) {
+      const timer = setTimeout(() => {
+        clearTimeout(timer);
+        this.setFieldsValue();
+      }, 300);
+    }
+  }
+
+  setFieldsValue = id => {
+    const {
+      form,
+      topic: { title, channelId, publishDate, timeliness },
+    } = this.props;
+
+    form.setFieldsValue({
+      title,
+      channelId: channelId + '',
+      publishTime: moment(publishDate),
+      timeliness: timeliness + '',
+    });
   };
 
   handleSubmit = e => {
@@ -49,27 +87,33 @@ class TopicModal extends React.Component {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         let creds = Object.assign({}, values);
+
         creds.publishTime = values.publishTime
           ? new Date(values.publishTime).getTime()
           : Date.now();
 
-        this.props.dispatch(createTopic(creds));
+        this.props.dispatch(createTopic(creds)).then(data => {
+          message.success(data.message);
+          this.props.onOk();
+        });
       }
     });
   };
 
   render() {
-    const { visible, onClose } = this.props;
+    const { visible, onCancel, onOk, id } = this.props;
     const { getFieldDecorator } = this.props.form;
 
     const props = {
       width: 800,
-      title: '创建专题',
+      title: id ? '修改专题' : '创建专题',
       visible,
       okText: '提交',
       cancelText: '取消',
-      onCancel: onClose,
+      onCancel,
+      onOk,
       footer: null,
+      destroyOnClose: true,
     };
 
     return (
@@ -94,10 +138,13 @@ class TopicModal extends React.Component {
                   message: '请选择发布频道',
                 },
               ],
+              onChange(v) {
+                console.log(v);
+              },
             })(
               <Select showSearch placeholder="请选择发布频道">
                 {categoryOptions.map(option => (
-                  <Option value={option.value}>{option.label}</Option>
+                  <Option key={option.value}>{option.label}</Option>
                 ))}
               </Select>,
             )}
@@ -141,8 +188,9 @@ class TopicModal extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
+function mapStateToProps(state, props) {
   return {
+    topic: state.topics.list.find(item => item.topicId === props.id),
     isFetching: state.topic.isFetching,
     message: state.topic.message,
   };

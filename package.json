@@ -32,6 +32,7 @@
     "immutable": "^3.8.2",
     "isomorphic-style-loader": "^4.0.0",
     "jsonwebtoken": "^8.2.0",
+    "lodash": "^4.17.10",
     "moment": "^2.22.1",
     "node-fetch": "^2.1.1",
     "passport": "^0.4.0",

@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Select, Button, Form } from 'antd';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import KeywordSelect from 'components/KeywordSelect'
 import s from './TagFormGroup.less';
 
 const Option = Select.Option;
@@ -73,21 +74,14 @@ class TagFormGroup extends React.Component {
     let { showAll, options, value } = this.state;
     let values = this.props.value || value;
 
-    console.log(values);
-
     let Inputs = inputs.map((item, index) => (
-      <FormItem key={index} label={item.label} {...this.props.formItemLayout}>
-        <Select
-          value={values[index]}
-          mode="tags"
-          placeholder="请输入关键词"
-          dropdownStyle={{
-            display: 'none',
-          }}
-          onChange={this.handlerChange.bind(this, index)}
-        >
-          {options[item.key]}
-        </Select>
+      <FormItem
+        className={s.control}
+        key={'tag' + index}
+        label={item.label}
+        {...this.props.formItemLayout}
+      >
+        <KeywordSelect value={values[index]} onChange={this.handlerChange.bind(this, index)}/>
       </FormItem>
     ));
 

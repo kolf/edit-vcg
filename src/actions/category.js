@@ -10,11 +10,11 @@ function fetchCategoryRequest(creds) {
   };
 }
 
-function fetchCategoryError(msg) {
+function fetchCategoryError(message) {
   return {
     type: FETCH_CATEGORY_ERROR,
     isFetching: false,
-    msg,
+    message,
   };
 }
 
@@ -38,9 +38,9 @@ export function fetchCategory() {
             dispatch(fetchCategoryError(data.message));
             return Promise.reject(data);
           }
-          const payload = data.data;
+          let payload = data.data;
           dispatch(fetchCategorySuccess(payload));
-          return Promise.reject(payload);
+          return Promise.resolve(payload);
         }),
       )
       .catch(err => console.log('Error', err));

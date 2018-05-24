@@ -13,13 +13,13 @@ import { spawn } from './lib/cp';
 import { makeDir, moveDir, cleanDir } from './lib/fs';
 import run from './run';
 
-// GitHub Pages
+// VCG
 const remote = {
   name: 'github',
-  url: 'https://github.com/kolf/edit-vcg',
+  url: 'http://git.vcg.com/edit/web.git',
   branch: 'master',
-  website: 'https://<user>.github.io/<repo>/',
-  static: true,
+  website: 'https://edit-vcg.vcg.com',
+  static: false,
 };
 
 // Heroku

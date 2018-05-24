@@ -178,8 +178,6 @@ app.get('*', async (req, res, next) => {
       // I should not use `history` on server.. but how I do redirection? follow universal-router
     });
 
-    console.log('req---------', req);
-
     if (req.user && req.user.userName) {
       store.dispatch(
         receiveLogin({

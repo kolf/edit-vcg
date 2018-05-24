@@ -13,7 +13,7 @@ const menuData = [
       {
         id: '12',
         text: '自动抓图成组上线',
-        path: 'auto-topics',
+        path: 'auto-groups',
         icon: 'user',
       },
     ],

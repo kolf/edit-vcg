@@ -24,8 +24,8 @@ const routes = {
       load: () => import(/* webpackChunkName: 'topics' */ './topics'),
     },
     {
-      path: '/auto-topics',
-      load: () => import(/* webpackChunkName: 'auto-topics' */ './auto-topics'),
+      path: '/auto-groups',
+      load: () => import(/* webpackChunkName: 'auto-groups' */ './auto-groups'),
     },
     {
       path: '/topic/update/:id',

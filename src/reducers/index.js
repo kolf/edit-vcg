@@ -4,7 +4,11 @@ import runtime from './runtime';
 import category from './category';
 import topics from './topics';
 import topic from './topic';
-import topicSetting from './topicSetting';
+import topicRule from './topicRule';
+import autoGroups from './autoGroups';
+import autoGroup from './autoGroup';
+import autoGroupRule from './autoGroupRule';
+import keywordDict from './keywordDict';
 
 export default combineReducers({
   user,
@@ -12,5 +16,9 @@ export default combineReducers({
   category,
   topics,
   topic,
-  topicSetting,
+  topicRule,
+  autoGroups,
+  autoGroup,
+  autoGroupRule,
+  keywordDict,
 });

@@ -17,7 +17,7 @@ class DropdownSelect extends React.Component {
 
   handleMenuClick = e => {
     const { onChange } = this.props;
-    const value = e.key * 1;
+    const value = e.key;
     onChange(value);
   };
 
@@ -25,7 +25,7 @@ class DropdownSelect extends React.Component {
     if (!value) return '';
     const { options } = this.props;
     const option = options.find(o => o.value === value) || {};
-    return option.label;
+    return option.label || '';
   };
 
   render() {
