@@ -1,31 +1,31 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { Select } from 'antd';
-import classNames from 'classnames';
-import s from './KeywordSelect.less';
-import KeywordTag from './KeywordTag';
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
+import withStyles from 'isomorphic-style-loader/lib/withStyles'
+import { Select } from 'antd'
+import classNames from 'classnames'
+import s from './KeywordSelect.less'
+import KeywordTag from 'components/KeywordTag'
 
-const Option = Select.Option;
+const Option = Select.Option
 
-function Input({ value, onChange }) {
-  return <input placeholder="请输入关键词回车后确定" className="ant-input" />;
+function Input ({ value, onChange }) {
+  return <input placeholder='请输入关键词回车后确定' className='ant-input' />
 }
 
 class KeywordSelect extends Component {
   state = {
-    editable: false,
-  };
+    editable: false
+  }
 
-  render() {
-    const { editable } = this.state;
+  render () {
+    const { editable } = this.state
 
     return (
       <span className={s.root}>
-        {editable ? <Input /> : <KeywordTag value={[]} />}
+        {editable ? <Input /> : <KeywordTag />}
       </span>
-    );
+    )
   }
 }
 
-export default withStyles(s)(KeywordSelect);
+export default withStyles(s)(KeywordSelect)

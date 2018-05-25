@@ -6,13 +6,13 @@
 import React from 'react';
 import TopicUpdate from './TopicUpdate';
 
-const title = 'VCG专题';
+const title = 'VCG专题111';
 
-function action() {
+function action({ params }) {
   return {
     chunks: ['topic-update'],
     title,
-    component: <TopicUpdate title={title} />,
+    component: <TopicUpdate {...params} title={title} />,
   };
 }
 

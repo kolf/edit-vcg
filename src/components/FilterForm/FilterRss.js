@@ -1,138 +1,132 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { Button, Modal, Input, message, Tag, Icon } from 'antd';
-import s from './FilterRss.less';
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
+import withStyles from 'isomorphic-style-loader/lib/withStyles'
+import { Button, Modal, Input, message, Tag, Icon } from 'antd'
+import s from './FilterRss.less'
 
-const { CheckableTag } = Tag;
-const confirm = Modal.confirm;
+const { CheckableTag } = Tag
+const confirm = Modal.confirm
 
 class FilterRss extends Component {
   static propTypes = {
-    onTag: PropTypes.func.isRequired,
-    form: PropTypes.object.isRequired,
-  };
+    onClick: PropTypes.func.isRequired,
+    form: PropTypes.object.isRequired
+  }
 
   state = {
-    visible: false,
-    rssList: [],
-    newName: '',
-  };
+    modalVisible: false,
+    options: [],
+    value: ''
+  }
 
-  rssNameInputRef = null;
-
-  handlerClick = e => {
+  handleClick = e => {
     this.setState({
-      visible: true,
-    });
-    console.log(this);
-  };
+      modalVisible: true
+    })
+  }
 
-  handlerChangeName = e => {
+  handleNameChange = e => {
     this.setState({
-      newName: e.target.value,
-    });
-  };
+      value: e.target.value
+    })
+  }
 
-  createRss = () => {
-    const { newName, rssList } = this.state;
-    if (!newName) {
-      message.error('请输入订阅名！');
-      return;
+  createTag = () => {
+    const { value, options } = this.state
+    if (!value) {
+      message.error('请输入订阅名！')
+      return
     }
 
-    rssList.push({
-      label: newName,
-      value: Date.now(),
-    });
+    options.push({
+      label: value,
+      value: Date.now()
+    })
 
-    this.closeModal();
-  };
+    this.closeModal()
+  }
 
-  handlerClickTag = id => {
-    const { onTag } = this.props;
-    const { rssList } = this.state;
-    rssList.forEach(r => {
-      r.active = false;
+  handleTagClick = id => {
+    const { onClick } = this.props
+    const { options } = this.state
+    options.forEach(r => {
+      r.active = false
       if (r.value === id) {
-        r.active = true;
+        r.active = true
       }
-    });
+    })
 
-    onTag();
+    onClick()
 
     this.setState({
-      rssList,
-    });
-  };
+      options
+    })
+  }
 
-  handlerClickRemove = id => {
-    const _this = this;
+  handleCloseClick = id => {
+    const onOk = () => {
+      let { options } = this.state
+      options = options.filter(r => r.value !== id)
+      if (options.length > 0) {
+        options[0].active = true
+      }
+      this.setState({ options })
+    }
+
     confirm({
       title: '删除订阅?',
       content: '删除订阅后需要重新订阅',
       okText: '确定',
       cancelText: '取消',
-      onOk,
-    });
-
-    function onOk() {
-      let { rssList } = _this.state;
-      rssList = rssList.filter(r => r.value !== id);
-      if (rssList.length > 0) {
-        rssList[0].active = true;
-      }
-      _this.setState({ rssList });
-    }
-  };
+      onOk
+    })
+  }
 
   closeModal = () => {
     this.setState({
-      visible: false,
-    });
-  };
+      modalVisible: false
+    })
+  }
 
-  render() {
-    const { visible, newName, rssList, curRss } = this.state;
+  render () {
+    const { modalVisible, value, options, curRss } = this.state
     return (
       <div className={s.root}>
         <Modal
-          title="添加订阅"
-          visible={visible}
-          okText="确认"
-          cancelText="取消"
-          onOk={this.createRss}
+          title='添加订阅'
+          modalVisible={modalVisible}
+          okText='确认'
+          cancelText='取消'
+          onOk={this.createTag}
           onCancel={this.closeModal}
         >
           <Input
-            placeholder="请输入订阅名称"
-            value={newName}
-            onChange={this.handlerChangeName}
+            placeholder='请输入订阅名称'
+            value={value}
+            onChange={this.handleNameChange}
           />
         </Modal>
         <div className={s.tags}>
-          {rssList.map(r => (
+          {options.map(r => (
             <CheckableTag
               key={r.value}
-              onChange={this.handlerClickTag.bind(this, r.value)}
+              onChange={this.handleTagClick.bind(this, r.value)}
               checked={r.active}
             >
               {r.label}{' '}
               <Icon
-                type="cross"
-                onClick={this.handlerClickRemove.bind(this, r.value)}
+                type='cross'
+                onClick={this.handleCloseClick.bind(this, r.value)}
               />
             </CheckableTag>
           ))}
         </div>
-        <Button size="small" type="primary" onClick={this.handlerClick}>
+        <Button size='small' type='primary' onClick={this.handleClick}>
           订阅
         </Button>
       </div>
-    );
+    )
   }
 }
 
-FilterRss.propTypes = {};
-
-export default withStyles(s)(FilterRss);
+export default withStyles(s)(FilterRss)

@@ -55,6 +55,8 @@ class Banner extends React.Component {
       </div>
     );
 
+    console.log(this.props)
+
     const imageUrl = this.state.imageUrl;
 
     return (

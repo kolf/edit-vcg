@@ -14,7 +14,7 @@ import {
   Icon,
   Tabs,
 } from 'antd';
-import TagFormGroup from 'components/TagFormGroup';
+import KeywordGroup from 'components/KeywordGroup';
 import gs from 'components/App.less';
 import s from './NavUpdateModal.less';
 
@@ -157,7 +157,7 @@ class NavUpdateModal extends React.Component {
               )}
 
               <FormItem {...formItemLayout} label="关键词">
-                {getFieldDecorator('f10', {})(<TagFormGroup />)}
+                {getFieldDecorator('f10', {})(<KeywordGroup />)}
               </FormItem>
 
               <FormItem {...formItemLayout} label="供应商">

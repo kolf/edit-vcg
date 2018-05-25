@@ -5,7 +5,7 @@ import {
   REMOVE_ALL_KEYWORD_DICT
 } from 'actions/keywordDict'
 
-export default function keywordDict (state = { map: {} }, action) {
+export default function keywordDict (state = { mapData: {} }, action) {
   switch (action.type) {
     case REQUEST_FETCH_KEYWORD_DICT:
       return Object.assign({}, state, {
@@ -18,30 +18,25 @@ export default function keywordDict (state = { map: {} }, action) {
         message: action.message
       })
     case FETCH_KEYWORD_DICT_SUCCESS:
-      let map = {}
-
-      for (let name in action.map) {
-        const keywords = JSON.parse(action.map[name])
-        if (keywords.length === 1) {
-          let { id, kind, cnname } = keywords[0]
-          map[id] = {
+      return {
+        isFetching: false,
+        message: action.message,
+        mapData: action.list.reduce((result, item) => {
+          let { id, kind, cnname } = item
+          result[id] = {
             value: id + '',
             label: cnname,
             kind
           }
-        } else if (keywords.length > 1) {
-          let id = keywords.map(k => k.id).join(',')
-          map[id] = name
-        }
+          return result
+        }, state.mapData)
       }
-
-      return Object.assign({}, state, {
-        isFetching: false,
-        message: action.message,
-        map
-      })
     case REMOVE_ALL_KEYWORD_DICT:
-      return {}
+      return {
+        isFetching: false,
+        message: '清除关键词词典',
+        mapData: {}
+      }
     default:
       return state
   }

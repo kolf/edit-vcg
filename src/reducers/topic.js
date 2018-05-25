@@ -1,21 +1,21 @@
 import {
-  CREATE_TOPIC_REQUEST,
+  REQUEST_CREATE_TOPIC,
   CREATE_TOPIC_FAILURE,
   CREATE_TOPIC_SUCCESS,
-  STOP_TOPIC_REQUEST,
+  REQUEST_STOP_TOPIC,
   STOP_TOPIC_FAILURE,
   STOP_TOPIC_SUCCESS,
 } from '../actions/topic';
 
 export default function topics(state = {}, action) {
   switch (action.type) {
-    case CREATE_TOPIC_REQUEST:
+    case REQUEST_CREATE_TOPIC:
       return state;
     case CREATE_TOPIC_FAILURE:
       return state;
     case CREATE_TOPIC_SUCCESS:
       return state;
-    case STOP_TOPIC_REQUEST:
+    case REQUEST_STOP_TOPIC:
       return Object.assign({}, state, {
         isFetching: true,
         errorMessage: '',

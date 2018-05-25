@@ -7,106 +7,51 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import React from 'react';
-import PropTypes from 'prop-types';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { Layout, Menu, Icon, Breadcrumb } from 'antd';
-import Link from 'components/Link';
+import React from 'react'
+import PropTypes from 'prop-types'
+import withStyles from 'isomorphic-style-loader/lib/withStyles'
+import { Menu, Icon } from 'antd'
 
-import s from './Layout.less';
-import menuData from './menuData';
-import logoUrl from './logo.svg';
+import s from './Layout.less'
+import logoUrl from './logo.svg'
+import Sidebar from './Sidebar/Sidebar'
+const SubMenu = Menu.SubMenu
 
-const { Header, Sider, Content, Footer } = Layout;
-const SubMenu = Menu.SubMenu;
-
-class UserLayout extends React.Component {
+class Layout extends React.Component {
   static propTypes = {
-    children: PropTypes.node.isRequired,
-  };
+    children: PropTypes.node.isRequired
+  }
 
-  state = {
-    openKeys: ['1'],
-    selectedKeys: ['11'],
-  };
-
-  changeSelect = menu => {
-    const selectedKeys = menu.key;
-    this.setState({
-      selectedKeys,
-    });
-  };
-
-  render() {
-    const { openKeys, selectedKeys } = this.state;
-
+  render () {
     return (
       <div className={s.root + ' ant-layout'}>
         <div className={s.header + ' ant-layout-header'}>
           <span className={s.brand}>
-            <img src={logoUrl} alt="logo" width="50" />
+            <img src={logoUrl} alt='logo' width='50' />
             VCG 内容管理系统
           </span>
           <Menu
-            theme="dark"
-            mode="horizontal"
+            theme='dark'
+            mode='horizontal'
             style={{ height: 46, float: 'right' }}
           >
-            <Menu.Item key="star" className={s.star}>
-              <Icon type="star" />
+            <Menu.Item key='star' className={s.star}>
+              <Icon type='star' />
             </Menu.Item>
-            <SubMenu key="h1" title="姜婧婧">
-              <Menu.Item key="h11">退出</Menu.Item>
+            <SubMenu key='h1' title='姜婧婧'>
+              <Menu.Item key='h11'>退出</Menu.Item>
             </SubMenu>
           </Menu>
         </div>
-        <div className="ant-layout ant-layout-has-sider">
-          <div className={s.sider + ' ant-layout-sider'}>
-            <div className="ant-layout-sider-children">
-              <Menu
-                className={s.siderMenu}
-                mode="inline"
-                onSelect={this.changeSelect}
-                openKeys={openKeys}
-                selectedKeys={selectedKeys}
-              >
-                {menuData.map(m => {
-                  if (m.children) {
-                    return (
-                      <SubMenu
-                        key={m.id}
-                        title={
-                          <span>
-                            <Icon type={m.icon} />
-                            <span>{m.text}</span>
-                          </span>
-                        }
-                      >
-                        {m.children.map(c => (
-                          <Menu.Item key={c.id}>
-                            <Link to={c.path}>{c.text}</Link>
-                          </Menu.Item>
-                        ))}
-                      </SubMenu>
-                    );
-                  }
-                  return (
-                    <Menu.Item key={m.id}>
-                      <Icon type={m.icon} />
-                      <Link to={m.path}>{m.text}</Link>
-                    </Menu.Item>
-                  );
-                })}
-              </Menu>
-            </div>
-          </div>
+        <div className='ant-layout ant-layout-has-sider'>
+          <Sidebar />
           <div className={s.content + ' ant-layout-content'}>
             {this.props.children}
           </div>
         </div>
       </div>
-    );
+    )
   }
 }
 
-export default withStyles(s)(UserLayout);
+export default withStyles(s)(Layout)

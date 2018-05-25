@@ -1,0 +1,6 @@
+{
+  "name": "KeywordGroup",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./KeywordGroup.js"
+}

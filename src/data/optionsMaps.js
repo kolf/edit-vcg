@@ -137,7 +137,7 @@ function getOptions(optionsName) {
 
 function getOptionName(options, value) {
   const names = (typeof options === 'string' ? optionsMap[options] : options).reduce((result, option) => {
-    if (option.value === value) {
+    if (option.value == value) {
       result.push(option.label);
     }
     return result;

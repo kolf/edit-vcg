@@ -52,7 +52,7 @@ class TopicUpdate extends React.Component {
       <div className={s.root}>
         <Topbar />
         <div className="container">
-          <Navbar toggleLayerChange={this.changeModules} />
+          <Navbar topicId={this.props.id} toggleLayerChange={this.changeModules} />
           <div className={s.body}>
             <LayoutMask
               target="sideNav"
