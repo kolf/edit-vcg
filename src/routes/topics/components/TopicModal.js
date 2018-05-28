@@ -96,8 +96,8 @@ class TopicModal extends React.Component {
           ? new Date(values.publishTime).getTime()
           : Date.now()
 
-        this.props.dispatch(createTopic(creds)).then(data => {
-          message.success(data.message)
+        this.props.dispatch(createTopic(creds)).then(msg => {
+          message.success(msg)
           this.props.onOk()
         })
       }

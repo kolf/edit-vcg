@@ -1,13 +1,34 @@
 import React, { Component } from 'react';
-import { Radio, Icon, DatePicker } from 'antd';
+import { DatePicker } from 'antd';
+import RadioTag from 'components/RadioTag';
+import moment from 'moment';
 
 const { RangePicker } = DatePicker;
-const RadioButton = Radio.Button;
-const RadioGroup = Radio.Group;
 
-import './style.scss';
+const options = [
+  {
+    label: '全部',
+    value: 'all',
+  },
+  {
+    label: '今日',
+    value: '1',
+  },
+  {
+    label: '昨天',
+    value: '2',
+  },
+  {
+    label: '近一周',
+    value: '3',
+  },
+];
 
-class XTimeGroup extends Component {
+function strValueToMomentValue(str) {
+  return str.split(',').map(d => moment(d));
+}
+
+class TimeGroup extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -16,14 +37,14 @@ class XTimeGroup extends Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps, nextState) {
     const { value, timeValue } = this.state;
 
-    // //console.log(typeof nextProps.value)
+    console.log(nextProps, nextState)
 
-    if (Array.isArray(nextProps.value)) {
+    if (nextProps.value.length > 10) {
       this.setState({
-        timeValue: nextProps.value,
+        timeValue: strValueToMomentValue(nextProps.value),
         value: '',
       });
     } else if (nextProps.value != value) {
@@ -34,15 +55,10 @@ class XTimeGroup extends Component {
     }
   }
 
-  onChange = e => {
+  handleChange = e => {
     const { value } = this.state;
     const { onChange } = this.props;
     const newVal = e.target ? e.target.value : e;
-    // if(newVal==value){
-    //     newVal = ''
-    // }
-    // console.log(value);
-    // console.log(newVal)
 
     onChange(newVal);
   };
@@ -51,24 +67,25 @@ class XTimeGroup extends Component {
     const { onChange } = this.props;
     const { value, timeValue } = this.state;
 
+    console.log(value, timeValue);
+
     return (
       <span className="">
-        <RadioGroup className="border-0" onChange={this.onChange} value={value}>
-          <RadioButton value="all">全部</RadioButton>
-          <RadioButton value="1">今日</RadioButton>
-          <RadioButton value="2">昨天</RadioButton>
-          <RadioButton value="3">近一周</RadioButton>
-        </RadioGroup>
+        <RadioTag
+          value={value}
+          onChange={this.handleChange}
+          options={options}
+        />
         <RangePicker
           format="YYYY-MM-DD"
           value={timeValue}
           style={{ width: 220 }}
           placeholder={['开始时间', '结束时间']}
-          onChange={this.onChange}
+          onChange={this.handleChange}
         />
       </span>
     );
   }
 }
 
-export default XTimeGroup;
+export default TimeGroup;

@@ -1,107 +1,108 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
-import withStyles from 'isomorphic-style-loader/lib/withStyles'
-import { Button, Modal, Input, message, Tag, Icon } from 'antd'
-import s from './FilterRss.less'
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import { Button, Modal, Input, message, Tag, Icon } from 'antd';
+import s from './FilterRss.less';
 
-const { CheckableTag } = Tag
-const confirm = Modal.confirm
+const { CheckableTag } = Tag;
+// const confirm = Modal.confirm;
 
 class FilterRss extends Component {
   static propTypes = {
     onClick: PropTypes.func.isRequired,
-    form: PropTypes.object.isRequired
-  }
+  };
 
   state = {
     modalVisible: false,
     options: [],
-    value: ''
-  }
+    value: '',
+  };
 
-  handleClick = e => {
+  handleClick = () => {
     this.setState({
-      modalVisible: true
-    })
-  }
+      modalVisible: true,
+    });
+  };
 
   handleNameChange = e => {
     this.setState({
-      value: e.target.value
-    })
-  }
+      value: e.target.value,
+    });
+  };
 
   createTag = () => {
-    const { value, options } = this.state
+    const { value, options } = this.state;
     if (!value) {
-      message.error('请输入订阅名！')
-      return
+      message.error('请输入订阅名！');
+      return;
     }
 
     options.push({
       label: value,
-      value: Date.now()
-    })
+      value: Date.now(),
+    });
 
-    this.closeModal()
-  }
+    this.closeModal();
+  };
 
   handleTagClick = id => {
-    const { onClick } = this.props
-    const { options } = this.state
-    options.forEach(r => {
-      r.active = false
-      if (r.value === id) {
-        r.active = true
-      }
-    })
+    const { onClick } = this.props;
+    const { options } = this.state;
 
-    onClick()
+    const newOptions = options.map(option => {
+      option.active = false;
+      if (option.value === id) {
+        option.active = true;
+      }
+      return option;
+    });
+
+    onClick();
 
     this.setState({
-      options
-    })
-  }
+      options: newOptions,
+    });
+  };
 
   handleCloseClick = id => {
     const onOk = () => {
-      let { options } = this.state
-      options = options.filter(r => r.value !== id)
+      let { options } = this.state;
+      options = options.filter(r => r.value !== id);
       if (options.length > 0) {
-        options[0].active = true
+        options[0].active = true;
       }
-      this.setState({ options })
-    }
+      this.setState({ options });
+    };
 
-    confirm({
+    Modal.confirm({
       title: '删除订阅?',
       content: '删除订阅后需要重新订阅',
       okText: '确定',
       cancelText: '取消',
-      onOk
-    })
-  }
+      onOk,
+    });
+  };
 
   closeModal = () => {
     this.setState({
-      modalVisible: false
-    })
-  }
+      modalVisible: false,
+    });
+  };
 
-  render () {
-    const { modalVisible, value, options, curRss } = this.state
+  render() {
+    const { modalVisible, value, options } = this.state;
     return (
       <div className={s.root}>
         <Modal
-          title='添加订阅'
+          title="添加订阅"
           modalVisible={modalVisible}
-          okText='确认'
-          cancelText='取消'
+          okText="确认"
+          cancelText="取消"
           onOk={this.createTag}
           onCancel={this.closeModal}
         >
           <Input
-            placeholder='请输入订阅名称'
+            placeholder="请输入订阅名称"
             value={value}
             onChange={this.handleNameChange}
           />
@@ -110,23 +111,23 @@ class FilterRss extends Component {
           {options.map(r => (
             <CheckableTag
               key={r.value}
-              onChange={this.handleTagClick.bind(this, r.value)}
+              onChange={() => this.handleTagClick(r.value)}
               checked={r.active}
             >
               {r.label}{' '}
               <Icon
-                type='cross'
-                onClick={this.handleCloseClick.bind(this, r.value)}
+                type="cross"
+                onClick={() => this.handleCloseClick(r.value)}
               />
             </CheckableTag>
           ))}
         </div>
-        <Button size='small' type='primary' onClick={this.handleClick}>
+        <Button size="small" type="primary" onClick={this.handleClick}>
           订阅
         </Button>
       </div>
-    )
+    );
   }
 }
 
-export default withStyles(s)(FilterRss)
+export default withStyles(s)(FilterRss);

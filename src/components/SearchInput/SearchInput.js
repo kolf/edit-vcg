@@ -1,50 +1,57 @@
-import React, { Component } from 'react'
-import withStyles from 'isomorphic-style-loader/lib/withStyles'
-import { Input, Icon, Button } from 'antd'
-import PropTypes from 'prop-types'
-import DropdownSelect from 'components/DropdownSelect'
-import s from './SearchInput.less'
+import React, { Component } from 'react';
+import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import { Input, Icon, Button } from 'antd';
+import PropTypes from 'prop-types';
+import DropdownSelect from 'components/DropdownSelect';
+import s from './SearchInput.less';
 
-const Search = Input.Search
+const Search = Input.Search;
 
 class SearchInput extends Component {
   state = {
     value: '',
-    typeValue: '1'
-  }
+    typeValue: '1',
+  };
 
   handleClick = () => {
-    this.onSearch(this.getValue('typeValue'))
-  }
+    this.onSearch(this.getValue('typeValue'));
+  };
 
   handleChange = value => {
     if (this.props.value !== undefined) {
-      this.props.onChange(value)
+      this.props.onChange(value);
     } else {
       this.setState({
-        value
-      })
+        value,
+      });
     }
-  }
+  };
 
   onSearch = typeValue => {
-    console.log(typeValue)
-    const { onClick } = this.props
+    const { onClick } = this.props;
     onClick &&
       onClick({
         value: this.getValue('value'),
-        typeValue
-      })
-  }
+        typeValue,
+      });
+  };
+
+  onEmpty = () => {
+    this.handleChange('');
+    const timer = setTimeout(() => {
+      clearTimeout(timer);
+      this.onSearch(this.getValue('typeValue'));
+    }, 300);
+  };
 
   getValue = key =>
-    (this.props[key] !== undefined ? this.props[key] : this.state[key])
+    this.props[key] !== undefined ? this.props[key] : this.state[key];
 
-  render () {
-    const { placeholder, types } = this.props
+  render() {
+    const { placeholder, types } = this.props;
 
-    const value = this.getValue('value')
-    const typeValue = this.getValue('typeValue')
+    const value = this.getValue('value');
+    const typeValue = this.getValue('typeValue');
 
     let suffix = [
       <DropdownSelect
@@ -52,31 +59,26 @@ class SearchInput extends Component {
         value={typeValue}
         options={types}
         onChange={this.onSearch}
-      />
-    ]
+      />,
+    ];
 
     if (value) {
-      suffix.unshift(
-        <Icon type='close-circle' onClick={() => this.handleChange('')} />
-      )
+      suffix.unshift(<Icon type="close-circle" onClick={this.onEmpty} />);
     }
-    // value
-    //   ? <Icon type='close-circle' onClick={() => this.handleChange('')} />
-    //   : null
 
     return (
       <Search
-        size='large'
+        size="large"
         className={s.root}
         suffix={suffix}
         onChange={e => this.handleChange(e.target.value)}
         value={value}
         placeholder={placeholder}
         onSearch={this.handleClick}
-        enterButton='搜索'
+        enterButton="搜索"
       />
-    )
+    );
   }
 }
 
-export default withStyles(s)(SearchInput)
+export default withStyles(s)(SearchInput);

@@ -154,8 +154,6 @@ class TopicRuleModal extends React.Component {
           return result
         }, {})
 
-        console.log(keywords)
-
         this.props.form.setFieldsValue({ keywords })
       })
   }
@@ -206,7 +204,7 @@ class TopicRuleModal extends React.Component {
     })
   }
 
-  handlerClickStop = e => {
+  handleStopClick = e => {
     this.props
       .dispatch(
         stopTopic({
@@ -215,6 +213,7 @@ class TopicRuleModal extends React.Component {
       )
       .then(data => {
         message.success(data.message)
+        this.props.onOk()
       })
   }
 
@@ -364,7 +363,7 @@ class TopicRuleModal extends React.Component {
                 </Button>
                 <Button
                   loading={this.props.stopTopicFetching}
-                  onClick={this.handlerClickStop}
+                  onClick={this.handleStopClick}
                 >
                   结束抓取
                 </Button>

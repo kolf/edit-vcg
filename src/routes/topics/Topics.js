@@ -7,238 +7,241 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import React from 'react'
-import { connect } from 'react-redux'
-import PropTypes from 'prop-types'
-import withStyles from 'isomorphic-style-loader/lib/withStyles'
-import { Input, Table, Button, Row, Col, Modal, Select, message } from 'antd'
-import FilterForm from 'components/FilterForm'
-import FilterPager from 'components/FilterPager'
-import filterData from 'components/FilterForm/filterData'
-import DropdownSelect from 'components/DropdownSelect'
-import { getOptionName } from 'data/optionsMaps'
-import TopicRuleModal from './components/TopicRuleModal'
-import TopicModal from './components/TopicModal'
-import SearchInput from 'components/SearchInput'
+import React from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import { Input, Table, Button, Row, Col, Modal, Select, message } from 'antd';
+import FilterForm from 'components/FilterForm';
+import FilterPager from 'components/FilterPager';
+import filterData from 'components/FilterForm/filterData';
+import DropdownSelect from 'components/DropdownSelect';
+import { getOptionName } from 'data/optionsMaps';
+import TopicRuleModal from './components/TopicRuleModal';
+import TopicModal from './components/TopicModal';
+import SearchInput from 'components/SearchInput';
 
-import gs from 'components/App.less'
-import s from './Topics.less'
-import { fetchTopics } from 'actions/topics'
-import { offlineTopic } from 'actions/topic'
-import { fetchCategory } from 'actions/category'
+import gs from 'components/App.less';
+import s from './Topics.less';
+import { fetchTopics } from 'actions/topics';
+import { offlineTopic } from 'actions/topic';
+import { fetchCategory } from 'actions/category';
 
-const confirm = Modal.confirm
-const Search = Input.Search
-const Option = Select.Option
-const formItems = filterData.list('1', '2', '3', '4', '5', '6')
+const confirm = Modal.confirm;
+const Search = Input.Search;
+const Option = Select.Option;
+const formItems = filterData.list('1', '2', '3', '4', '5', '6');
 // 2018-05-03 00:00:00,2018-06-05 23:59:59
 const formatData = dataArr =>
-  (dataArr.length === 2
-    ? `${dataArr[0].format('YYYY-MM-DD')} 00:00:00,${dataArr[1].format('YYYY-MM-DD')} 23:59:59`
-    : '')
+  dataArr.length === 2
+    ? `${dataArr[0].format('YYYY-MM-DD')} 00:00:00,${dataArr[1].format(
+        'YYYY-MM-DD',
+      )} 23:59:59`
+    : '';
 const timeOptions = [
   {
     value: '1',
-    label: '创建时间从新到旧'
+    label: '创建时间从新到旧',
   },
   {
     value: '2',
-    label: '创建时间从旧到新'
-  }
-]
+    label: '创建时间从旧到新',
+  },
+];
 
 class Topics extends React.Component {
-  static propTypes = {}
+  static propTypes = {};
 
   static defaultProps = {
     list: [],
-    total: 0
-  }
+    total: 0,
+  };
 
-  constructor (props) {
-    super(props)
+  constructor(props) {
+    super(props);
     this.state = {
-      topicSettingVisible: false,
+      topicRuleModalVisible: false,
       topicModalVisible: false,
       query: {
         pageNum: 1,
         pageSize: 60,
         desc: '1',
         keywordType: '1',
-        title: ''
-      }
-    }
+        title: '',
+      },
+    };
   }
 
-  componentDidMount () {
-    this.fetchTopics()
-    this.props.dispatch(fetchCategory())
+  componentDidMount() {
+    this.fetchTopics();
+    this.props.dispatch(fetchCategory());
   }
 
   addTopic = item => {
-    this.topicId = ''
-    this.setState({ topicModalVisible: true })
-  }
+    this.topicId = '';
+    this.setState({ topicModalVisible: true });
+  };
 
-  reload = () => {
-    this.fetchTopics({ pageNum: 1 })
-  }
+  reload = time => {
+    const timer = setTimeout(() => {
+      clearTimeout(timer);
+      this.fetchTopics({ pageNum: 1 });
+    }, time || 0);
+  };
 
   fetchTopics = param => {
-    const { dispatch } = this.props
-    const { query } = this.state
+    const { dispatch } = this.props;
+    const { query } = this.state;
 
-    let params = Object.assign(query, param)
+    let params = Object.assign(query, param);
 
     if (query.createdTime && Array.isArray(query.createdTime)) {
-      params.createdTime = formatData(query.createdTime)
+      params.createdTime = formatData(query.createdTime);
     }
 
     if (query.publishTime && Array.isArray(query.publishTime)) {
-      params.publishTime = formatData(query.publishTime)
+      params.publishTime = formatData(query.publishTime);
     }
 
-    dispatch(fetchTopics(params))
-  }
+    dispatch(fetchTopics(params));
+  };
 
   handleUpdateClick = topicId => {
-    window.open(`/topic/update/${topicId}`)
-  }
+    window.open(`/topic/update/${topicId}`);
+  };
 
-  handleClickTopicSetting = topicId => {
-    this.topicId = topicId
-    this.setState({ topicSettingVisible: true })
-  }
+  handleTopicRuleClick = topicId => {
+    this.topicId = topicId;
+    this.setState({ topicRuleModalVisible: true });
+  };
 
   onOkTopicRuleModal = () => {
-    this.state.topicSettingVisible = false
-    this.reload()
-  }
+    this.state.topicRuleModalVisible = false;
+    this.reload(900);
+  };
 
   onCancelTopicRuleModal = () => {
     this.setState({
-      topicSettingVisible: false
-    })
-  }
+      topicRuleModalVisible: false,
+    });
+  };
 
   onCancelTopicModal = () => {
-    this.setState({ topicModalVisible: false })
-  }
+    this.setState({ topicModalVisible: false });
+  };
 
   onOkTopicModal = () => {
-    this.state.topicModalVisible = false
-    this.reload()
-  }
+    this.state.topicModalVisible = false;
+    this.reload(900);
+  };
 
   handleOfflineClick = topicId => {
     const onOk = () => {
       this.props.dispatch(offlineTopic({ id: topicId })).then(msg => {
-        message.success(msg)
-        this.reload()
-      })
-    }
+        message.success(msg);
+        this.reload();
+      });
+    };
 
     confirm({
       title: '确定下线该专题？',
       content: '请确认是否下线该专题，下线后前台页面、搜索不再展示该专题',
       okText: '确定',
       cancelText: '取消',
-      onOk
-    })
-  }
+      onOk,
+    });
+  };
 
   handleTitleClick = topicId => {
-    this.topicId = topicId
-    this.setState({ topicModalVisible: true })
-  }
+    this.topicId = topicId;
+    this.setState({ topicModalVisible: true });
+  };
 
-  handleOpenTopicClick = item => {
-    window.open(
-      'https://edit.vcg.com/zh/group/update/edit/503808611?groupId=503808611'
-    )
-  }
+  handleOpenTopicClick = topicId => {
+    window.open(`//dev-edit.vcg.com/zh/edit/all?topicId=${topicId}`);
+  };
 
   handleFilterClick = ({ field, value }) => {
     this.fetchTopics({
       pageNum: 1,
-      [field]: value
-    })
-  }
+      [field]: value,
+    });
+  };
 
   handleSearchInputChange = val => {
-    let { query } = this.state
-    query.title = val
-    this.setState({ query })
-  }
+    let { query } = this.state;
+    query.title = val;
+    this.setState({ query });
+  };
 
-  render () {
-    const { topicSettingVisible, topicModalVisible, query } = this.state
+  render() {
+    const { topicRuleModalVisible, topicModalVisible, query } = this.state;
 
     const columns = [
       {
         title: '序号',
         dataIndex: 'index',
-        width: 46
+        width: 42,
       },
       {
         title: '专题ID',
         dataIndex: 'topicId',
-        width: 76
+        width: 76,
       },
       {
         title: '专题名称',
         dataIndex: 'title',
         render: (text, record) => (
           <a onClick={() => this.handleTitleClick(record.topicId)}>{text}</a>
-        )
+        ),
         // width: 200,
       },
       {
         title: '频道',
         dataIndex: 'channelId',
         width: 70,
-        render: (text, record) => getOptionName('categorys', text + '')
+        render: (text, record) => getOptionName('categorys', text + ''),
       },
       {
         title: '创建时间/发布时间',
         dataIndex: 'time1',
         width: 136,
         render: (text, record) => {
-          const { createDate, publishDate } = record
+          const { createDate, publishDate } = record;
           return [createDate, publishDate].map(name => (
             <p className={gs.gap0}>{name}</p>
-          ))
-        }
+          ));
+        },
       },
       {
         title: '专题状态',
         dataIndex: 'status',
         width: 70,
-        render: (text, record) => getOptionName('topicState', text + '')
+        render: (text, record) => getOptionName('topicState', text + ''),
       },
       {
         title: '编审人',
         dataIndex: 'updatedBy',
         width: 70,
-        render: text => text || '---'
+        render: text => text || '---',
       },
       {
         title: '抓取状态',
         dataIndex: 'runningStatus',
         width: 70,
-        render: (text, record) => getOptionName('runningStatus', text + '')
+        render: (text, record) => getOptionName('runningStatus', text + ''),
       },
       {
         title: '抓取时间',
         dataIndex: 'time2',
         width: 136,
         render: (text, record) => {
-          const { uploadBeginTime, uploadEndTime } = record
+          const { uploadBeginTime, uploadEndTime } = record;
           return [
             <p className={gs.gap0}>{uploadBeginTime || '---'}</p>,
-            <p className={gs.gap0}>{uploadEndTime || '---'}</p>
-          ]
-        }
+            <p className={gs.gap0}>{uploadEndTime || '---'}</p>,
+          ];
+        },
       },
       {
         title: '操作',
@@ -247,30 +250,33 @@ class Topics extends React.Component {
         render: (text, record) => (
           <div className={s.settingBtns}>
             <Button
-              size='small'
+              size="small"
               onClick={() => this.handleUpdateClick(record.topicId)}
             >
               网站设置
             </Button>
             <Button
-              size='small'
-              onClick={() => this.handleClickTopicSetting(record.topicId)}
+              size="small"
+              onClick={() => this.handleTopicRuleClick(record.topicId)}
             >
               抓取设置
             </Button>
             <Button
-              size='small'
+              size="small"
               onClick={() => this.handleOfflineClick(record.topicId)}
             >
               下线
             </Button>
-            <Button size='small' onClick={this.handleOpenTopicClick}>
+            <Button
+              size="small"
+              onClick={() => this.handleOpenTopicClick(record.topicId)}
+            >
               查看组照
             </Button>
           </div>
-        )
-      }
-    ]
+        ),
+      },
+    ];
 
     return (
       <div className={s.root}>
@@ -282,28 +288,36 @@ class Topics extends React.Component {
         />
         <TopicRuleModal
           id={this.topicId}
-          visible={topicSettingVisible}
+          visible={topicRuleModalVisible}
           onOk={this.onOkTopicRuleModal}
           onCancel={this.onCancelTopicRuleModal}
         />
         <SearchInput
-          types={[{ value: '1', label: '专题ID' }, { value: '2', label: '专题名称' }]}
+          types={[
+            { value: '1', label: '专题ID' },
+            { value: '2', label: '专题名称' },
+          ]}
           typeValue={query.keywordType}
           value={query.title}
-          placeholder='输入专题名称或ID进行搜索'
+          placeholder="输入专题名称或ID进行搜索"
           onChange={this.handleSearchInputChange}
           onClick={values =>
             this.fetchTopics({
               title: values.value,
-              keywordType: values.typeValue
-            })}
+              keywordType: values.typeValue,
+            })
+          }
         />
 
-        <FilterForm formItems={formItems} onClick={this.handleFilterClick} />
+        <FilterForm
+          value={query}
+          formItems={formItems}
+          onClick={this.handleFilterClick}
+        />
         <Row>
-          <Col span='16'>
+          <Col span="16">
             <div className={s.btns}>
-              <Button type='primary' onClick={this.addTopic}>
+              <Button type="primary" onClick={this.addTopic}>
                 创建专题
               </Button>
               <Button onClick={() => this.fetchTopics({ pageNum: 1 })}>
@@ -316,7 +330,7 @@ class Topics extends React.Component {
               />
             </div>
           </Col>
-          <Col span='8'>
+          <Col span="8">
             <FilterPager
               pageSize={query.pageSize}
               pageNum={query.pageNum}
@@ -331,14 +345,14 @@ class Topics extends React.Component {
           pagination={false}
           className={gs.table}
           bordered
-          size='small'
+          size="small"
           scroll={{ x: 1000 }}
           columns={columns}
           dataSource={this.props.list}
           onChange={this.fetchTopics}
           loading={this.props.isFetching}
         />
-        <div className='ant-row'>
+        <div className="ant-row">
           <FilterPager
             pageSize={query.pageSize}
             pageNum={query.pageNum}
@@ -348,16 +362,16 @@ class Topics extends React.Component {
           />
         </div>
       </div>
-    )
+    );
   }
 }
 
-function mapStateToProps (state) {
+function mapStateToProps(state) {
   return {
     isFetching: state.topics.isFetching,
     list: state.topics.list,
-    total: state.topics.total
-  }
+    total: state.topics.total,
+  };
 }
 
-export default connect(mapStateToProps)(withStyles(s, gs)(Topics))
+export default connect(mapStateToProps)(withStyles(s, gs)(Topics));

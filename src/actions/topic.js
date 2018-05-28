@@ -1,160 +1,181 @@
-const queryString = require('query-string')
+const queryString = require('query-string');
 
-export const REQUEST_CREATE_TOPIC = 'REQUEST_CREATE_TOPIC'
-export const CREATE_TOPIC_FAILURE = 'CREATE_TOPIC_FAILURE'
-export const CREATE_TOPIC_SUCCESS = 'CREATE_TOPIC_SUCCESS'
+export const REQUEST_CREATE_TOPIC = 'REQUEST_CREATE_TOPIC';
+export const CREATE_TOPIC_FAILURE = 'CREATE_TOPIC_FAILURE';
+export const CREATE_TOPIC_SUCCESS = 'CREATE_TOPIC_SUCCESS';
 
-function requestCreateTopic (topic) {
+function requestCreateTopic(topic) {
   return {
     type: REQUEST_CREATE_TOPIC,
     isFetching: true,
-    topic
-  }
+    topic,
+  };
 }
 
-function createTopicSuccess (topic) {
+function createTopicSuccess(topic) {
   return {
     type: CREATE_TOPIC_SUCCESS,
     isFetching: false,
-    topic
-  }
+    topic,
+  };
 }
 
-function createTopicError (message) {
+function createTopicError(message) {
   return {
     type: CREATE_TOPIC_FAILURE,
     isFetching: false,
-    message
-  }
+    message,
+  };
 }
 
-export function createTopic (creds) {
+export function createTopic(creds) {
   return dispatch => {
-    dispatch(requestCreateTopic(creds))
+    dispatch(requestCreateTopic(creds));
     return fetch(
-      `/api/xuefeng/topic/addTopic?token=${localStorage.getItem('id_token')}&${queryString.stringify(creds)}`,
+      `/api/xuefeng/topic/addTopic?token=${localStorage.getItem(
+        'id_token',
+      )}&${queryString.stringify(creds)}`,
       {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json;charset=UTF-8'
-        }
-      }
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+      },
     )
       .then(res =>
         res.json().then(data => {
           if (!res.ok) {
-            dispatch(createTopicError(data.message))
-            return Promise.reject(data)
+            dispatch(createTopicError(data.message));
+            return Promise.reject(data);
           }
-          dispatch(createTopicSuccess(data))
-          return Promise.resolve(data)
-        })
+          dispatch(createTopicSuccess(data));
+          return Promise.resolve(data.message);
+        }),
       )
-      .catch(err => console.log('Error', err))
-  }
+      .catch(err => console.log('Error', err));
+  };
 }
 
 // 停止专题
-export const REQUEST_STOP_TOPIC = 'REQUEST_STOP_TOPIC'
-export const STOP_TOPIC_FAILURE = 'STOP_TOPIC_FAILURE'
-export const STOP_TOPIC_SUCCESS = 'STOP_TOPIC_SUCCESS'
+export const REQUEST_STOP_TOPIC = 'REQUEST_STOP_TOPIC';
+export const STOP_TOPIC_FAILURE = 'STOP_TOPIC_FAILURE';
+export const STOP_TOPIC_SUCCESS = 'STOP_TOPIC_SUCCESS';
 
-function requestStopTopic (topic) {
+function requestStopTopic(topic) {
   return {
     type: REQUEST_STOP_TOPIC,
     isFetching: true,
-    topic
-  }
+    topic,
+  };
 }
 
-function stopTopicSuccess (topic) {
+function stopTopicSuccess(topic) {
   return {
     type: STOP_TOPIC_SUCCESS,
     isFetching: false,
-    topic
-  }
+    topic,
+  };
 }
 
-function stopTopicError (message) {
+function stopTopicError(message) {
   return {
     type: STOP_TOPIC_FAILURE,
     isFetching: false,
-    message
-  }
+    message,
+  };
 }
 
-export function stopTopic (creds) {
+export function stopTopic(creds) {
   return dispatch => {
-    dispatch(requestStopTopic(creds))
+    dispatch(requestStopTopic(creds));
     return fetch(`/api/xuefeng/topic/grabingStop/${creds.id}`, {
       headers: {
-        'Content-Type': 'application/json;charset=UTF-8'
-      }
+        'Content-Type': 'application/json;charset=UTF-8',
+      },
     })
       .then(res =>
         res.json().then(data => {
-          console.log(res, data)
+          console.log(res, data);
           if (!res.ok) {
-            dispatch(stopTopicError(data.message))
-            return Promise.reject(data)
+            dispatch(stopTopicError(data.message));
+            return Promise.reject(data);
           }
 
-          dispatch(stopTopicSuccess(data))
-          return Promise.resolve(data)
-        })
+          dispatch(stopTopicSuccess(data));
+          return Promise.resolve(data);
+        }),
       )
-      .catch(err => console.log('Error', err))
-  }
+      .catch(err => console.log('Error', err));
+  };
 }
 
 // 下线专题
-export const REQUEST_OFFLINE_TOPIC = 'REQUEST_OFFLINE_TOPIC'
-export const OFFLINE_TOPIC_FAILURE = 'OFFLINE_TOPIC_FAILURE'
-export const OFFLINE_TOPIC_SUCCESS = 'OFFLINE_TOPIC_SUCCESS'
+export const REQUEST_OFFLINE_TOPIC = 'REQUEST_OFFLINE_TOPIC';
+export const OFFLINE_TOPIC_FAILURE = 'OFFLINE_TOPIC_FAILURE';
+export const OFFLINE_TOPIC_SUCCESS = 'OFFLINE_TOPIC_SUCCESS';
 
-function requestOfflineTopic (topic) {
+function requestOfflineTopic(topic) {
   return {
     type: REQUEST_OFFLINE_TOPIC,
     isFetching: true,
-    topic
-  }
+    topic,
+  };
 }
 
-function offlineTopicSuccess (topic) {
+function offlineTopicSuccess(topic) {
   return {
     type: OFFLINE_TOPIC_SUCCESS,
     isFetching: false,
-    topic
-  }
+    topic,
+  };
 }
 
-function offlineTopicError (message) {
+function offlineTopicError(message) {
   return {
     type: OFFLINE_TOPIC_FAILURE,
     isFetching: false,
-    message
-  }
+    message,
+  };
 }
 
-export function offlineTopic (creds) {
+export function offlineTopic(creds) {
   return dispatch => {
-    dispatch(requestOfflineTopic(creds))
+    dispatch(requestOfflineTopic(creds));
     return fetch(`/api/xuefeng/topic/offLineTopic/${creds.id}`, {
       headers: {
-        'Content-Type': 'application/json;charset=UTF-8'
-      }
+        'Content-Type': 'application/json;charset=UTF-8',
+      },
     })
       .then(res =>
         res.json().then(data => {
           if (!res.ok) {
-            dispatch(offlineTopicError(data.message))
-            return Promise.reject(data)
+            dispatch(offlineTopicError(data.message));
+            return Promise.reject(data);
           }
 
-          dispatch(offlineTopicSuccess(data))
-          return Promise.resolve(data.message)
-        })
+          dispatch(offlineTopicSuccess(data));
+          return Promise.resolve(data.message);
+        }),
       )
-      .catch(err => console.log('Error', err))
-  }
+      .catch(err => console.log('Error', err));
+  };
+}
+
+// 查询专题下面的组照
+function fetchTopicImages(creds) {
+  return fetch(`/api/xuefeng/topicGroup/findTopicGroupPageList/${creds.id}`, {
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8',
+    },
+  })
+    .then(res =>
+      res.json().then(data => {
+        if (!res.ok) {
+          return Promise.reject(data);
+        }
+        const payload = data.data;
+        return Promise.resolve(payload);
+      }),
+    )
+    .catch(err => console.log('Error', err));
 }

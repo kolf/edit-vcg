@@ -18,7 +18,7 @@ class LayoutMask extends React.Component {
     show: true,
   };
 
-  onChange = () => {
+  handleChange = () => {
     const { target, onChange } = this.props;
     const value = !this.state.show;
 
@@ -38,8 +38,8 @@ class LayoutMask extends React.Component {
           value={show}
           className={s.btn}
           defaultChecked
-          onChange={this.onChange}
-        />{' '}
+          onChange={this.handleChange}
+        />
         {!show && <div className={s.mask} />}
       </div>
     );

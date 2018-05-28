@@ -1,132 +1,126 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import withStyles from 'isomorphic-style-loader/lib/withStyles'
-import { Form, DatePicker, TimePicker, Button, Input, Radio } from 'antd'
-import XTimeGroup from 'components/XTimeGroup'
-import FilterRss from './FilterRss'
-import s from './FilterForm.less'
-import filterData from './filterData'
+import React from 'react';
+import PropTypes from 'prop-types';
+import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import { Form, Button, Input } from 'antd';
+import TimeGroup from 'components/TimeGroup';
+import RadioTag from 'components/RadioTag';
+import SearchSelect from 'components/SearchSelect';
+import FilterRss from './FilterRss';
+import s from './FilterForm.less';
 
-const FormItem = Form.Item
-const RadioGroup = Radio.Group
-const RadioButton = Radio.Button
+const FormItem = Form.Item;
 
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
-    sm: { span: 2 }
+    sm: { span: 2 },
   },
   wrapperCol: {
     xs: { span: 24 },
-    sm: { span: 22 }
-  }
-}
+    sm: { span: 22 },
+  },
+};
 
-const Radios = ({ onChange, value, options }) => {
-  function handleChange (e) {
-    onChange(e.target.value)
-  }
-
-  return (
-    <RadioGroup className='border-0' onChange={handleChange}>
-      {options.map(option => (
-        <RadioButton value={option.value} key={option.value}>
-          {option.label}
-        </RadioButton>
-      ))}
-    </RadioGroup>
-  )
-}
-
-Radios.defaultProps = {
-  options: [],
-  value: ''
-}
+const emptyValue = '';
 
 class FilterForm extends React.Component {
   static propTypes = {
-    formItems: PropTypes.array,
-    onClick: PropTypes.func.isRequire
-  }
+    formItems: PropTypes.arrayOf(PropTypes.string).isRequired,
+    onClick: PropTypes.func.isRequired,
+    value: PropTypes.object,
+  };
 
   static defaultProps = {
-    onClick: () => {}
-  }
+    value: {},
+  };
 
-  constructor (props) {
-    super(props)
+  constructor(props) {
+    super(props);
     this.state = {
-      expand: false
-    }
+      expand: false,
+    };
   }
 
-  handleClickExpend = () => {
-    const expand = !this.state.expand
+  handleExpendClick = () => {
+    const expand = !this.state.expand;
     this.setState({
-      expand
-    })
-  }
+      expand,
+    });
+  };
 
-  handleClickTag = () => {
-    console.log()
-  }
+  handleRssClick = () => {};
 
   handleChange = (field, value) => {
-    const { onClick, form } = this.props
-    const values = form.getFieldsValue()
-    onClick({ field, value })
-  }
+    const { onClick } = this.props;
+    onClick({ field, value });
+  };
 
-  render () {
-    const { formItems, form } = this.props
-    const { getFieldDecorator } = form
-    const { expand } = this.state
+  render() {
+    const { formItems, value } = this.props;
+    const { expand } = this.state;
 
     return (
-      <React.Fragment>
+      <div className={s.root}>
         <div className={s.tools}>
-          <FilterRss form={form} onClick={this.handleClickTag} />
+          <FilterRss onClick={this.handleRssClick} />
           <Button
             icon={expand ? 'up' : 'down'}
-            onClick={this.handleClickExpend}
+            onClick={this.handleExpendClick}
           >
             展开筛选
           </Button>
         </div>
-        <Form className={s.wrap} style={{ display: expand ? 'block' : 'none' }}>
-          {formItems.map((formItem, index) => {
-            const { formType, options, placeholder } = formItem
-            let control = null
+        <Form className={s.form} style={{ display: expand ? 'block' : 'none' }}>
+          {formItems.map(formItem => {
+            const { formType, options, placeholder, field } = formItem;
+            let Control = null;
             switch (formType) {
               case 'radio':
-                control = <Radios options={options} />
-                break
+                Control = (
+                  <RadioTag
+                    value={value[field] || emptyValue}
+                    options={options}
+                    onChange={val => this.handleChange(field, val)}
+                  />
+                );
+                break;
               case 'radioTime':
-                control = <XTimeGroup />
-                break
+                Control = (
+                  <TimeGroup
+                    value={value[field] || emptyValue}
+                    onChange={val => this.handleChange(field, val)}
+                  />
+                );
+                break;
+              case 'searchSelect':
+                Control = (
+                  <SearchSelect
+                    placeholder={placeholder}
+                    style={{ width: 420 }}
+                  />
+                );
+                break;
               default:
-                control = (
-                  <Input placeholder={placeholder} style={{ width: 360 }} />
-                )
+                Control = (
+                  <Input placeholder={placeholder} style={{ width: 420 }} />
+                );
             }
 
             return (
               <FormItem
-                key={s + index}
+                key={formItem.key}
                 {...formItemLayout}
                 className={s.item}
                 label={formItem.label}
               >
-                {getFieldDecorator(formItem.field, {
-                  onChange: value => this.handleChange(formItem.field, value)
-                })(control)}
+                {Control}
               </FormItem>
-            )
+            );
           })}
         </Form>
-      </React.Fragment>
-    )
+      </div>
+    );
   }
 }
 
-export default Form.create()(withStyles(s)(FilterForm))
+export default withStyles(s)(FilterForm);
