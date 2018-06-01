@@ -12,32 +12,32 @@ export default function topics(state = {}, action) {
     case FETCH_TOPIC_RULE_REQUEST:
       return Object.assign({}, state, {
         isFetching: true,
-        errorMessage: '',
+        message: '',
       });
     case FETCH_TOPIC_RULE_SUCCESS:
       return Object.assign({}, state, {
         isFetching: false,
-        errorMessage: '',
+        message: '',
       });
     case FETCH_TOPIC_RULE_FAILURE:
       return Object.assign({}, state, {
         isFetching: false,
-        errorMessage: action.message,
+        message: action.message,
       });
     case UPDATE_TOPIC_RULE_REQUEST:
       return Object.assign({}, state, {
         confirmLoading: true,
-        errorMessage: '',
+        message: '',
       });
     case UPDATE_TOPIC_RULE_SUCCESS:
       return Object.assign({}, state, {
         confirmLoading: false,
-        errorMessage: '',
+        message: '',
       });
     case UPDATE_TOPIC_RULE_FAILURE:
       return Object.assign({}, state, {
         confirmLoading: false,
-        errorMessage: action.message,
+        message: action.message,
       });
 
     default:

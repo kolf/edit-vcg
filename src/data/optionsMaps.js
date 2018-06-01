@@ -129,6 +129,42 @@ const optionsMap = {
       label: '未上线/未编审',
     },
   ],
+  qualityRanks: [
+    {
+      value: '1',
+      label: 'A',
+    },
+    {
+      value: '2',
+      label: 'B',
+    },
+    {
+      value: '3',
+      label: 'C',
+    },
+    {
+      value: '4',
+      label: 'D',
+    },
+  ],
+  graphicalStyles: [
+    {
+      value: '1',
+      label: '摄影图片',
+    },
+    {
+      value: '2',
+      label: '插画',
+    },
+    {
+      value: '3',
+      label: '漫画',
+    },
+    {
+      value: '4',
+      label: '图表',
+    },
+  ],
 };
 
 function getOptions(optionsName) {
@@ -136,7 +172,10 @@ function getOptions(optionsName) {
 }
 
 function getOptionName(options, value) {
-  const names = (typeof options === 'string' ? optionsMap[options] : options).reduce((result, option) => {
+  const names = (typeof options === 'string'
+    ? optionsMap[options]
+    : options
+  ).reduce((result, option) => {
     if (option.value == value) {
       result.push(option.label);
     }

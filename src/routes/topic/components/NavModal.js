@@ -13,7 +13,7 @@ import {
   Radio,
   Icon,
 } from 'antd';
-import s from './NavUpdateModal.less';
+import s from './NavModal.less';
 
 const FormItem = Form.Item;
 const MonthPicker = DatePicker.MonthPicker;
@@ -45,7 +45,7 @@ const tailFormItemLayout = {
   },
 };
 
-const NavUpdateModal = Form.create()(
+const NavModal = Form.create()(
   class extends React.Component {
     constructor(props) {
       super(props);
@@ -87,7 +87,7 @@ const NavUpdateModal = Form.create()(
       };
 
       return (
-        <Modal {...props} className={s.navUpdateModal}>
+        <Modal {...props} className={s.NavModal}>
           <Form>
             <FormItem {...formItemLayout} label="显示名称">
               {getFieldDecorator('f1', {
@@ -213,4 +213,4 @@ const NavUpdateModal = Form.create()(
   },
 );
 
-export default withStyles(s)(NavUpdateModal);
+export default withStyles(s)(NavModal);

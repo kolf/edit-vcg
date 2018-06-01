@@ -1,18 +1,8 @@
-/**
- * React Starter Kit (https://www.reactstarterkit.com/)
- *
- * Copyright © 2014-present Kriasoft, LLC. All rights reserved.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE.txt file in the root directory of this source tree.
- */
-
 import React from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import MainNav from './components/MainNav';
-import HotSpots from './components/HotSpots';
-import Banner from './components/Banner';
 import SideNav from './components/SideNav';
 import ThumbList from './components/ThumbList';
 import Navbar from './components/Navbar';
@@ -21,10 +11,6 @@ import storage from 'utils/localStorage';
 import s from './Topic.less';
 
 class Topic extends React.Component {
-  static propTypes = {
-    title: PropTypes.string.isRequired,
-  };
-
   constructor(props) {
     super(props);
     this.state = {
@@ -60,12 +46,16 @@ class Topic extends React.Component {
     const showLogo = logo === '1';
     return (
       <div className={s.root}>
-        <div className="container">
-          <Navbar showTitle={showTitle} showLogo={showLogo} />
+        <div className={s.container}>
+          <Navbar
+            topicId={this.props.id}
+            showTitle={showTitle}
+            showLogo={showLogo}
+          />
           <div className={s.body}>
             {sideNav === '1' && <SideNav />}
             <div className={s.main}>
-              {mainNav === '1' && <MainNav />}
+              {mainNav === '1' && <MainNav topicId={this.props.id} />}
               {imgList === '1' && <ThumbList row={4} />}
             </div>
           </div>

@@ -93,12 +93,18 @@ class ThumbList extends React.Component {
           spinning={this.props.isFetching}
           tip="加载中..."
         >
-          <Row>
+          <Row gutter={16}>
             {this.props.list.map((img, index) => (
               <Col span={spanSize} key={`img${index}`}>
                 <div className={s.item}>
                   <div className={s.picture}>
-                    <img src={img.oss176} alt="" />
+                    <img
+                      src={
+                        img.oss176 ||
+                        'https://goss4.vcg.com/editorial/vcg/400/new/VCG31N963792080.jpg'
+                      }
+                      alt=""
+                    />
                   </div>
                   <h5 className={s.title}>2018-02-09 22:43:32</h5>
                   <p className={s.caption}>

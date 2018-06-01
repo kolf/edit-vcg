@@ -208,6 +208,17 @@ class GroupRuleModal extends React.Component {
       });
   };
 
+  checkKeywords = (rule, value, callback) => {
+    if (Object.values(value).every(vs => !vs || vs.length === 0)) {
+      callback('请填写关键词规则');
+    } else if (
+      !Object.values(value).every(vs => vs.every(v => /^\d+$/.test(v.value)))
+    ) {
+      callback('请删除不确定关键词');
+    }
+    callback();
+  };
+
   render() {
     const { visible, onCancel, onOk, group } = this.props;
     const { getFieldDecorator, getFieldsValue } = this.props.form;
@@ -223,8 +234,6 @@ class GroupRuleModal extends React.Component {
       footer: null,
       destroyOnClose: true,
     };
-
-    console.log('group-------------', group);
 
     return (
       <Modal {...props} className={s.root}>
@@ -278,7 +287,10 @@ class GroupRuleModal extends React.Component {
                 rules: [
                   {
                     required: true,
-                    message: '请选择填写关键词规则',
+                    message: '请选择抓取分类',
+                  },
+                  {
+                    validator: this.checkKeywords,
                   },
                 ],
               })(<KeywordGroup />)}
@@ -301,7 +313,7 @@ class GroupRuleModal extends React.Component {
                   提交
                 </Button>
                 <Button
-                  loading={this.props.stopGroupFetching}
+                  loading={this.props.confirmLoading}
                   onClick={this.handleStopClick}
                 >
                   结束抓取
@@ -323,9 +335,9 @@ class GroupRuleModal extends React.Component {
 function mapStateToProps(state, props) {
   return {
     isFetching: state.autoGroupRule.isFetching,
-    confirmLoading: state.autoGroupRule.confirmLoading,
+    confirmLoading:
+      state.autoGroupRule.confirmLoading || state.autoGroup.isFetching,
     group: state.autoGroups.list.find(item => item.groupId == props.groupId),
-    stopGroupFetching: state.autoGroup.isFetching,
   };
 }
 

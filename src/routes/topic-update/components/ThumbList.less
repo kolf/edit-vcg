@@ -1,11 +1,5 @@
 .root {
   padding: 32px 16px 16px;
-  border: 1px solid #ccc;
-  margin-bottom: 16px;
-
-  &:hover{
-    border-color: #f84949
-  }
 }
 
 .root :global {
@@ -31,17 +25,19 @@
   }
 }
 
-.list{
-  min-height: 200px;
+.list {
+  min-height: 282px;
 }
 
 .item {
   padding: 10px;
+  margin-bottom: 16px;
 }
 
 .picture {
   text-align: center;
   height: 170px;
+  width: 100%;
   background-color: #eee;
   vertical-align: bottom;
   display: table-cell;
@@ -67,17 +63,19 @@
   line-height: 1.4;
   height: 52px;
   overflow: hidden;
+  margin-bottom: 0;
 }
 
-.bar{
+.bar {
   overflow: hidden;
+  margin-bottom: 16px;
 }
 
-.selects{
+.selects {
   margin-right: 10px;
 
-  :global{
-    .ant-btn{
+  :global {
+    .ant-btn {
       // border: none;
       // padding: 0 5px;
     }

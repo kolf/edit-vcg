@@ -1,8 +1,10 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { Input, Button, Icon, Upload, message } from 'antd';
 import LayoutMask from 'components/LayoutMask';
+import { fetchTopic, setTopic, deteleTopicBanner } from 'actions/topic';
 
 const Search = Input.Search;
 const ButtonGroup = Button.Group;
@@ -11,19 +13,32 @@ import s from './Navbar.less';
 import logoUrl from '../assets/logo.svg';
 
 class Navbar extends React.Component {
-  state = {
-    bannerUrl: '',
+  static defaultProps = {
+    title: '加载中...',
   };
 
-  handleRemove = () => {
-    this.setState({
-      bannerUrl: '',
+  componentDidMount() {
+    this.props.dispatch(fetchTopic({ id: this.props.topicId }));
+  }
+
+  changeBanner = url => {
+    this.props.dispatch(
+      setTopic({
+        bannerUrl: url,
+      }),
+    );
+  };
+
+  deteleTopicBanner = e => {
+    const { topicId } = this.props;
+    deteleTopicBanner({ topicId }).then(msg => {
+      this.changeBanner('');
     });
   };
 
+  // setTopic
   render() {
-    const { toggleLayerChange, topicId } = this.props;
-    let { bannerUrl } = this.state;
+    const { moduleChange, topicId, title, bannerUrl } = this.props;
 
     const uploadProps = {
       supportServerRender: true,
@@ -32,7 +47,7 @@ class Navbar extends React.Component {
       accept: 'image/png,image/jpeg,image/jpg',
       action: '/api/xuefeng/topicPageSet/uploadBannerImage',
       data: {
-        topicId
+        topicId,
       },
       beforeUpload: file => {
         const isJPG = /[jpeg|png]/.test(file.type);
@@ -42,21 +57,15 @@ class Navbar extends React.Component {
         return isJPG;
       },
       onChange: info => {
-        if (info.file.status !== 'uploading') {
-          console.log(info.file, info.fileList);
-        }
-
         if (info.file.status === 'done') {
           const res = info.file.response;
           if (res && res.code === 200 && res.data) {
             message.success('banner上传成功');
-            this.setState({
-              bannerUrl: `${res.data}?now=${Date.now()}`,
-            });
+            let bannerUrl = `${res.data}?now=${Date.now()}`;
+            this.changeBanner(bannerUrl);
           } else {
             message.error(res.message);
           }
-          console.log(info.file, info.fileList);
         } else if (info.file.status === 'error') {
           message.error('上传失败，请重新尝试！');
         }
@@ -76,7 +85,7 @@ class Navbar extends React.Component {
               paddingTop: 10,
             }}
             target="logo"
-            onChange={toggleLayerChange}
+            onChange={moduleChange}
           >
             <a className={s.logo}>
               <img src={logoUrl} width="100" alt="视觉中国" />
@@ -90,9 +99,9 @@ class Navbar extends React.Component {
                 paddingTop: 10,
               }}
               target="title"
-              onChange={toggleLayerChange}
+              onChange={moduleChange}
             >
-              2018俄罗斯世界杯
+              {title}
             </LayoutMask>
           </h1>
           <div className={s.search}>
@@ -112,7 +121,7 @@ class Navbar extends React.Component {
                   重新上传
                 </Button>
               </Upload>
-              <Button onClick={this.handleRemove}>删除</Button>
+              <Button onClick={this.deteleTopicBanner}>删除</Button>
             </ButtonGroup>
           ) : (
             <Upload {...uploadProps}>
@@ -127,4 +136,11 @@ class Navbar extends React.Component {
   }
 }
 
-export default withStyles(s)(Navbar);
+function mapStateToProps(state) {
+  return {
+    title: state.topic.title,
+    bannerUrl: state.topic.bannerUrl,
+  };
+}
+
+export default withStyles(s)(connect(mapStateToProps)(Navbar));

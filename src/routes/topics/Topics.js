@@ -93,7 +93,9 @@ class Topics extends React.Component {
     const { dispatch } = this.props;
     const { query } = this.state;
 
-    let params = Object.assign(query, param);
+    Object.assign(query, param);
+
+    let params = Object.assign({}, query);
 
     if (query.createdTime && Array.isArray(query.createdTime)) {
       params.createdTime = formatData(query.createdTime);
@@ -101,6 +103,10 @@ class Topics extends React.Component {
 
     if (query.publishTime && Array.isArray(query.publishTime)) {
       params.publishTime = formatData(query.publishTime);
+    }
+
+    if (query.updatedBy && Array.isArray(query.updatedBy)) {
+      params.updatedBy = query.updatedBy.map(v => v.key).join(',');
     }
 
     dispatch(fetchTopics(params));
@@ -158,7 +164,7 @@ class Topics extends React.Component {
   };
 
   handleOpenTopicClick = topicId => {
-    window.open(`//dev-edit.vcg.com/zh/edit/all?topicId=${topicId}`);
+    window.open(`//dev-edit.vcg.com/zh/edit/all?topicIds=${topicId}`);
   };
 
   handleFilterClick = ({ field, value }) => {

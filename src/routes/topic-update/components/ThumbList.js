@@ -7,7 +7,7 @@ import FilterPager from 'components/FilterPager';
 import gs from 'components/App.less';
 import s from './ThumbList.less';
 
-import { fetchTopics, updateTopic } from 'actions/topics';
+import { fetchTopicImages } from 'actions/topic';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -37,7 +37,6 @@ function Item({ onClick, oss176, id, title, selected }) {
         <br />
         {title}
       </p>
-      <p>{selected ? '已选' : '未选'}</p>
     </div>
   );
 }
@@ -48,47 +47,35 @@ class ThumbList extends React.Component {
     total: 0,
   };
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      loading: false,
-      query: {
-        pageNum: 1,
-        pageSize: 60,
-        desc: 1,
-        keyword: '世界杯 2014',
-        keywordType: 1,
-      },
-    };
-  }
+  state = {
+    query: {
+      topicId: '100804',
+      pageNum: 1,
+      pageSize: 60,
+    },
+  };
 
   componentDidMount() {
-    this.fetchTopics();
+    this.fetchTopicImages();
   }
 
   handleChangeAsset = e => {
     const { value } = e.target;
-    this.fetchTopics({
+    this.fetchTopicImages({
       desc: value,
     });
   };
 
-  handlerClickItem = (id, selected) => {
-    this.props.dispatch(
-      updateTopic(id, {
-        selected: !selected,
-      }),
-    );
-  };
+  handlerClickItem = (id, selected) => {};
 
-  fetchTopics = param => {
+  fetchTopicImages = param => {
     const { dispatch } = this.props;
     const { query } = this.state;
     if (param) {
       Object.assign(query, param);
     }
 
-    dispatch(fetchTopics(query));
+    dispatch(fetchTopicImages(query));
   };
 
   render() {
@@ -96,8 +83,6 @@ class ThumbList extends React.Component {
     const { query } = this.state;
 
     const spanSize = row;
-
-    console.error('----------', this.props);
 
     return (
       <div className={s.root}>
@@ -120,7 +105,7 @@ class ThumbList extends React.Component {
             pageSize={query.pageSize}
             pageNum={query.pageNum}
             className={gs.fRight}
-            onChange={this.fetchTopics}
+            onChange={this.fetchTopicImages}
             total={this.props.total}
           />
         </div>
@@ -131,7 +116,7 @@ class ThumbList extends React.Component {
         >
           <Row>
             {this.props.list.map((img, index) => (
-              <Col span={spanSize}>
+              <Col key={img.id} span={spanSize}>
                 <Item {...img} onClick={this.handlerClickItem} />
               </Col>
             ))}
@@ -142,7 +127,7 @@ class ThumbList extends React.Component {
             pageSize={query.pageSize}
             pageNum={query.pageNum}
             className={gs.fRight}
-            onChange={this.fetchTopics}
+            onChange={this.fetchTopicImages}
             total={this.props.total}
           />
         </div>
@@ -153,9 +138,9 @@ class ThumbList extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    isFetching: state.topics.isFetching,
-    list: state.topics.list,
-    total: state.topics.total,
+    isFetching: state.topic.isFetching,
+    list: state.topic.imagesList,
+    total: state.topic.imagesTotal,
   };
 }
 

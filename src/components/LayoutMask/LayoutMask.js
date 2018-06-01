@@ -28,11 +28,11 @@ class LayoutMask extends React.Component {
   };
 
   render() {
-    const { style } = this.props;
+    const { style, bordered } = this.props;
     const { show } = this.state;
 
     return (
-      <div className={s.root} style={style}>
+      <div className={s.root + (bordered ? ' bordered' : '')} style={style}>
         {this.props.children}
         <Switch
           value={show}

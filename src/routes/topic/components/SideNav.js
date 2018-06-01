@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { Menu, Icon, Modal } from 'antd';
-import NavUpdateModal from './NavUpdateModal';
+import NavModal from './NavModal';
 import s from './SideNav.less';
 
 const confirm = Modal.confirm;
@@ -361,8 +361,8 @@ class SideNav extends React.Component {
     this.state = {
       loading: false,
       openKeys: ['sub1'],
-      navUpdateModalVisible: false,
-      navUpdateModalType: '1', // 1 一级导航， 2， 二级导航
+      NavModalVisible: false,
+      NavModalType: '1', // 1 一级导航， 2， 二级导航
     };
   }
 
@@ -381,25 +381,25 @@ class SideNav extends React.Component {
     }
   };
 
-  showNavUpdateModal = navUpdateModalType => {
+  showNavModal = NavModalType => {
     this.setState({
-      navUpdateModalType,
-      navUpdateModalVisible: true,
+      NavModalType,
+      NavModalVisible: true,
     });
   };
 
-  closeNavUpdateModal = data => {
+  closeNavModal = data => {
     this.setState({
-      navUpdateModalVisible: false,
+      NavModalVisible: false,
     });
   };
 
   handleClick = item => {
     const { key } = item;
     if (key === 'add') {
-      this.showNavUpdateModal('1');
+      this.showNavModal('1');
     } else if (/addSub/.test(key)) {
-      this.showNavUpdateModal('2');
+      this.showNavModal('2');
     }
     console.log(item, key);
   };
@@ -417,7 +417,7 @@ class SideNav extends React.Component {
   };
 
   render() {
-    const { navUpdateModalVisible, navUpdateModalType } = this.state;
+    const { NavModalVisible, NavModalType } = this.state;
 
     return (
       <div className={s.root}>
@@ -435,7 +435,7 @@ class SideNav extends React.Component {
               title={
                 <span
                   onDoubleClick={() => {
-                    this.showNavUpdateModal('1', n);
+                    this.showNavModal('1', n);
                   }}
                 >
                   {n.title}
@@ -446,7 +446,7 @@ class SideNav extends React.Component {
                 <Menu.Item key={c.value + j}>
                   <span
                     onDoubleClick={() => {
-                      this.showNavUpdateModal('2', c);
+                      this.showNavModal('2', c);
                     }}
                   >
                     {c.label}

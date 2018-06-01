@@ -95,6 +95,8 @@ class FilterForm extends React.Component {
               case 'searchSelect':
                 Control = (
                   <SearchSelect
+                    onChange={val => this.handleChange(field, val)}
+                    value={value[field] || []}
                     placeholder={placeholder}
                     style={{ width: 420 }}
                   />

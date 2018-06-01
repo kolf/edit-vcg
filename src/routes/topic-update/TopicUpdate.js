@@ -1,13 +1,5 @@
-/**
- * React Starter Kit (https://www.reactstarterkit.com/)
- *
- * Copyright © 2014-present Kriasoft, LLC. All rights reserved.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE.txt file in the root directory of this source tree.
- */
-
 import React from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import MainNav from './components/MainNav';
@@ -16,20 +8,26 @@ import ThumbList from './components/ThumbList';
 import LayoutMask from 'components/LayoutMask';
 import Topbar from './components/Topbar';
 import Navbar from './components/Navbar';
-
 import storage from 'utils/localStorage';
-
+import { fetchTopicSetting } from 'actions/topic';
 import gs from 'components/App.less';
 import s from './TopicUpdate.less';
 
 class TopicUpdate extends React.Component {
-  static propTypes = {
-    title: PropTypes.string.isRequired,
-  };
+  static propTypes = {};
 
   componentDidMount() {
-    storage.set('topicModules', JSON.stringify(this.modulesValue));
+    this.fetchTopicSetting();
   }
+
+  fetchTopicSetting = () => {
+    const { dispatch, id } = this.props;
+    dispatch(
+      fetchTopicSetting({
+        id,
+      }),
+    );
+  };
 
   modulesValue = {
     title: '1',
@@ -50,22 +48,32 @@ class TopicUpdate extends React.Component {
   render() {
     return (
       <div className={s.root}>
-        <Topbar />
-        <div className="container">
-          <Navbar topicId={this.props.id} toggleLayerChange={this.changeModules} />
+        <Topbar topicId={this.props.id} />
+        <div className={s.container}>
+          <Navbar topicId={this.props.id} moduleChange={this.changeModules} />
           <div className={s.body}>
             <LayoutMask
+              bordered={true}
               target="sideNav"
               onChange={this.changeModules}
-              style={{ marginRight: 20 }}
+              style={{ marginRight: 16 }}
             >
-              <SideNav />
+              <SideNav topicId={this.props.id} />
             </LayoutMask>
             <div className={s.main}>
-              <LayoutMask target="mainNav" onChange={this.changeModules}>
-                <MainNav />
+              <LayoutMask
+                bordered={true}
+                target="mainNav"
+                style={{ marginBottom: 16 }}
+                onChange={this.changeModules}
+              >
+                <MainNav topicId={this.props.id} />
               </LayoutMask>
-              <LayoutMask target="imgList" onChange={this.changeModules}>
+              <LayoutMask
+                bordered={true}
+                target="imgList"
+                onChange={this.changeModules}
+              >
                 <ThumbList row={4} />
               </LayoutMask>
             </div>
@@ -76,4 +84,4 @@ class TopicUpdate extends React.Component {
   }
 }
 
-export default withStyles(gs, s)(TopicUpdate);
+export default withStyles(gs, s)(connect()(TopicUpdate));
