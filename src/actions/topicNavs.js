@@ -49,7 +49,7 @@ export function fetchTopicNavs(creds) {
   return dispatch => {
     dispatch(requestFetchTopicNavs(creds));
     return fetch(
-      `/api/xuefeng/topicNavList/getNavList?${queryString.stringify(creds)}`,
+      `/api/xuefeng/topicNavList/getEidtOrPreviewNavList?${queryString.stringify(creds)}`,
       {
         method: 'POST',
         headers: {
