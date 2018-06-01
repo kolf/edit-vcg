@@ -19,6 +19,7 @@ import {
   InputNumber,
 } from 'antd';
 import KeywordGroup from 'components/KeywordGroup';
+import SearchSelect from 'components/SearchSelect';
 import { getOptions } from 'data/optionsMaps';
 
 import { createTopicNav } from 'actions/topicNavs';
@@ -69,7 +70,9 @@ const qualityRankOptions = getOptions('qualityRanks');
 const graphicalStyleOptions = getOptions('graphicalStyles');
 
 function getOptionsValue(options) {
-  return Array.isArray(options) ? options.map(v => v.value).toString() : '';
+  return Array.isArray(options)
+    ? options.map(v => v.value).toString()
+    : options;
 }
 
 function checkKeywords(rule, value, callback) {
@@ -77,6 +80,10 @@ function checkKeywords(rule, value, callback) {
     callback('请删除不确定关键词');
   }
   callback();
+}
+
+function getTime(date) {
+  return new Date(date).getTime();
 }
 
 const ManuallForm = Form.create()(props => {
@@ -124,7 +131,9 @@ const ManuallForm = Form.create()(props => {
         导航规则
       </Divider>
       <FormItem {...formItemLayout} label="入库时间">
-        {getFieldDecorator('times', {})(
+        {getFieldDecorator('runTime', {
+          initialValue: []
+        })(
           <RangePicker
             style={{ width: '100%' }}
             placeholder={['起始日期', '结束日期']}
@@ -153,18 +162,18 @@ const ManuallForm = Form.create()(props => {
         })(<KeywordGroup />)}
       </FormItem>
       <FormItem {...formItemLayout} label="供应商">
-        {getFieldDecorator('providerId', {})(
-          <Input placeholder="请输入供应商名称" />,
-        )}
+        {getFieldDecorator('providerId', {
+          initialValue: [],
+        })(<SearchSelect paramType="6" placeholder="请输入供应商名称" />)}
       </FormItem>
       <FormItem {...formItemLayout} label="图片等级">
-        {getFieldDecorator('qualityRank', {})(
-          <CheckboxGroup options={qualityRankOptions} />,
-        )}
+        {getFieldDecorator('qualityRank', {
+          initialValue: [],
+        })(<CheckboxGroup options={qualityRankOptions} />)}
       </FormItem>
       <FormItem {...formItemLayout} label="外链">
         {getFieldDecorator('link', {})(
-          <Input addonBefore="Https://" placeholder="www.vcg.com/topic/:id" />,
+          <Input addonBefore="https://" placeholder="www.vcg.com/topic/:id" />,
         )}
       </FormItem>
       <FormItem {...tailFormItemLayout}>
@@ -248,9 +257,11 @@ class NavModal extends Component {
           },
           navName,
           sort,
+          link,
+          providerId,
+          qualityRank,
+          runTime,
         } = values;
-
-        console.log(parentNavId, '------------------');
 
         let creds = {
           allContainKeywords: getOptionsValue(allContainKeywords),
@@ -262,6 +273,11 @@ class NavModal extends Component {
           sort,
           navLocation,
           parentNavId,
+          providerId: getOptionsValue(providerId),
+          qualityRank: qualityRank.join(','),
+          link,
+          endTime: getTime(runTime[0]),
+          beginTime: getTime(runTime[1]),
         };
 
         dispatch(createTopicNav(creds)).then(msg => {
