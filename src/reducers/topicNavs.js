@@ -4,7 +4,7 @@ import {
   FETCH_TOPIC_NAVS_SUCCESS,
 } from 'actions/topicNavs';
 
-export default function topics(
+export default function topicNavs(
   state = {
     navs: {
       0: [],

@@ -71,7 +71,7 @@ const graphicalStyleOptions = getOptions('graphicalStyles');
 
 function getOptionsValue(options) {
   return Array.isArray(options)
-    ? options.map(v => v.value).toString()
+    ? options.map(v => v.value || v.key).toString()
     : options;
 }
 
@@ -119,7 +119,7 @@ const ManuallForm = Form.create()(props => {
         )}
       </FormItem>
       <FormItem {...formItemLayout} label="默认展示方式">
-        {getFieldDecorator('buildGroup', { initialValue: '1' })(
+        {getFieldDecorator('showType', { initialValue: '1' })(
           <RadioGroup>
             <Radio value="1">组照</Radio>
             <Radio value="0">单张</Radio>
@@ -132,7 +132,7 @@ const ManuallForm = Form.create()(props => {
       </Divider>
       <FormItem {...formItemLayout} label="入库时间">
         {getFieldDecorator('runTime', {
-          initialValue: []
+          initialValue: [],
         })(
           <RangePicker
             style={{ width: '100%' }}
@@ -142,9 +142,9 @@ const ManuallForm = Form.create()(props => {
       </FormItem>
       {props.navLevel === 1 && (
         <FormItem {...formItemLayout} label="内容类型">
-          {getFieldDecorator('graphicalStyle', {})(
-            <CheckboxGroup options={graphicalStyleOptions} />,
-          )}
+          {getFieldDecorator('graphicalStyle', {
+            initialValue: [],
+          })(<CheckboxGroup options={graphicalStyleOptions} />)}
         </FormItem>
       )}
       <FormItem {...formItemLayout} label="关键词">
@@ -255,29 +255,28 @@ class NavModal extends Component {
             anyContainKeywords,
             notContainKeywords,
           },
-          navName,
-          sort,
-          link,
           providerId,
           qualityRank,
           runTime,
+          graphicalStyle,
         } = values;
 
         let creds = {
+          ...values,
           allContainKeywords: getOptionsValue(allContainKeywords),
           anyContainKeywords: getOptionsValue(anyContainKeywords),
           notContainKeywords: getOptionsValue(notContainKeywords),
           topicId,
           navLevel,
-          navName,
-          sort,
           navLocation,
           parentNavId,
           providerId: getOptionsValue(providerId),
+          graphicalStyle: graphicalStyle.join(','),
           qualityRank: qualityRank.join(','),
-          link,
           endTime: getTime(runTime[0]),
           beginTime: getTime(runTime[1]),
+          keywords: undefined,
+          runTime: undefined,
         };
 
         dispatch(createTopicNav(creds)).then(msg => {
@@ -336,4 +335,10 @@ class NavModal extends Component {
   }
 }
 
-export default connect()(withStyles(s)(NavModal));
+function mapStateToProps(state) {
+  return {
+    confirmLoading: state.topicNavs.isFetching,
+  };
+}
+
+export default connect(mapStateToProps)(withStyles(s)(NavModal));
