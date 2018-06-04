@@ -171,7 +171,7 @@ class MainNav extends React.Component {
                 添加一级<Icon type="plus" />
               </span>
             }
-            key="addTab"
+            key="0"
           >
             <p className={s.empty}>请添加一级导航</p>
           </TabPane>

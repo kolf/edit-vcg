@@ -21,6 +21,7 @@ import {
 import KeywordGroup from 'components/KeywordGroup';
 import SearchSelect from 'components/SearchSelect';
 import { getOptions } from 'data/optionsMaps';
+import moment from 'moment';
 
 import { createTopicNav } from 'actions/topicNavs';
 import s from './NavModal.less';
@@ -119,7 +120,7 @@ const ManuallForm = Form.create()(props => {
         )}
       </FormItem>
       <FormItem {...formItemLayout} label="默认展示方式">
-        {getFieldDecorator('showType', { initialValue: '1' })(
+        {getFieldDecorator('buildGroup', { initialValue: '1' })(
           <RadioGroup>
             <Radio value="1">组照</Radio>
             <Radio value="0">单张</Radio>
@@ -223,23 +224,52 @@ class NavModal extends Component {
     isFetching: false,
   };
 
-  componentWillReceiveProps(nextProps) {
-    if (
-      nextProps.visible === true &&
-      this.props.visible === false &&
-      nextProps.value
-    ) {
-      this.initialFormValue(nextProps.value);
-    }
-  }
+  manuallFormRef = null;
+  autoFormRef = null;
 
-  initialFormValue = value => {
-    console.log(value);
+  // componentWillReceiveProps(nextProps) {
+  //   if (
+  //     nextProps.visible === true &&
+  //     this.props.visible === false &&
+  //     nextProps.value
+  //   ) {
+  //     this.initialFormValue(nextProps.value);
+  //   }
+  // }
+
+  initialFormValue = formRef => {
+    const { value } = this.props;
+    if (value) {
+      const {
+        endTime,
+        beginTime,
+        qualityRank,
+        graphicalStyle,
+        navName,
+        sort,
+      } = value;
+
+      console.log(formRef);
+
+      formRef &&
+        formRef.setFieldsValue({
+          navName,
+          sort,
+          beginTime: undefined,
+          endTime: undefined,
+          runTime: [moment(beginTime), moment(endTime)],
+          qualityRank: (qualityRank || '').split(','),
+          providerId: undefined,
+          graphicalStyle: (graphicalStyle || '').split(','),
+          cId: undefined,
+        });
+    }
+    console.log(formRef, this.props.value);
   };
 
   manuallFormSubmit = (e, form) => {
     e.preventDefault();
-    form.validateFieldsAndScroll((err, values) => {
+    form.validateFields((err, values) => {
       if (!err) {
         const {
           topicId,
@@ -248,6 +278,7 @@ class NavModal extends Component {
           onOk,
           navLocation,
           parentNavId,
+          value,
         } = this.props;
         let {
           keywords: {
@@ -266,13 +297,14 @@ class NavModal extends Component {
           allContainKeywords: getOptionsValue(allContainKeywords),
           anyContainKeywords: getOptionsValue(anyContainKeywords),
           notContainKeywords: getOptionsValue(notContainKeywords),
+          navId: value ? value.navId : '',
           topicId,
           navLevel,
           navLocation,
           parentNavId,
           providerId: getOptionsValue(providerId),
-          graphicalStyle: graphicalStyle.join(','),
-          qualityRank: qualityRank.join(','),
+          graphicalStyle: (graphicalStyle || []).join(','),
+          qualityRank: (qualityRank || []).join(','),
           endTime: getTime(runTime[0]),
           beginTime: getTime(runTime[1]),
           keywords: undefined,
@@ -315,7 +347,6 @@ class NavModal extends Component {
       title: (value ? '编辑' : '添加') + levels[navLevel] + '级导航',
       visible,
       onCancel,
-      onOk: () => {},
       footer: null,
       destroyOnClose: true,
     };
@@ -324,10 +355,18 @@ class NavModal extends Component {
       <Modal {...props} className={s.root}>
         <Tabs tabBarStyle={{ textAlign: 'center', fontSize: 14 }} type="card">
           <TabPane tab="手动" key="manuall">
-            <ManuallForm navLevel={navLevel} submit={this.manuallFormSubmit} />
+            <ManuallForm
+              ref={this.initialFormValue}
+              navLevel={navLevel}
+              submit={this.manuallFormSubmit}
+            />
           </TabPane>
           <TabPane tab="自动" key="auto">
-            <AutoForm navLevel={navLevel} submit={this.autoFormSubmit} />
+            <AutoForm
+              wrappedComponentRef={f => (this.autoFormRef = f)}
+              navLevel={navLevel}
+              submit={this.autoFormSubmit}
+            />
           </TabPane>
         </Tabs>
       </Modal>

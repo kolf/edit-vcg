@@ -222,12 +222,11 @@ export function fetchTopic(creds) {
 
 // 删除专题banner
 export function deteleTopicBanner(creds) {
-  return fetch(`/api/xuefeng/topicPageSet/deleteBannerImage`, {
+  return fetch(`/api/xuefeng/topicPageSet/deleteBannerImage/${creds.topicId}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json;charset=UTF-8',
     },
-    body: JSON.stringify(creds),
   })
     .then(res =>
       res.json().then(data => {
