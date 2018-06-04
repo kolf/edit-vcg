@@ -27,6 +27,13 @@ class SearchSelect extends Component {
     fetching: false,
   };
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.value && Array.isArray(nextProps.value)) {
+      let { options } = this.state;
+      this.state.options = _.uniqBy(options.concat(nextProps.value), 'key');
+    }
+  }
+
   onSearch = value => {
     if (timer) {
       clearTimeout(timer);
@@ -72,8 +79,13 @@ class SearchSelect extends Component {
     onChange && onChange(value);
   };
 
-  getValue = () =>
-    this.props.value !== undefined ? this.props.value : this.state.value;
+  getValue = () => {
+    // let { options } = this.state;
+    // // if(options)
+    // console.log(this.props.value);
+
+    return this.props.value !== undefined ? this.props.value : this.state.value;
+  };
 
   render() {
     const { placeholder, style } = this.props;

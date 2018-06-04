@@ -179,7 +179,11 @@ const ManuallForm = Form.create()(props => {
       </FormItem>
       <FormItem {...tailFormItemLayout}>
         <div className="btns">
-          <Button type="primary" onClick={e => props.submit(e, props.form)}>
+          <Button
+            loading={props.confirmLoading}
+            type="primary"
+            onClick={e => props.submit(e, props.form)}
+          >
             提交
           </Button>
         </div>
@@ -193,7 +197,8 @@ const AutoForm = Form.create()(props => {
   return (
     <Form>
       <FormItem {...formItemLayout} label="自动抓取人物关键词">
-        {getFieldDecorator('f7', {
+        {getFieldDecorator('buildGroup', {
+          initialValue: '0',
           rules: [
             {
               required: true,
@@ -202,14 +207,18 @@ const AutoForm = Form.create()(props => {
           ],
         })(
           <RadioGroup>
-            <Radio value="1">二级筛选项显示</Radio>
-            <Radio value="2">复制新建组&二级筛选项显示</Radio>
+            <Radio value="0">二级筛选项显示</Radio>
+            <Radio value="1">复制新建组&二级筛选项显示</Radio>
           </RadioGroup>,
         )}
       </FormItem>
       <FormItem {...tailFormItemLayout}>
         <div className={s.btns}>
-          <Button type="primary" onClick={e => props.submit(e, props.form)}>
+          <Button
+            loading={props.confirmLoading}
+            type="primary"
+            onClick={e => props.submit(e, props.form)}
+          >
             提交
           </Button>
         </div>
@@ -249,8 +258,6 @@ class NavModal extends Component {
         sort,
       } = value;
 
-      console.log(formRef);
-
       formRef &&
         formRef.setFieldsValue({
           navName,
@@ -264,7 +271,6 @@ class NavModal extends Component {
           cId: undefined,
         });
     }
-    console.log(formRef, this.props.value);
   };
 
   manuallFormSubmit = (e, form) => {
@@ -321,17 +327,24 @@ class NavModal extends Component {
 
   autoFormSubmit = (e, form) => {
     e.preventDefault();
-    form.validateFieldsAndScroll((err, values) => {
+    form.validateFields((err, values) => {
       if (!err) {
         const { topicId, navLevel, dispatch, onOk, parentNavId } = this.props;
+        let navId = '0';
+        if (navLevel === '2') {
+          navId = parentNavId;
+        }
 
-        let creds = Object.assign({}, values, {
-          topicId,
-          navLevel,
-          parentNavId,
-        });
+        let creds = Object.assign(
+          {},
+          {
+            ...values,
+            topicId,
+            navId,
+          },
+        );
 
-        dispatch(createTopicNav(creds)).then(msg => {
+        dispatch(createTopicNav(creds, true)).then(msg => {
           message.success(msg);
           onOk();
         });

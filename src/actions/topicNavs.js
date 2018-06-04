@@ -49,7 +49,9 @@ export function fetchTopicNavs(creds) {
   return dispatch => {
     dispatch(requestFetchTopicNavs(creds));
     return fetch(
-      `/api/xuefeng/topicNavList/getEidtOrPreviewNavList?${queryString.stringify(creds)}`,
+      `/api/xuefeng/topicNavList/getEidtOrPreviewNavList?${queryString.stringify(
+        creds,
+      )}`,
       {
         method: 'POST',
         headers: {
@@ -105,16 +107,21 @@ function createTopicNavError(message) {
   };
 }
 
-export function createTopicNav(creds) {
+export function createTopicNav(creds, isAuto) {
   return dispatch => {
     dispatch(requestCreateTopicNav(creds));
-    return fetch(`/api/xuefeng/topicNavList/addTopicNavList`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json;charset=UTF-8',
+    return fetch(
+      `/api/xuefeng/topicNavList/${
+        isAuto ? 'autoAddTopicNavList' : 'addTopicNavList'
+      }`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+        body: JSON.stringify(creds),
       },
-      body: JSON.stringify(creds),
-    })
+    )
       .then(res =>
         res.json().then(data => {
           if (!res.ok) {
