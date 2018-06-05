@@ -1,0 +1,6 @@
+{
+  "name": "FilterTag",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./FilterTag.js"
+}

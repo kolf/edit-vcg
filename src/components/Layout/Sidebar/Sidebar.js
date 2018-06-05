@@ -17,15 +17,19 @@ const navs = [
         id: '11',
         text: '编辑类图片专题',
         path: 'topics',
-        icon: 'user',
       },
       {
         id: '12',
         text: '自动抓图成组上线',
         path: 'auto-groups',
-        icon: 'user',
       },
     ],
+  },
+  {
+    id: '2',
+    text: '编辑组照筛选',
+    path: 'group-tags',
+    icon: 'filter',
   },
 ];
 
@@ -94,7 +98,9 @@ class Sidebar extends Component {
                 ) : (
                   <Menu.Item key={nav.id}>
                     <Icon type={nav.icon} />
-                    <Link to={nav.path}>{nav.text}</Link>
+                    <Link className={s.link} to={nav.path}>
+                      {nav.text}
+                    </Link>
                   </Menu.Item>
                 ),
             )}

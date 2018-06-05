@@ -10,6 +10,7 @@ import autoGroup from './autoGroup';
 import autoGroupRule from './autoGroupRule';
 import keywordDict from './keywordDict';
 import topicNavs from './topicNavs';
+import groups from './groups'
 
 export default combineReducers({
   user,
@@ -23,4 +24,5 @@ export default combineReducers({
   autoGroupRule,
   keywordDict,
   topicNavs,
+  groups
 });

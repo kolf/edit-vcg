@@ -18,13 +18,13 @@ class SearchInput extends Component {
   };
 
   handleChange = value => {
-    if (this.props.value !== undefined) {
-      this.props.onChange(value);
-    } else {
+    const { onChange } = this.props;
+    if (this.props.value === undefined) {
       this.setState({
         value,
       });
     }
+    onChange && onChange(value);
   };
 
   onSearch = typeValue => {
@@ -49,18 +49,21 @@ class SearchInput extends Component {
 
   render() {
     const { placeholder, types } = this.props;
-
     const value = this.getValue('value');
     const typeValue = this.getValue('typeValue');
 
-    let suffix = [
-      <DropdownSelect
-        size="large"
-        value={typeValue}
-        options={types}
-        onChange={this.onSearch}
-      />,
-    ];
+    let suffix = [];
+
+    if (types && types.length > 0) {
+      suffix.push(
+        <DropdownSelect
+          size="large"
+          value={typeValue}
+          options={types}
+          onChange={this.onSearch}
+        />,
+      );
+    }
 
     if (value) {
       suffix.unshift(<Icon type="close-circle" onClick={this.onEmpty} />);

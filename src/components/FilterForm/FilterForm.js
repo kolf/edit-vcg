@@ -5,7 +5,7 @@ import { Form, Button, Input } from 'antd';
 import TimeGroup from 'components/TimeGroup';
 import RadioTag from 'components/RadioTag';
 import SearchSelect from 'components/SearchSelect';
-import FilterRss from './FilterRss';
+import FilterTag from 'components/FilterTag';
 import s from './FilterForm.less';
 
 const FormItem = Form.Item;
@@ -62,7 +62,7 @@ class FilterForm extends React.Component {
     return (
       <div className={s.root}>
         <div className={s.tools}>
-          <FilterRss onClick={this.handleRssClick} />
+          <FilterTag onClick={this.handleRssClick} />
           <Button
             icon={expand ? 'up' : 'down'}
             onClick={this.handleExpendClick}
