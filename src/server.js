@@ -32,9 +32,7 @@ import schema from './data/schema';
 import chunks from './chunk-manifest.json'; // eslint-disable-line import/no-unresolved
 import configureStore from './store/configureStore';
 import { setRuntimeVariable } from './actions/runtime';
-import { receiveLogin, receiveLogout } from './actions/user';
 import config from './config';
-import antTheme from './components/antTheme.less';
 
 process.on('unhandledRejection', (reason, p) => {
   console.error('Unhandled Rejection at:', p, 'reason:', reason);
@@ -51,6 +49,7 @@ global.navigator.userAgent = global.navigator.userAgent || 'all';
 
 const app = express();
 
+//
 // If you are using proxy from external machine, you can set TRUST_PROXY env
 // Default is to trust proxy headers only from loopback interface.
 // -----------------------------------------------------------------------------
@@ -63,7 +62,7 @@ const { NODE_ENV } = process.env;
 
 let prefix = '';
 if (NODE_ENV === 'development') {
-  prefix = 'dev-';
+  prefix = 'test-';
 } else if (NODE_ENV === 'test') {
   prefix = 'test-';
 }
@@ -89,6 +88,7 @@ app.use(express.static(path.resolve(__dirname, 'public')));
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
 //
 // Authentication
 // -----------------------------------------------------------------------------
@@ -114,17 +114,31 @@ app.use(passport.initialize());
 
 app.get(
   '/auth',
-  passport.authenticate('token', {
+  passport.authenticate('bearer', {
     successRedirect: '/',
     failureRedirect: '/login',
     session: false,
   }),
   (req, res) => {
-    const expiresIn = 60 * 60 * 24 * 180; // 180 days
-    const token = jwt.sign(req.user, config.auth.jwt.secret, { expiresIn });
-    res.cookie('id_token', token, { maxAge: 1000 * expiresIn, httpOnly: true });
-    res.redirect('/');
+    const expiresIn = 60 * 60 * 24 * 1; // 1 days
+    console.log(req, res);
+    // const token = jwt.sign(req.user, config.auth.jwt.secret, { expiresIn });
+    // res.cookie('id_token', token, { maxAge: 1000 * expiresIn, httpOnly: true });
+    // res.redirect('/');
   },
+);
+
+//
+// Register API middleware
+// -----------------------------------------------------------------------------
+app.use(
+  '/graphql',
+  expressGraphQL(req => ({
+    schema,
+    graphiql: __DEV__,
+    rootValue: { request: req },
+    pretty: __DEV__,
+  })),
 );
 
 //
@@ -158,16 +172,6 @@ app.get('*', async (req, res, next) => {
       // I should not use `history` on server.. but how I do redirection? follow universal-router
     });
 
-    if (req.user && req.user.userName) {
-      store.dispatch(
-        receiveLogin({
-          id_token: req.cookies.id_token,
-        }),
-      );
-    } else {
-      store.dispatch(receiveLogout());
-    }
-
     store.dispatch(
       setRuntimeVariable({
         name: 'initialNow',
@@ -187,8 +191,6 @@ app.get('*', async (req, res, next) => {
       store,
       storeSubscription: null,
     };
-
-    css.add(antTheme._getCss());
 
     const route = await router.resolve(context);
 

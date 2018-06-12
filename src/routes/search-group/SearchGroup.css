@@ -1,0 +1,14 @@
+.root {
+}
+
+.pad {
+  &B8 {
+    padding-bottom: 8px;
+  }
+}
+
+.filterTagWrap {
+  margin-bottom: 8px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 8px;
+}

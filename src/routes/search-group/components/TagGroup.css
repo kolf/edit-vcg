@@ -4,11 +4,20 @@
     .ant-form-item-control {
       line-height: 1;
     }
+
     .ant-form-item {
       margin-bottom: 8px;
     }
+
     .ant-tag {
       margin-bottom: 6px;
     }
   }
+}
+
+
+.placeholder{
+  padding: 50px 0;
+  text-align: center;
+  font-size: 14px;
 }

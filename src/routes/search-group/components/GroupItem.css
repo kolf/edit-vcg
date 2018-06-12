@@ -5,11 +5,14 @@
   min-height: 240px;
   max-height: 400px;
   position: relative;
-  &:hover {
+
+  &:hover,
+  &.active {
     box-shadow: 4px 4px 40px rgba(0, 0, 6, 0.1);
     border-color: #b74635;
-    .delete{
-      display: block
+
+    .delete {
+      display: block;
     }
   }
 }
@@ -18,8 +21,10 @@
   display: flex;
   background-color: #e5e5e5;
   min-height: 176px;
+
   & > * {
     margin: auto;
+    max-width: 100%;
   }
 }
 

@@ -1,12 +1,28 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { Button, Modal, Input, message, Tag, Icon, Form } from 'antd';
+import { Button, Modal, Input, message, Tag, Icon, Form, Divider } from 'antd';
+import {
+  fetchUserSearch,
+  createUserSearch,
+  deleteUserSearch,
+} from 'actions/userSearch';
 import s from './FilterTag.less';
 
 const { CheckableTag } = Tag;
 const FormItem = Form.Item;
 // const confirm = Modal.confirm;
+const formItemLayout = {
+  labelCol: {
+    xs: { span: 24 },
+    sm: { span: 6 },
+  },
+  wrapperCol: {
+    xs: { span: 24 },
+    sm: { span: 16 },
+  },
+};
 
 const FormModal = Form.create()(
   class extends React.Component {
@@ -23,10 +39,11 @@ const FormModal = Form.create()(
     };
 
     render() {
-      const { visible, onCancel, form, tagTitle } = this.props;
+      const { visible, onCancel, form, tagTitle, formAfter } = this.props;
       const { getFieldDecorator } = form;
       return (
         <Modal
+          width={800}
           visible={visible}
           title={'添加' + tagTitle}
           okText="确认"
@@ -34,8 +51,8 @@ const FormModal = Form.create()(
           onCancel={onCancel}
           onOk={this.handleSubmit}
         >
-          <Form layout="vertical">
-            <FormItem label="名称">
+          <Form>
+            <FormItem {...formItemLayout} label={tagTitle + '名称'}>
               {getFieldDecorator('name', {
                 rules: [
                   {
@@ -45,6 +62,7 @@ const FormModal = Form.create()(
                 ],
               })(<Input placeholder="请输入名称" />)}
             </FormItem>
+            {formAfter || formAfter}
           </Form>
         </Modal>
       );
@@ -63,47 +81,54 @@ class FilterTag extends Component {
 
   state = {
     modalVisible: false,
-    options: [],
+    activeKey: '',
+  };
+
+  componentDidMount() {
+    this.fetchTags();
+  }
+
+  fetchTags = () => {
+    const { pageId, dispatch } = this.props;
+    dispatch(fetchUserSearch(pageId));
   };
 
   createTag = ({ name }) => {
-    const { options } = this.state;
+    const { value, dispatch, pageId } = this.props;
 
-    options.push({
-      label: name,
-      value: Date.now(),
+    dispatch(
+      createUserSearch({
+        type: pageId,
+        name,
+        searchs: JSON.stringify(value),
+      }),
+    ).then(msg => {
+      this.fetchTags();
+      this.hideModal();
     });
-
-    this.hideModal();
   };
 
-  handleClick = id => {
+  handleClick = tag => {
     const { onClick } = this.props;
-    const { options } = this.state;
-
-    const newOptions = options.map(option => {
-      option.active = false;
-      if (option.value === id) {
-        option.active = true;
-      }
-      return option;
-    });
-
-    onClick();
-
     this.setState({
-      options: newOptions,
+      activeKey: tag.key,
     });
+    onClick && onClick(tag.value);
   };
 
-  handleClose = id => {
+  handleClose = (key, e) => {
+    e.stopPropagation();
+    const { pageId, dispatch } = this.props;
     const onOk = () => {
-      let { options } = this.state;
-      options = options.filter(r => r.value !== id);
-      if (options.length > 0) {
-        options[0].active = true;
-      }
-      this.setState({ options });
+      dispatch(
+        deleteUserSearch({
+          type: pageId,
+          id: key,
+        }),
+      ).then(msg => {
+        this.fetchTags();
+        this.hideModal();
+      });
     };
 
     const { title } = this.props;
@@ -122,15 +147,25 @@ class FilterTag extends Component {
     });
   };
 
-  showModal = () => {
+  handleAddClick = () => {
+    const { value, title, formAfter } = this.props;
+
+    if (!value && !formAfter) {
+      message.info(`请选择一个${title}`);
+      return;
+    }
+
     this.setState({
       modalVisible: true,
     });
   };
 
   render() {
-    const { style, title } = this.props;
-    const { modalVisible, value, options } = this.state;
+    const { style, title, tags, formAfter } = this.props;
+    const { modalVisible, activeKey } = this.state;
+
+    console.log(activeKey);
+
     return (
       <div className={s.root} style={style || null}>
         <FormModal
@@ -138,16 +173,19 @@ class FilterTag extends Component {
           onCancel={this.hideModal}
           onOk={this.createTag}
           tagTitle={title}
+          formAfter={formAfter}
         />
         <div className={s.list}>
-          {options.map(r => (
+          {tags.map(tag => (
             <CheckableTag
-              key={r.value}
-              onChange={() => this.handleClick(r.value)}
-              checked={r.active}
+              key={tag.id}
+              onChange={() => {
+                this.handleClick(tag);
+              }}
+              checked={tag.key === activeKey}
             >
-              {r.label}{' '}
-              <Icon type="cross" onClick={() => this.handleClose(r.value)} />
+              {tag.name}
+              <Icon type="cross" onClick={e => this.handleClose(tag.key, e)} />
             </CheckableTag>
           ))}
         </div>
@@ -156,7 +194,7 @@ class FilterTag extends Component {
             size="small"
             type="primary"
             icon="plus-circle"
-            onClick={this.showModal}
+            onClick={this.handleAddClick}
           >
             {title}
           </Button>
@@ -165,5 +203,12 @@ class FilterTag extends Component {
     );
   }
 }
+function mapStateToProps(state) {
+  return {
+    tags: state.userSearch.list,
+    isFetching: state.userSearch.isFetching,
+    errMessage: state.userSearch.errMessage,
+  };
+}
 
-export default withStyles(s)(FilterTag);
+export default withStyles(s)(connect(mapStateToProps)(FilterTag));

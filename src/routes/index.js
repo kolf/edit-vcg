@@ -25,8 +25,9 @@ const routes = {
       load: () => import(/* webpackChunkName: 'topic' */ './topic'),
     },
     {
-      path: '/group-tags',
-      load: () => import(/* webpackChunkName: 'group-tags' */ './group-tags'),
+      path: '/search-group',
+      load: () =>
+        import(/* webpackChunkName: 'search-group' */ './search-group'),
     },
     {
       path: '/login',

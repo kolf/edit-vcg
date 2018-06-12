@@ -32,7 +32,7 @@ function fetchTopicRuleError(message) {
 export function fetchTopicRule(creds) {
   return dispatch => {
     dispatch(requestFetchTopicRule(creds));
-    return fetch(`/api/xuefeng/topic/findTopicNewRuleByTopicId/${creds.id}`, {
+    return fetch(`/api/sitecms/topic/findTopicNewRuleByTopicId/${creds.id}`, {
       headers: {
         'Content-Type': 'application/json;charset=UTF-8',
       },
@@ -84,7 +84,7 @@ function updateTopicRuleError(message) {
 export function updateTopicRule(creds) {
   return dispatch => {
     dispatch(requestUpdateTopicRule(creds));
-    return fetch(`/api/xuefeng/topic/addAutoTopicRule`, {
+    return fetch(`/api/sitecms/topic/addAutoTopicRule`, {
       headers: {
         'Content-Type': 'application/json;charset=UTF-8',
       },

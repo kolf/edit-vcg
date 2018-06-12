@@ -90,19 +90,11 @@ const optionsMap = {
   ranges: [
     {
       value: '1',
-      label: '图关键词',
-    },
-    {
-      value: '2',
-      label: '组关键词',
+      label: '图片关键词',
     },
     {
       value: '3',
-      label: '图说',
-    },
-    {
-      value: '4',
-      label: '组说',
+      label: '图片说明',
     },
   ],
   assets: [

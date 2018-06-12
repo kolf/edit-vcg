@@ -28,7 +28,7 @@ const navs = [
   {
     id: '2',
     text: '编辑组照筛选',
-    path: 'group-tags',
+    path: 'search-group',
     icon: 'filter',
   },
 ];

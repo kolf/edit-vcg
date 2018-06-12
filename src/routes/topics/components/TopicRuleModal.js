@@ -303,6 +303,7 @@ class TopicRuleModal extends React.Component {
 
             <FormItem {...formItemLayout} label="抓取状态">
               {getFieldDecorator('status', {
+                initialValue: ['1', '2'],
                 rules: [
                   {
                     required: true,
@@ -314,6 +315,7 @@ class TopicRuleModal extends React.Component {
 
             <FormItem {...formItemLayout} label="抓取范围">
               {getFieldDecorator('range', {
+                initialValue: ['1', '3'],
                 rules: [
                   {
                     required: true,
@@ -344,6 +346,7 @@ class TopicRuleModal extends React.Component {
 
             <FormItem {...formItemLayout} label="抓取时效/资料">
               {getFieldDecorator('timeliness', {
+                initialValue: ['1', '2'],
                 rules: [
                   {
                     required: true,

@@ -47,7 +47,7 @@ export function fetchTopics(
   return dispatch => {
     dispatch(fetchTopicsRequest(creds));
     return fetch(
-      `/api/xuefeng/topic/topicPageList?token=${localStorage.getItem(
+      `/api/sitecms/topic/topicPageList?token=${localStorage.getItem(
         'id_token',
       )}`,
       {

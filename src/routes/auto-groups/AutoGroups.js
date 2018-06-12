@@ -39,7 +39,7 @@ const defaultText = '---';
 function getKeywordNames(ids, keywordDict) {
   return ids
     .match(/\d+/g)
-    .map(id => (keywordDict[id] ? keywordDict[id].label : ''))
+    .map(id => (keywordDict[id] ? keywordDict[id].displayName : ''))
     .join(', ');
 }
 function formatData(dataArr) {
@@ -338,6 +338,7 @@ class AutoGroups extends React.Component {
         />
 
         <FilterForm
+          pageId="203"
           value={query}
           onClick={this.handleFilterClick}
           formItems={formItems}

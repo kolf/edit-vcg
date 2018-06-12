@@ -69,9 +69,7 @@ function createFetch(
             ...(options && options.headers),
           },
         })
-      : fetch(url, options).then(res => {
-          console.log(res, '-------------------------');
-        });
+      : fetch(url, options);
   };
 }
 

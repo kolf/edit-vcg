@@ -1,14 +1,14 @@
 import React from 'react';
-import GroupTags from './GroupTags';
+import SearchGroup from './SearchGroup';
 import Layout from '../../components/Layout';
 
 async function action() {
   return {
     title: '编辑组照筛选',
-    chunks: ['group-tags'],
+    chunks: ['search-group'],
     component: (
       <Layout>
-        <GroupTags />
+        <SearchGroup />
       </Layout>
     ),
   };

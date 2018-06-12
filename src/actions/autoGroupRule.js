@@ -33,7 +33,7 @@ export function fetchAutoGroupRule (creds) {
   return dispatch => {
     dispatch(requestFetchAutoGroupRule(creds))
     return fetch(
-      `/api/xuefeng/autoGroup/findTopicNewGroupRuleByTopicId/${creds.id}`,
+      `/api/sitecms/autoGroup/findTopicNewGroupRuleByTopicId/${creds.id}`,
       {
         headers: {
           'Content-Type': 'application/json;charset=UTF-8'
@@ -87,7 +87,7 @@ function updateAutoGroupRuleError (message) {
 export function updateAutoGroupRule (creds) {
   return dispatch => {
     dispatch(requestUpdateAutoGroupRule(creds))
-    return fetch(`/api/xuefeng/autoGroup/addAutoGroupRule`, {
+    return fetch(`/api/sitecms/autoGroup/addAutoGroupRule`, {
       headers: {
         'Content-Type': 'application/json;charset=UTF-8'
       },
@@ -141,7 +141,7 @@ function stopAutoGroupRuleError (message) {
 export function stopAutoGroupRule (creds) {
   return dispatch => {
     dispatch(requestStopAutoGroupRule(creds))
-    return fetch(`/api/xuefeng/autoGroup/grabingStop/${creds.id}`, {
+    return fetch(`/api/sitecms/autoGroup/grabingStop/${creds.id}`, {
       headers: {
         'Content-Type': 'application/json;charset=UTF-8'
       }

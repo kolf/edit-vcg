@@ -22,15 +22,15 @@ export default function keywordDict(state = { mapData: {} }, action) {
         {},
         state.mapData,
         action.list.reduce((result, item) => {
-          let { id, kind, cnname } = item;
+          let { id, cnname } = item;
           result[id] = {
-            value: id + '',
-            label: cnname,
-            kind,
+            // value: id + '',
+            displayName: cnname,
+            ...item,
           };
           return result;
         }, {}),
-      )
+      );
 
       return {
         isFetching: false,

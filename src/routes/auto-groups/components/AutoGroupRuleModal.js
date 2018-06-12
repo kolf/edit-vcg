@@ -182,8 +182,8 @@ class GroupRuleModal extends React.Component {
                 .toString()
             : category,
           isOnline: isOnline ? '1' : '0',
-          endTime: getTime(runTime[0]),
-          beginTime: getTime(runTime[1]),
+          endTime: getTime(runTime[1]),
+          beginTime: getTime(runTime[0]),
           groupId: this.props.groupId + '',
           topicId: this.props.group.topicId,
         };

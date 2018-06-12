@@ -17,10 +17,10 @@ import {
 import moment from 'moment';
 
 import { getOptions } from 'data/optionsMaps';
-import { createTopic } from 'actions/topic';
+import { postSearch } from 'actions/searchGroups';
 import KeywordTag from 'components/KeywordTag';
 
-import s from './GroupTagsModal.less';
+import s from './SearchGroupModal.css';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -51,25 +51,63 @@ const tailFormItemLayout = {
   },
 };
 
-const rangeOptions = [
+const levels = ['', '一', '二'];
+const scopes = [
   {
-    value: '1',
-    label: '图关键词',
+    value: ['1'],
+    label: '图片说明',
+    key: '1',
   },
   {
-    value: '2',
-    label: '组关键词',
+    value: ['2'],
+    label: '图片关键词',
+    key: '2',
+  },
+  {
+    value: ['1', '2'],
+    label: '图片说明,图片关键词',
+    key: '3',
   },
 ];
+const scopeOptions = scopes.reduce((result, scope) => {
+  const { key, label } = scope;
+  if (key < 3) {
+    result.push({
+      value: key,
+      label,
+    });
+  }
+  return result;
+}, []);
+
+function getOptionValues(options) {
+  return Array.isArray(options)
+    ? options.map(v => v.value || v.key).toString()
+    : '';
+}
+
+function getScopeValue(value) {
+  if (value.length === 0) {
+    return '';
+  }
+  return scopes.find(s => {
+    return s.value.join(',') == value.join(',');
+  }).key;
+}
 
 function checkKeywords(rule, value, callback) {
-  if (!Object.values(value).every(vs => vs.every(v => /^\d+$/.test(v.value)))) {
+  if (
+    !Object.values(value).every(v => {
+      console.log(v);
+      return /^\d+$/.test(v.value);
+    })
+  ) {
     callback('请删除不确定关键词');
   }
   callback();
 }
 
-class GroupTagsModal extends React.Component {
+class SearchGroupModal extends React.Component {
   static propsTypes = {
     isFetching: PropTypes.bool,
   };
@@ -78,7 +116,7 @@ class GroupTagsModal extends React.Component {
     if (
       nextProps.visible === true &&
       this.props.visible === false &&
-      nextProps.id
+      nextProps.value
     ) {
       const timer = setTimeout(() => {
         clearTimeout(timer);
@@ -87,17 +125,13 @@ class GroupTagsModal extends React.Component {
     }
   }
 
-  setFieldsValue = id => {
-    const {
-      form,
-      topic: { title, channelId, publishDate, timeliness },
-    } = this.props;
-
+  setFieldsValue = () => {
+    const { form, value: { name, keywords, scope, sort } } = this.props;
     form.setFieldsValue({
-      title,
-      channelId: channelId + '',
-      publishTime: moment(publishDate),
-      timeliness: timeliness + '',
+      name,
+      scope: scope ? scopes[scope - 1].value : [],
+      sort,
+      keywords: keywords ? keywords.split(',') : [],
     });
   };
 
@@ -105,18 +139,16 @@ class GroupTagsModal extends React.Component {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        let creds = Object.assign({}, values);
+        const { groupId, parentId, value } = this.props;
+        console.log(parentId);
+        let creds = Object.assign({}, values, {
+          keywords: getOptionValues(values.keywords),
+          scope: getScopeValue(values.scope),
+          pid: parentId,
+          id: value ? value.id : undefined,
+        });
 
-        if (this.props.id) {
-          creds.topicId = this.props.id;
-        }
-
-        creds.publishTime = values.publishTime
-          ? new Date(values.publishTime).getTime()
-          : Date.now();
-
-        this.props.dispatch(createTopic(creds)).then(msg => {
-          message.success(msg);
+        this.props.dispatch(postSearch(creds, groupId)).then(msg => {
           this.props.onOk();
         });
       }
@@ -124,12 +156,12 @@ class GroupTagsModal extends React.Component {
   };
 
   render() {
-    const { visible, onCancel, onOk, id } = this.props;
+    const { visible, onCancel, onOk, value, level } = this.props;
     const { getFieldDecorator } = this.props.form;
 
     const props = {
       width: 800,
-      title: id ? '修改筛选项' : '创建筛选项',
+      title: `${value ? '修改' : '添加'}${levels[level]}筛选项`,
       visible,
       okText: '提交',
       cancelText: '取消',
@@ -143,7 +175,7 @@ class GroupTagsModal extends React.Component {
       <Modal {...props} className={s.root}>
         <Form>
           <FormItem {...formItemLayout} label="筛选项名称">
-            {getFieldDecorator('title', {
+            {getFieldDecorator('name', {
               rules: [
                 {
                   required: true,
@@ -156,16 +188,18 @@ class GroupTagsModal extends React.Component {
           <FormItem {...formItemLayout} label="关键词">
             {getFieldDecorator('keywords', {
               initialValue: [],
+              rules: [
+                {
+                  validator: checkKeywords,
+                },
+              ],
             })(<KeywordTag />)}
           </FormItem>
 
           <FormItem {...formItemLayout} label="搜索范围">
-            {getFieldDecorator('range', {
-              initial: '1',
-              rules: [
-
-              ],
-            })(<CheckboxGroup options={rangeOptions} />)}
+            {getFieldDecorator('scope', {
+              initialValue: ['1', '2'],
+            })(<CheckboxGroup options={scopeOptions} />)}
           </FormItem>
 
           <FormItem {...formItemLayout} label="顺序">
@@ -205,6 +239,6 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(
-  Form.create()(withStyles(s)(GroupTagsModal)),
+export default withStyles(s)(
+  connect(mapStateToProps)(Form.create()(SearchGroupModal)),
 );

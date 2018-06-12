@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 
 import s from './RadioTag.less';
@@ -7,7 +8,7 @@ import s from './RadioTag.less';
 class RadioTag extends PureComponent {
   static propTypes = {
     onChange: PropTypes.func.isRequired,
-    options: PropTypes.Array,
+    options: PropTypes.array.isRequired,
     value: PropTypes.string,
   };
 

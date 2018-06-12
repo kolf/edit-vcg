@@ -19,7 +19,7 @@ export function receiveLogin(user) {
     type: LOGIN_SUCCESS,
     isFetching: false,
     isAuthenticated: true,
-    id_token: user.id_token,
+    user,
   };
 }
 
@@ -79,9 +79,11 @@ function TGTLogin(creds) {
 
           const user = {
             userName: data.data.name,
+            userId: data.data.ucId,
             id_token: creds.token,
           };
           localStorage.setItem('id_token', user.id_token);
+          localStorage.setItem('user', JSON.stringify(user));
           dispatch(receiveLogin(user));
           return Promise.resolve(user);
         });
@@ -103,8 +105,10 @@ export function logoutUser() {
   return dispatch => {
     dispatch(requestLogout());
     localStorage.removeItem('id_token');
+    localStorage.removeItem('user');
     document.cookie = 'id_token=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     dispatch(receiveLogout());
+    return Promise.resolve();
   };
 }
 

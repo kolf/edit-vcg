@@ -49,7 +49,7 @@ export function fetchTopicNavs(creds) {
   return dispatch => {
     dispatch(requestFetchTopicNavs(creds));
     return fetch(
-      `/api/xuefeng/topicNavList/getEidtOrPreviewNavList?${queryString.stringify(
+      `/api/sitecms/topicNavList/getEidtOrPreviewNavList?${queryString.stringify(
         creds,
       )}`,
       {
@@ -111,7 +111,7 @@ export function createTopicNav(creds, isAuto) {
   return dispatch => {
     dispatch(requestCreateTopicNav(creds));
     return fetch(
-      `/api/xuefeng/topicNavList/${
+      `/api/sitecms/topicNavList/${
         isAuto ? 'autoAddTopicNavList' : 'addTopicNavList'
       }`,
       {
@@ -166,7 +166,7 @@ function deleteTopicNavError(message) {
 export function deleteTopicNav(creds) {
   return dispatch => {
     dispatch(requestDeleteTopicNav(creds));
-    return fetch(`/api/xuefeng/topicNavList/preRemoveNav/${creds.navId}`, {
+    return fetch(`/api/sitecms/topicNavList/preRemoveNav/${creds.navId}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json;charset=UTF-8',

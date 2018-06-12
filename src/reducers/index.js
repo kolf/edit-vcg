@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import user from './user';
+import auth from './auth';
 import runtime from './runtime';
 import category from './category';
 import topics from './topics';
@@ -10,10 +10,11 @@ import autoGroup from './autoGroup';
 import autoGroupRule from './autoGroupRule';
 import keywordDict from './keywordDict';
 import topicNavs from './topicNavs';
-import groups from './groups'
+import searchGroups from './searchGroups';
+import userSearch from './userSearch';
 
 export default combineReducers({
-  user,
+  auth,
   runtime,
   category,
   topics,
@@ -24,5 +25,6 @@ export default combineReducers({
   autoGroupRule,
   keywordDict,
   topicNavs,
-  groups
+  searchGroups,
+  userSearch,
 });

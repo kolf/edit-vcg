@@ -316,6 +316,7 @@ class Topics extends React.Component {
         />
 
         <FilterForm
+          pageId="202"
           value={query}
           formItems={formItems}
           onClick={this.handleFilterClick}

@@ -3,7 +3,7 @@ import {
   LOGIN_SUCCESS,
   LOGIN_FAILURE,
   LOGOUT_SUCCESS,
-} from '../actions/user';
+} from 'actions/user';
 
 export default function auth(
   state = {
@@ -24,6 +24,7 @@ export default function auth(
         isFetching: false,
         isAuthenticated: true,
         errorMessage: '',
+        user: action.user,
       });
     case LOGIN_FAILURE:
       return Object.assign({}, state, {
@@ -34,6 +35,7 @@ export default function auth(
     case LOGOUT_SUCCESS:
       return Object.assign({}, state, {
         isAuthenticated: false,
+        user: {},
       });
     default:
       return state;

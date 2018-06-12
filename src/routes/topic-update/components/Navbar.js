@@ -45,7 +45,7 @@ class Navbar extends React.Component {
       name: 'file',
       showUploadList: false,
       accept: 'image/png,image/jpeg,image/jpg',
-      action: '/api/xuefeng/topicPageSet/uploadBannerImage',
+      action: '/api/sitecms/topicPageSet/uploadBannerImage',
       data: {
         topicId,
       },

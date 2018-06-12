@@ -19,8 +19,8 @@ import configureStore from './store/configureStore';
 import history from './history';
 import { updateMeta } from './DOMUtils';
 import router from './router';
-import antTheme from './components/antTheme.less';
 
+import antTheme from './components/antTheme.less';
 antTheme._insertCss();
 
 const context = {

@@ -37,7 +37,7 @@ export function fetchAutoGroups (
   return dispatch => {
     dispatch(requestFetchAutoGroups(creds))
     return fetch(
-      `/api/xuefeng/autoGroup/autoGroupPageList?token=${localStorage.getItem('id_token')}`,
+      `/api/sitecms/autoGroup/autoGroupPageList?token=${localStorage.getItem('id_token')}`,
       {
         method: 'POST',
         headers: {

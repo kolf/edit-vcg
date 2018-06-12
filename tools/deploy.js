@@ -15,10 +15,10 @@ import run from './run';
 
 // VCG
 const remote = {
-  name: 'github',
-  url: 'http://git.vcg.com/edit/web.git',
-  branch: 'master',
-  website: 'https://edit-vcg.vcg.com',
+  name: 'vcg',
+  url: 'http://git.vcg.com/edit/website_front/edit-cms.git',
+  branch: 'build',
+  website: 'http://test-sitecms.vcg.com',
   static: false,
 };
 

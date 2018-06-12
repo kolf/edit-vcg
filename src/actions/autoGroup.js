@@ -32,7 +32,7 @@ export function createAutoGroup(creds) {
   return dispatch => {
     dispatch(requestCreateAutoGroup(creds));
     return fetch(
-      `/api/xuefeng/autoGroup/addGroup?token=${localStorage.getItem(
+      `/api/sitecms/autoGroup/addGroup?token=${localStorage.getItem(
         'id_token',
       )}&${queryString.stringify(creds)}`,
       {

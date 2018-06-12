@@ -21,7 +21,7 @@ module.exports = {
 
   // https://expressjs.com/en/guide/behind-proxies.html
   trustProxy: {
-    xuefeng: 'cmsservice.vcg.com',
+    sitecms: 'cmsservice.vcg.com',
     edit: 'editservice.vcg.com',
     topic: 'cms.vcg.com',
     passport: 'passportservice.vcg.com',

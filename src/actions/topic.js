@@ -101,7 +101,7 @@ export function createTopic(creds) {
   return dispatch => {
     dispatch(requestCreateTopic(creds));
     return fetch(
-      `/api/xuefeng/topic/addTopic?token=${localStorage.getItem(
+      `/api/sitecms/topic/addTopic?token=${localStorage.getItem(
         'id_token',
       )}&${queryString.stringify(creds)}`,
       {
@@ -129,7 +129,7 @@ export function createTopic(creds) {
 export function stopTopic(creds) {
   return dispatch => {
     dispatch(requestUpdateTopic(creds));
-    return fetch(`/api/xuefeng/topic/grabingStop/${creds.id}`, {
+    return fetch(`/api/sitecms/topic/grabingStop/${creds.id}`, {
       headers: {
         'Content-Type': 'application/json;charset=UTF-8',
       },
@@ -153,7 +153,7 @@ export function stopTopic(creds) {
 export function offlineTopic(creds) {
   return dispatch => {
     dispatch(requestUpdateTopic(creds));
-    return fetch(`/api/xuefeng/topic/offLineTopic/${creds.id}`, {
+    return fetch(`/api/sitecms/topic/offLineTopic/${creds.id}`, {
       headers: {
         'Content-Type': 'application/json;charset=UTF-8',
       },
@@ -177,7 +177,7 @@ export function offlineTopic(creds) {
 export function publishTopic(creds) {
   return dispatch => {
     dispatch(requestUpdateTopic(creds));
-    return fetch(`/api/xuefeng/topicPageSet/getPageSet/${creds.id}`, {
+    return fetch(`/api/sitecms/topicPageSet/getPageSet/${creds.id}`, {
       headers: {
         'Content-Type': 'application/json;charset=UTF-8',
       },
@@ -201,7 +201,7 @@ export function publishTopic(creds) {
 export function fetchTopic(creds) {
   return dispatch => {
     dispatch(requestFetchTopic(creds));
-    return fetch(`/api/xuefeng/topic/getTopicById/${creds.id}`, {
+    return fetch(`/api/sitecms/topic/getTopicById/${creds.id}`, {
       headers: {
         'Content-Type': 'application/json;charset=UTF-8',
       },
@@ -222,7 +222,7 @@ export function fetchTopic(creds) {
 
 // 删除专题banner
 export function deteleTopicBanner(creds) {
-  return fetch(`/api/xuefeng/topicPageSet/deleteBannerImage/${creds.topicId}`, {
+  return fetch(`/api/sitecms/topicPageSet/deleteBannerImage/${creds.topicId}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json;charset=UTF-8',
@@ -273,7 +273,7 @@ export function fetchTopicImages(creds) {
   return dispatch => {
     dispatch(requestFetchTopicImages(creds));
     return fetch(
-      `/api/xuefeng/topicGroup/findTopicGroupPageList?${queryString.stringify(
+      `/api/sitecms/topicGroup/findTopicGroupPageList?${queryString.stringify(
         creds,
       )}`,
       {
@@ -329,7 +329,7 @@ function fetchTopicSettingError(message) {
 export function fetchTopicSetting(creds) {
   return dispatch => {
     dispatch(requestFetchTopicSetting(creds));
-    return fetch(`/api/xuefeng/topicPageSet/getPageSet/${creds.id}`, {
+    return fetch(`/api/sitecms/topicPageSet/getPageSet/${creds.id}`, {
       headers: {
         'Content-Type': 'application/json;charset=UTF-8',
       },

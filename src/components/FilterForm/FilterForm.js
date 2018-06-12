@@ -25,7 +25,7 @@ const emptyValue = '';
 
 class FilterForm extends React.Component {
   static propTypes = {
-    formItems: PropTypes.arrayOf(PropTypes.string).isRequired,
+    formItems: PropTypes.array.isRequired,
     onClick: PropTypes.func.isRequired,
     value: PropTypes.object,
   };
@@ -56,14 +56,15 @@ class FilterForm extends React.Component {
   };
 
   render() {
-    const { formItems, value } = this.props;
+    const { formItems, value, pageId } = this.props;
     const { expand } = this.state;
 
     return (
       <div className={s.root}>
         <div className={s.tools}>
-          <FilterTag onClick={this.handleRssClick} />
+          <FilterTag pageId={pageId} onClick={this.handleRssClick} />
           <Button
+            className={s.add}
             icon={expand ? 'up' : 'down'}
             onClick={this.handleExpendClick}
           >
