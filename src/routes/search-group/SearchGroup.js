@@ -146,8 +146,11 @@ class SearchGroup extends React.Component {
 
   setAllGroupSearch = () => {
     const groupSearch = this.groupSearchModalValue;
+
+    console.log(_.cloneDeep(groupSearch));
+
     const groups = this.props.groups.map(group => {
-      group.searchItems = groupSearch;
+      group.searchItems = _.cloneDeep(groupSearch);
       return group;
     });
     this.hideTagModal();

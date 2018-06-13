@@ -82,7 +82,15 @@ const scopeOptions = scopes.reduce((result, scope) => {
 
 function getOptionValues(options) {
   return Array.isArray(options)
-    ? options.map(v => v.value || v.key).toString()
+    ? options
+        .map(v => {
+          if (typeof v === 'string') {
+            return v;
+          } else {
+            return v.value || v.key;
+          }
+        })
+        .toString()
     : '';
 }
 
@@ -98,8 +106,11 @@ function getScopeValue(value) {
 function checkKeywords(rule, value, callback) {
   if (
     !Object.values(value).every(v => {
-      console.log(v);
-      return /^\d+$/.test(v.value);
+      if (typeof v === 'string') {
+        return /^\d+$/.test(v);
+      } else {
+        return /^\d+$/.test(v.value);
+      }
     })
   ) {
     callback('请删除不确定关键词');

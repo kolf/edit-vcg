@@ -31,7 +31,7 @@ function updateGroupSearch(group, groupSearch) {
   function loop(items = []) {
     let updateItem = items.find((item, index) => {
       if (groupSearch.id === item.id) {
-        items[index] = groupSearch;
+        items[index] = Object.assign({}, item, groupSearch);
         return true;
       } else if (groupSearch.pid === item.id) {
         item.children = item.children || [];

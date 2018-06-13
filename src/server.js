@@ -58,18 +58,10 @@ const app = express();
 const proxyMiddleware = require('http-proxy-middleware');
 
 const proxys = config.trustProxy;
-const { NODE_ENV } = process.env;
-
-let prefix = '';
-if (NODE_ENV === 'development') {
-  prefix = 'test-';
-} else if (NODE_ENV === 'test') {
-  prefix = 'test-';
-}
 
 Object.keys(proxys).forEach(key => {
   const isIp = !/[a-z]+/.test(proxys[key]);
-  const target = `http://${isIp ? '' : prefix}${proxys[key]}`;
+  const target = `http://${isIp ? '' : config.api.prefix}${proxys[key]}`;
 
   app.use(
     `/api/${key}/*`,

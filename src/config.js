@@ -15,6 +15,18 @@ if (process.env.BROWSER) {
   );
 }
 
+function getApiPrefix() {
+  const NODE_ENV = process.env.NODE_ENV || 'development';
+  let prefix = '';
+
+  if (NODE_ENV === 'development') {
+    prefix = 'dev-';
+  } else if (NODE_ENV === 'test') {
+    prefix = 'test-';
+  }
+  return prefix;
+}
+
 module.exports = {
   // Node.js app
   port: process.env.PORT || 3100,
@@ -32,12 +44,11 @@ module.exports = {
 
   // API Gateway
   api: {
-    // API URL to be used in the client-side code
     clientUrl: process.env.API_CLIENT_URL || '',
-    // API URL to be used in the server-side code
     serverUrl:
       process.env.API_SERVER_URL ||
       `http://localhost:${process.env.PORT || 3100}`,
+    prefix: getApiPrefix(),
   },
 
   // Database

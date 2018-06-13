@@ -13,30 +13,14 @@ import { spawn } from './lib/cp';
 import { makeDir, moveDir, cleanDir } from './lib/fs';
 import run from './run';
 
-// VCG
+// sitecms
 const remote = {
-  name: 'vcg',
-  url: 'http://git.vcg.com/edit/website_front/edit-cms.git',
-  branch: 'build',
-  website: 'http://test-sitecms.vcg.com',
+  name: 'sitecms',
+  url: 'http://git.vcg.com/edit/www-sitecms.git',
+  branch: 'master',
+  website: 'https://sitecms.vcg.com',
   static: false,
 };
-
-// Heroku
-// const remote = {
-//   name: 'heroku',
-//   url: 'https://git.heroku.com/<app>.git',
-//   branch: 'master',
-//   website: 'https://<app>.herokuapp.com',
-// };
-
-// Azure Web Apps
-// const remote = {
-//   name: 'azure',
-//   url: 'https://<user>@<app>.scm.azurewebsites.net:443/<app>.git',
-//   branch: 'master',
-//   website: `http://<app>.azurewebsites.net`,
-// };
 
 const options = {
   cwd: path.resolve(__dirname, '../build'),

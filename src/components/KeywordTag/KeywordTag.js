@@ -103,8 +103,10 @@ class KeywordTag extends Component {
     this.props.onChange && this.props.onChange(value);
   };
 
-  handleClick = ({ value, label }) => {
-    const id = value.match(/\d+/g) || [];
+  handleClick = ({ value, label }, e) => {
+    e.stopPropagation();
+
+    const id = (value + '').match(/\d+/g) || [];
 
     if (id.length > 1) {
       this.keywordIds = id.join(',');
@@ -155,7 +157,6 @@ class KeywordTag extends Component {
   };
 
   handleselect = keywords => {
-    console.log(111111, keywords, this.keywordIds);
     let newValue = this.getValue().reduce((result, val, index) => {
       if (val.value == this.keywordIds) {
         result.push(...keywords);
