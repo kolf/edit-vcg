@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import toRegExp from 'path-to-regexp';
@@ -9,59 +9,89 @@ import Link from 'components/Link';
 const SubMenu = Menu.SubMenu;
 const navs = [
   {
-    id: '1',
+    key: '1',
     text: '专题管理',
     icon: 'user',
     children: [
       {
-        id: '11',
+        key: '11',
         text: '编辑类图片专题',
-        path: 'topics',
+        path: '/topics',
       },
       {
-        id: '12',
+        key: '12',
         text: '自动抓图成组上线',
-        path: 'auto-groups',
+        path: '/auto-groups',
       },
     ],
   },
   {
-    id: '2',
+    key: '2',
     text: '编辑组照筛选',
-    path: 'search-group',
+    path: '/search-group',
     icon: 'filter',
   },
 ];
 
-function matchURI(path, uri) {
-  const keys = [];
-  const pattern = toRegExp(path, keys); // TODO: Use caching
-  const match = pattern.exec(uri);
-  if (!match) return null;
-  const params = Object.create(null);
-  for (let i = 1; i < match.length; i++) {
-    params[keys[i - 1].name] = match[i] !== undefined ? match[i] : undefined;
-  }
-  return params;
+function getSelectedKey(navs) {
+  const { pathname } = window.location;
+  const nav = navs.find(nav => nav.path === pathname);
+  return nav ? nav.key : '';
 }
 
-class Sidebar extends Component {
-  constructor(props) {
-    super(props);
-  }
-
+class Sidebar extends PureComponent {
   state = {
-    openKeys: ['1'],
-    selectedKeys: ['11'],
+    openKeys: [],
+    selectedKeys: [],
   };
 
-  componentWillMount() {}
+  componentDidMount() {
+    this.initOpenKeys();
+  }
 
-  handleChange = menu => {
-    const selectedKeys = [menu.key];
+  initOpenKeys = () => {
+    let selectedKey = getSelectedKey(navs);
+    if (selectedKey) {
+      this.setState({
+        selectedKeys: [selectedKey],
+      });
+    } else {
+      let nav = navs.find(nav => {
+        selectedKey = getSelectedKey(nav.children);
+        return true;
+      });
+
+      if (nav) {
+        if (selectedKey) {
+          this.state.selectedKeys = selectedKey;
+        }
+
+        this.setState({
+          openKeys: [nav.key],
+        });
+      }
+
+      console.log(nav);
+    }
+  };
+
+  handleClick = ({ key }) => {
     this.setState({
-      selectedKeys,
+      selectedKeys: [key],
     });
+  };
+
+  onOpenChange = openKeys => {
+    const latestOpenKey = openKeys.find(
+      key => this.state.openKeys.indexOf(key) === -1,
+    );
+    if (navs.indexOf(latestOpenKey) === -1) {
+      this.setState({ openKeys });
+    } else {
+      this.setState({
+        openKeys: latestOpenKey ? [latestOpenKey] : [],
+      });
+    }
   };
 
   render() {
@@ -71,17 +101,19 @@ class Sidebar extends Component {
       <div className={s.root + ' ant-layout-sider'}>
         <div className="ant-layout-sider-children">
           <Menu
+            selectedKeys={selectedKeys}
             className={s.menu}
             mode="inline"
+            onClick={this.handleClick}
             onSelect={this.handleChange}
             openKeys={openKeys}
-            selectedKeys={selectedKeys}
+            onOpenChange={this.onOpenChange}
           >
             {navs.map(
               nav =>
                 nav.children ? (
                   <SubMenu
-                    key={nav.id}
+                    key={nav.key}
                     title={
                       <span>
                         <Icon type={nav.icon} />
@@ -90,13 +122,13 @@ class Sidebar extends Component {
                     }
                   >
                     {nav.children.map(c => (
-                      <Menu.Item key={c.id}>
+                      <Menu.Item key={c.key}>
                         <Link to={c.path}>{c.text}</Link>
                       </Menu.Item>
                     ))}
                   </SubMenu>
                 ) : (
-                  <Menu.Item key={nav.id}>
+                  <Menu.Item key={nav.key}>
                     <Icon type={nav.icon} />
                     <Link className={s.link} to={nav.path}>
                       {nav.text}

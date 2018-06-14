@@ -9,66 +9,9 @@ import {
   deleteUserSearch,
 } from 'actions/userSearch';
 import s from './FilterTag.less';
+import AddTagModal from './AddTagModal';
 
 const { CheckableTag } = Tag;
-const FormItem = Form.Item;
-// const confirm = Modal.confirm;
-const formItemLayout = {
-  labelCol: {
-    xs: { span: 24 },
-    sm: { span: 6 },
-  },
-  wrapperCol: {
-    xs: { span: 24 },
-    sm: { span: 16 },
-  },
-};
-
-const FormModal = Form.create()(
-  class extends React.Component {
-    handleSubmit = () => {
-      const { form, onOk } = this.props;
-      form.validateFields((err, values) => {
-        if (err) {
-          return;
-        }
-
-        form.resetFields();
-        onOk(values);
-      });
-    };
-
-    render() {
-      const { visible, onCancel, form, tagTitle, formAfter } = this.props;
-      const { getFieldDecorator } = form;
-      return (
-        <Modal
-          width={800}
-          visible={visible}
-          title={'添加' + tagTitle}
-          okText="确认"
-          cancelText="取消"
-          onCancel={onCancel}
-          onOk={this.handleSubmit}
-        >
-          <Form>
-            <FormItem {...formItemLayout} label={tagTitle + '名称'}>
-              {getFieldDecorator('name', {
-                rules: [
-                  {
-                    required: true,
-                    message: '请输入名称',
-                  },
-                ],
-              })(<Input placeholder="请输入名称" />)}
-            </FormItem>
-            {formAfter || formAfter}
-          </Form>
-        </Modal>
-      );
-    }
-  },
-);
 
 class FilterTag extends Component {
   static propTypes = {
@@ -164,11 +107,9 @@ class FilterTag extends Component {
     const { style, title, tags, formAfter } = this.props;
     const { modalVisible, activeKey } = this.state;
 
-    console.log(activeKey);
-
     return (
       <div className={s.root} style={style || null}>
-        <FormModal
+        <AddTagModal
           visible={modalVisible}
           onCancel={this.hideModal}
           onOk={this.createTag}
@@ -178,6 +119,7 @@ class FilterTag extends Component {
         <div className={s.list}>
           {tags.map(tag => (
             <CheckableTag
+              title={tag.name}
               key={tag.id}
               onChange={() => {
                 this.handleClick(tag);

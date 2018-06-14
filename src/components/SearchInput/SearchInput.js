@@ -3,7 +3,7 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { Input, Icon, Button } from 'antd';
 import PropTypes from 'prop-types';
 import DropdownSelect from 'components/DropdownSelect';
-import s from './SearchInput.less';
+import s from './SearchInput.css';
 
 const Search = Input.Search;
 

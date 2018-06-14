@@ -22,6 +22,10 @@ export default function topics(state = { list: [] }, action) {
         }),
         total: action.payload.total,
       });
+    case FETCH_TOPICS_FAILURE:
+      return Object.assign({}, state, {
+        isFetching: false,
+      });
     case UPDATE_TOPIC:
       state.list.find(item => {
         if (item.id == action.payload.id) {

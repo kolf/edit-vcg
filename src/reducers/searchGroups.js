@@ -72,7 +72,6 @@ export default function searchGroups(state = { list: [] }, action) {
       return Object.assign({}, state, {
         isFetching: false,
         list: action.list.map((item, index) => {
-          console.log(item);
           item.index = index + 1;
           return item;
         }),

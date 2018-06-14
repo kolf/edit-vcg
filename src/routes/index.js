@@ -5,7 +5,8 @@ const routes = {
   children: [
     {
       path: '',
-      load: () => import(/* webpackChunkName: 'search-group' */ './topics'),
+      load: () =>
+        import(/* webpackChunkName: 'search-group' */ './search-group'),
     },
     {
       path: '/topics',

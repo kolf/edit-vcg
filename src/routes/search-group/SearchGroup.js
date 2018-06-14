@@ -147,8 +147,6 @@ class SearchGroup extends React.Component {
   setAllGroupSearch = () => {
     const groupSearch = this.groupSearchModalValue;
 
-    console.log(_.cloneDeep(groupSearch));
-
     const groups = this.props.groups.map(group => {
       group.searchItems = _.cloneDeep(groupSearch);
       return group;
@@ -159,14 +157,18 @@ class SearchGroup extends React.Component {
 
   deleleGroup = (groupId, e) => {
     e.stopPropagation();
-    const groups = this.props.groups.filter(group => group.id != groupId);
-    const groupIds = this.state.groupIds
-      .replace(groupId, '')
-      .match(/\d+/g)
-      .toString();
+    let groupIds = [];
+    const groups = this.props.groups.filter(group => {
+      if (group.id != groupId) {
+        groupIds.push(group.id);
+        return true;
+      }
+    });
 
-    this.setState({ groupIds });
-    this.props.dispatch(setSearchGroups(groups));
+    if (groupIds) {
+      this.setState({ groupIds: groupIds.join(',') });
+      this.props.dispatch(setSearchGroups(groups));
+    }
   };
 
   render() {

@@ -29,11 +29,19 @@ const TagGroup = ({ items = [], onClick, onClose, placeholder }) => {
     <div className={s.root}>
       {items.sort((a, b) => a.sort - b.sort).map(item => (
         <div className="ant-row ant-form-item">
-          <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-3">
+          <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-4">
             <Tag
+              title={item.name}
               key={item.id}
               color="#333"
               onClick={e => handleClick(item, 1, '', e)}
+              style={
+                onClose
+                  ? {
+                      paddingRight: 18,
+                    }
+                  : null
+              }
             >
               {item.name}
               {onClose && (
@@ -41,11 +49,22 @@ const TagGroup = ({ items = [], onClick, onClose, placeholder }) => {
               )}
             </Tag>
           </div>
-          <div className="ant-form-item-control-wrapper  ant-col-xs-24 ant-col-sm-21">
+          <div className="ant-form-item-control-wrapper  ant-col-xs-24 ant-col-sm-20">
             <div className="ant-form-item-control">
               {item.children &&
                 item.children.sort((a, b) => a.sort - b.sort).map(t => (
-                  <Tag key={t.id} onClick={e => handleClick(t, 2, item.id, e)}>
+                  <Tag
+                    key={t.id}
+                    onClick={e => handleClick(t, 2, item.id, e)}
+                    title={t.name}
+                    style={
+                      onClose
+                        ? {
+                            paddingRight: 18,
+                          }
+                        : null
+                    }
+                  >
                     {t.name}
                     {onClose && (
                       <Icon type="cross" onClick={e => handleClose(t, e)} />

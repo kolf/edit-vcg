@@ -19,6 +19,7 @@ import moment from 'moment';
 import { getOptions } from 'data/optionsMaps';
 import { postSearch } from 'actions/searchGroups';
 import KeywordTag from 'components/KeywordTag';
+import { everyKeywordId, searchName } from 'utils/validates';
 
 import s from './SearchGroupModal.css';
 
@@ -103,21 +104,6 @@ function getScopeValue(value) {
   }).key;
 }
 
-function checkKeywords(rule, value, callback) {
-  if (
-    !Object.values(value).every(v => {
-      if (typeof v === 'string') {
-        return /^\d+$/.test(v);
-      } else {
-        return /^\d+$/.test(v.value);
-      }
-    })
-  ) {
-    callback('请删除不确定关键词');
-  }
-  callback();
-}
-
 class SearchGroupModal extends React.Component {
   static propsTypes = {
     isFetching: PropTypes.bool,
@@ -132,7 +118,7 @@ class SearchGroupModal extends React.Component {
       const timer = setTimeout(() => {
         clearTimeout(timer);
         this.setFieldsValue();
-      }, 300);
+      }, 30);
     }
   }
 
@@ -172,7 +158,7 @@ class SearchGroupModal extends React.Component {
 
     const props = {
       width: 800,
-      title: `${value ? '修改' : '添加'}${levels[level]}筛选项`,
+      title: `${value ? '修改' : '添加'}${levels[level]}级筛选项`,
       visible,
       okText: '提交',
       cancelText: '取消',
@@ -192,8 +178,11 @@ class SearchGroupModal extends React.Component {
                   required: true,
                   message: '请输入筛选项名称',
                 },
+                {
+                  validator: searchName,
+                },
               ],
-            })(<Input placeholder="请输入筛选项名称，最多可输入40个字符" />)}
+            })(<Input placeholder="请输入筛选项名称，最多可输入50个字符" />)}
           </FormItem>
 
           <FormItem {...formItemLayout} label="关键词">
@@ -201,7 +190,7 @@ class SearchGroupModal extends React.Component {
               initialValue: [],
               rules: [
                 {
-                  validator: checkKeywords,
+                  validator: everyKeywordId,
                 },
               ],
             })(<KeywordTag />)}
