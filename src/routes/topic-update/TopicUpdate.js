@@ -46,11 +46,13 @@ class TopicUpdate extends React.Component {
   };
 
   render() {
+    const { id } = this.props;
+
     return (
       <div className={s.root}>
-        <Topbar topicId={this.props.id} />
+        <Topbar topicId={id} />
         <div className={s.container}>
-          <Navbar topicId={this.props.id} moduleChange={this.changeModules} />
+          <Navbar topicId={id} moduleChange={this.changeModules} />
           <div className={s.body}>
             <LayoutMask
               bordered={true}
@@ -58,7 +60,7 @@ class TopicUpdate extends React.Component {
               onChange={this.changeModules}
               style={{ marginRight: 16 }}
             >
-              <SideNav topicId={this.props.id} />
+              <SideNav topicId={id} />
             </LayoutMask>
             <div className={s.main}>
               <LayoutMask
@@ -67,14 +69,14 @@ class TopicUpdate extends React.Component {
                 style={{ marginBottom: 16 }}
                 onChange={this.changeModules}
               >
-                <MainNav topicId={this.props.id} />
+                <MainNav topicId={id} />
               </LayoutMask>
               <LayoutMask
                 bordered={true}
                 target="imgList"
                 onChange={this.changeModules}
               >
-                <ThumbList row={4} />
+                <ThumbList topicId={id} row={4} />
               </LayoutMask>
             </div>
           </div>

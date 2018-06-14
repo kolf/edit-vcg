@@ -26,7 +26,7 @@ const navs = [
     ],
   },
   {
-    key: '2',
+    key: '22',
     text: '编辑组照筛选',
     path: '/search-group',
     icon: 'filter',

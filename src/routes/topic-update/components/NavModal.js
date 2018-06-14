@@ -120,7 +120,15 @@ const ManuallForm = Form.create()(props => {
         )}
       </FormItem>
       <FormItem {...formItemLayout} label="默认展示方式">
-        {getFieldDecorator('buildGroup', { initialValue: '1' })(
+        {getFieldDecorator('showType', {
+          initialValue: '1',
+          rules: [
+            {
+              required: true,
+              message: '请选择展示方式',
+            },
+          ],
+        })(
           <RadioGroup>
             <Radio value="1">组照</Radio>
             <Radio value="0">单张</Radio>

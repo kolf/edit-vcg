@@ -49,7 +49,7 @@ class ThumbList extends React.Component {
 
   state = {
     query: {
-      topicId: '100804',
+      topicIds: this.props.topicId,
       pageNum: 1,
       pageSize: 60,
     },

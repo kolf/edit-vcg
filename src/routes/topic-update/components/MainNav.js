@@ -173,7 +173,7 @@ class MainNav extends React.Component {
             }
             key="0"
           >
-            <p className={s.empty}>请添加一级导航</p>
+            <p className={s.empty}>请添加一级导航~</p>
           </TabPane>
         </Tabs>
       </div>

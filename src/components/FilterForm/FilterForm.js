@@ -23,6 +23,13 @@ const formItemLayout = {
 
 const emptyValue = '';
 
+export function getFormValue(formItems, values) {
+  return formItems.reduce((result, { field }) => {
+    result[field] = values[field];
+    return result;
+  }, {});
+}
+
 class FilterForm extends React.Component {
   static propTypes = {
     formItems: PropTypes.array.isRequired,
@@ -34,12 +41,9 @@ class FilterForm extends React.Component {
     value: {},
   };
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      expand: false,
-    };
-  }
+  state = {
+    expand: false,
+  };
 
   handleExpendClick = () => {
     const expand = !this.state.expand;
@@ -48,7 +52,9 @@ class FilterForm extends React.Component {
     });
   };
 
-  handleRssClick = () => {};
+  handleTagClick = () => {
+    console.log(this.props.value);
+  };
 
   handleChange = (field, value) => {
     const { onClick } = this.props;
@@ -62,7 +68,7 @@ class FilterForm extends React.Component {
     return (
       <div className={s.root}>
         <div className={s.tools}>
-          <FilterTag pageId={pageId} onClick={this.handleRssClick} />
+          <FilterTag pageId={pageId} onClick={this.handleTagClick} />
           <Button
             className={s.add}
             icon={expand ? 'up' : 'down'}

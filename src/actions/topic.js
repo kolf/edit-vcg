@@ -273,9 +273,7 @@ export function fetchTopicImages(creds) {
   return dispatch => {
     dispatch(requestFetchTopicImages(creds));
     return fetch(
-      `/api/sitecms/topicGroup/findTopicGroupPageList?${queryString.stringify(
-        creds,
-      )}`,
+      `/api/edit/group/pageList?token=${localStorage.getItem('id_token')}`,
       {
         method: 'POST',
         headers: {
