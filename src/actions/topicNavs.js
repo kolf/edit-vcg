@@ -79,21 +79,21 @@ export function fetchTopicNavs(creds) {
   };
 }
 
-// 创建专题导航
-export const REQUEST_CREATE_TOPIC_NAV = 'REQUEST_CREATE_TOPIC_NAV';
-export const CREATE_TOPIC_NAV_FAILURE = 'CREATE_TOPIC_NAV_FAILURE';
-export const CREATE_TOPIC_NAV_SUCCESS = 'CREATE_TOPIC_NAV_SUCCESS';
+// 更新专题导航
+export const REQUEST_UPDATE_TOPIC_NAV = 'REQUEST_UPDATE_TOPIC_NAV';
+export const UPDATE_TOPIC_NAV_FAILURE = 'UPDATE_TOPIC_NAV_FAILURE';
+export const UPDATE_TOPIC_NAV_SUCCESS = 'UPDATE_TOPIC_NAV_SUCCESS';
 
 function requestCreateTopicNav() {
   return {
-    type: REQUEST_CREATE_TOPIC_NAV,
+    type: REQUEST_UPDATE_TOPIC_NAV,
     isFetching: true,
   };
 }
 
 function createTopicNavSuccess(nav) {
   return {
-    type: CREATE_TOPIC_NAV_SUCCESS,
+    type: UPDATE_TOPIC_NAV_SUCCESS,
     isFetching: false,
     nav,
   };
@@ -101,7 +101,7 @@ function createTopicNavSuccess(nav) {
 
 function createTopicNavError(message) {
   return {
-    type: CREATE_TOPIC_NAV_FAILURE,
+    type: UPDATE_TOPIC_NAV_FAILURE,
     isFetching: false,
     message,
   };

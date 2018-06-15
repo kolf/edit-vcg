@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { Tabs, Tag, Icon, Button, Modal } from 'antd';
 import NavModal from './NavModal';
+import NavsGroup from './NavsGroup';
 import s from './MainNav.less';
 import { fetchTopicNavs, deleteTopicNav } from 'actions/topicNavs';
 
@@ -11,58 +12,6 @@ const TabPane = Tabs.TabPane;
 const confirm = Modal.confirm;
 const levels = ['', '一', '二', '三'];
 const NAVLOCATION = '0';
-
-function hasThreeLevel(navs = []) {
-  return (
-    navs.length === 1 || navs.some(t => t.children && t.children.length > 0)
-  );
-}
-
-const Navs = ({ items = [], onClick, onClose }) =>
-  items
-    .map(item => (
-      <Tag onDoubleClick={() => onClick(item.navLevel, item)} key={item.navId}>
-        {item.navName}
-        <Icon type="cross" onClick={() => onClose(item)} />
-      </Tag>
-    ))
-    .concat([
-      <Tag style={{ color: '#f84949' }} onClick={() => onClick()}>
-        添加三级<Icon type="plus" />
-      </Tag>,
-    ]);
-
-const NavsGroup = ({ items = [], onClick, onClose }) => {
-  return items
-    .map(item => (
-      <div className={`${s.item} ant-row ant-form-item`}>
-        <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-3">
-          <Tag key={item.navId} onDoubleClick={() => onClick(2, item)}>
-            {item.navName}
-            <Icon type="cross" onClick={() => onClose(item)} />
-          </Tag>
-        </div>
-        <div className="ant-form-item-control-wrapper  ant-col-xs-24 ant-col-sm-21">
-          <div className="ant-form-item-control">
-            <Navs
-              items={item.children}
-              onClose={onClose}
-              onClick={nav => onClick(3, nav, item.navId)}
-            />
-          </div>
-        </div>
-      </div>
-    ))
-    .concat(
-      <div className={`${s.item} ant-row ant-form-item`}>
-        <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-3">
-          <Tag style={{ color: '#f84949' }} onClick={() => onClick(2)}>
-            添加二级<Icon type="plus" />
-          </Tag>
-        </div>
-      </div>,
-    );
-};
 
 class MainNav extends React.Component {
   static defaultProps = {
@@ -75,7 +24,7 @@ class MainNav extends React.Component {
 
   state = {
     navModalVisible: false,
-    level: 1,
+    level: 1, // 1 一级导航， 2， 二级导航
   };
 
   fetchTopicNavs = () => {
@@ -126,7 +75,7 @@ class MainNav extends React.Component {
   };
 
   render() {
-    let { navs, topicId } = this.props;
+    const { navs, topicId } = this.props;
     const { navModalVisible, level } = this.state;
 
     return (
@@ -173,7 +122,7 @@ class MainNav extends React.Component {
             }
             key="0"
           >
-            <p className={s.empty}>请添加一级导航~</p>
+            <div className={s.empty}>请添加一级导航~</div>
           </TabPane>
         </Tabs>
       </div>
@@ -184,7 +133,7 @@ class MainNav extends React.Component {
 function mapStateToProps(state) {
   return {
     isFetching: state.topicNavs.isFetching,
-    navs: state.topicNavs.navs[0],
+    navs: state.topicNavs.navs[NAVLOCATION],
   };
 }
 

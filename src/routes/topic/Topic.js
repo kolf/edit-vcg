@@ -38,6 +38,7 @@ class Topic extends React.Component {
   };
 
   render() {
+  const { id } = this.props;
     const {
       topicModules: { title, banner, sideNav, logo, mainNav, imgList },
     } = this.state;
@@ -56,7 +57,7 @@ class Topic extends React.Component {
             {sideNav === '1' && <SideNav />}
             <div className={s.main}>
               {mainNav === '1' && <MainNav topicId={this.props.id} />}
-              {imgList === '1' && <ThumbList row={4} />}
+              {imgList === '1' && <ThumbList topicId={id} row={4} />}
             </div>
           </div>
         </div>

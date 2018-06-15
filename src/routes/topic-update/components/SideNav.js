@@ -4,13 +4,21 @@ import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { Menu, Icon, Modal } from 'antd';
 import NavModal from './NavModal';
+import NavsGroup from './NavsGroup';
 import s from './SideNav.less';
 
-import { fetchTopicNavs } from 'actions/topicNavs';
+import { fetchTopicNavs, deleteTopicNav } from 'actions/topicNavs';
 
 const SubMenu = Menu.SubMenu;
-const nav = [];
+const confirm = Modal.confirm;
+const levels = ['', '一', '二', '三'];
 const NAVLOCATION = '1';
+
+function hasThreeLevel(navs = []) {
+  return (
+    navs.length === 1 || navs.some(t => t.children && t.children.length > 0)
+  );
+}
 
 class SideNav extends React.Component {
   static defaultProps = {
@@ -18,136 +26,109 @@ class SideNav extends React.Component {
   };
 
   componentDidMount() {
-    this.props.dispatch(
-      fetchTopicNavs({ topicId: this.props.topicId, navLocation: NAVLOCATION }),
-    );
+    this.fetchTopicNavs();
   }
   state = {
-    openKeys: ['sub1'],
     navModalVisible: false,
     level: 1, // 1 一级导航， 2， 二级导航
   };
 
-  rootSubmenuKeys = ['sub1', 'sub2', 'sub4'];
+  fetchTopicNavs = () => {
+    this.modalNavValue = null;
+    this.parentNavId = '';
 
-  onOpenChange = openKeys => {
-    const latestOpenKey = openKeys.find(
-      key => this.state.openKeys.indexOf(key) === -1,
+    this.props.dispatch(
+      fetchTopicNavs({ topicId: this.props.topicId, navLocation: NAVLOCATION }),
     );
-    if (this.rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
-      this.setState({ openKeys });
-    } else {
-      this.setState({
-        openKeys: latestOpenKey ? [latestOpenKey] : [],
-      });
-    }
   };
 
-  showNavModal = level => {
-    this.setState({ level, navModalVisible: true });
-  };
+  showNavModal = (level, nav, parentNavId = '') => {
+    console.log(level, nav, parentNavId)
 
-  onCancelNavModal = () => {
-    this.setState({ navModalVisible: false });
-  };
+    this.modalNavValue = nav;
+    this.parentNavId = parentNavId;
 
-  onOkNavModal = () => {
-    this.setState({ navModalVisible: false });
-  };
-
-  handleClick = item => {
-    const { key, domEvent } = item;
-    domEvent.stopPropagation();
-    if (key === 'add') {
-      this.showNavModal(1);
-    } else if (/addSub/.test(key)) {
-      this.showNavModal(2);
-    }
-    console.log(item, key, domEvent.target);
-  };
-
-  remove = (navType, menu) => {
-    Modal.confirm({
-      title: `删除${navType === '1' ? '一' : '二'}级导航`,
-      content: '删除菜单后，子菜单也会被删除',
-      okText: '确认删除',
-      cancelText: '我再想想',
-      onOk() {
-        console.log('OK');
-      },
+    this.setState({
+      level,
+      navModalVisible: true,
     });
   };
 
-  render() {
-    const { navs } = this.props;
-    const { navModalVisible, level } = this.state;
+  onDelete = ({ navLevel, navId }) => {
+    const onOk = () => {
+      const { dispatch } = this.props;
+      dispatch(deleteTopicNav({ navId })).then(msg => {
+        this.fetchTopicNavs();
+      });
+    };
 
-    console.log(navs);
+    confirm({
+      title: `删除${levels[navLevel]}级导航`,
+      content: '删除菜单后，子菜单也会被删除',
+      okText: '确认删除',
+      cancelText: '我再想想',
+      onOk,
+    });
+  };
+
+  navModalCancel = () => {
+    this.setState({
+      navModalVisible: false,
+    });
+  };
+
+  navModalOk = () => {
+    this.state.navModalVisible = false;
+    this.fetchTopicNavs();
+  };
+
+  render() {
+    const { navs, topicId } = this.props;
+    const { navModalVisible, level } = this.state;
 
     return (
       <div className={s.root}>
         <NavModal
           navLevel={level}
           visible={navModalVisible}
-          onCancel={this.onCancelNavModal}
-          topicId={this.props.topicId}
-          onOk={this.onOkNavModal}
+          onCancel={this.navModalCancel}
+          onOk={this.navModalOk}
           navLocation={NAVLOCATION}
+          topicId={topicId}
+          value={this.modalNavValue}
+          parentNavId={this.parentNavId}
         />
-        <Menu
-          onClick={this.handleClick}
-          mode="vertical"
-          openKeys={this.state.openKeys}
-          onOpenChange={this.onOpenChange}
-          selectable={false}
-        >
-          {navs.map(n => (
+        <Menu mode="vertical" selectable={false}>
+          {navs.map(nav => (
             <SubMenu
               className={s.subMenu}
-              key={n.navId}
+              key={nav.navId}
               title={
                 <span
-                  onDoubleClick={() => {
-                    this.showNavModal(1, n);
-                  }}
+                  onClick={() => this.showNavModal(1, nav)}
                   className={s.title}
                 >
-                  {n.navName}
-                  <Icon
-                    type="cross"
-                    onClick={() => {
-                      this.remove(1, n);
-                    }}
-                  />
+                  {nav.navName}
+                  <Icon type="cross" onClick={() => this.onDelete(nav)} />
                 </span>
               }
             >
-              {n.children &&
-                n.children.map(c => (
-                  <Menu.Item key={c.id}>
-                    <span
-                      onDoubleClick={() => {
-                        this.showNavModal(2, c);
-                      }}
-                    >
-                      {c.label}{' '}
-                      <Icon
-                        type="cross"
-                        onClick={() => {
-                          this.remove(2, c);
-                        }}
-                      />
-                    </span>
-                  </Menu.Item>
-                ))}
-              <Menu.Item key={`addSub${n.key}`} className={s.add}>
-                添加
-                <Icon type="plus" />
-              </Menu.Item>
+              <NavsGroup
+                items={nav.children}
+                onClose={this.onDelete}
+                onClick={(level, n, parentNavId) => {
+                  let parentId = parentNavId || nav.navId;
+                  this.showNavModal(level, n, parentId);
+                }}
+              />
             </SubMenu>
           ))}
-          <Menu.Item key="add" className={s.add}>
-            添加
+          <Menu.Item
+            key="add"
+            className={s.add}
+            onClick={() => this.showNavModal(1)}
+          >
+            添加一级
             <Icon type="plus" />
           </Menu.Item>
         </Menu>
@@ -156,10 +137,10 @@ class SideNav extends React.Component {
   }
 }
 
-function mapStateToProps(state, props) {
+function mapStateToProps(state) {
   return {
     isFetching: state.topicNavs.isFetching,
-    navs: state.topicNavs.navs[NAVLOCATION],
+    navs: state.topicNavs.navs[0],
   };
 }
 

@@ -323,6 +323,7 @@ class NavModal extends Component {
           beginTime: getTime(runTime[1]),
           keywords: undefined,
           runTime: undefined,
+          buildGroup: 0
         };
 
         dispatch(createTopicNav(creds)).then(msg => {
