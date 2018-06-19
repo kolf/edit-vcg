@@ -27,11 +27,17 @@
 
 .list {
   min-height: 282px;
+  margin: 0 -6px;
 }
 
 .item {
   padding: 10px;
-  margin-bottom: 16px;
+  margin: 6px;
+  border: 1px solid #e5e5e5;
+
+  &.active {
+    border-color: #b74635;
+  }
 }
 
 .picture {
@@ -39,12 +45,12 @@
   height: 170px;
   width: 100%;
   background-color: #ccc;
-  display:flex;
+  display: flex;
   // border: 1px solid #ccc;
   & > img {
     margin: auto;
     max-width: 100%;
-    max-height: 100%
+    max-height: 100%;
   }
 
   &:hover {

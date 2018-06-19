@@ -33,29 +33,33 @@
   }
 }
 
-.subMenu :global {
-  .ant-menu {
-    // border: 1px solid #ddd;
-    border-radius: 0;
-    min-width: 800px;
-    min-height: 300px;
-  }
+.subMenu {
+  z-index: 950;
+  :global {
+    .ant-menu {
+      // border: 1px solid #ddd;
+      border-radius: 0;
+      // min-width: 800px;
+      width: 800px;
+      min-height: 300px;
+    }
 
-  .ant-menu-item {
-    float: left;
-    line-height: 28px;
-    height: 28px;
-    padding-top: 0;
-    padding-bottom: 0;
-    margin: 0 !important;
+    .ant-menu-item {
+      float: left;
+      line-height: 28px;
+      height: 28px;
+      padding-top: 0;
+      padding-bottom: 0;
+      margin: 0 !important;
+    }
   }
 }
 
-.navGroup{
-  :global{
-    h3{
+.navGroup {
+  :global {
+    h3 {
       border-bottom: 1px solid #ddd;
-      padding:0 12px;
+      padding: 0 12px;
       line-height: 40px;
     }
   }

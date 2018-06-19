@@ -7,11 +7,9 @@ import FilterPager from 'components/FilterPager';
 import gs from 'components/App.less';
 import s from './ThumbList.less';
 
-import { fetchTopicImages } from 'actions/topic';
+import { fetchTopicImages, setTopic } from 'actions/topic';
 
-const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
-const TabPane = Tabs.TabPane;
 const ButtonGroup = Button.Group;
 
 const assetOptions = [
@@ -25,9 +23,19 @@ const assetOptions = [
   },
 ];
 
+const selectBtns = ['全选', '反选', '取消'];
+
 function Item({ onClick, oss176, id, title, selected }) {
+  const handleClick = e => {
+    e.stopPropagation();
+    onClick && onClick(id, selected);
+  };
+
   return (
-    <div className={s.item} onClick={() => onClick(id, selected)}>
+    <div
+      className={s.item + (selected ? ' ' + s.active : '')}
+      onClick={handleClick}
+    >
       <div className={s.picture}>
         <img src={oss176} alt="" />
       </div>
@@ -66,7 +74,26 @@ class ThumbList extends React.Component {
     });
   };
 
-  handlerClickItem = (id, selected) => {};
+  handlerClickItem = (id, active) => {
+    const { dispatch } = this.props;
+
+    const imagesList = this.props.list.map(item => {
+      if (item.id === id) {
+        return {
+          ...item,
+          selected: !active,
+        };
+      } else {
+        return item;
+      }
+    });
+
+    dispatch(
+      setTopic({
+        imagesList,
+      }),
+    );
+  };
 
   fetchTopicImages = param => {
     const { dispatch } = this.props;
@@ -76,6 +103,34 @@ class ThumbList extends React.Component {
     }
 
     dispatch(fetchTopicImages(query));
+  };
+
+  handleSelectClick = (e, key) => {
+    e.stopPropagation();
+    const { dispatch, list } = this.props;
+    let imagesList = [];
+    if (key === 0) {
+      imagesList = list.map(item => ({
+        ...item,
+        selected: true,
+      }));
+    } else if (key === 1) {
+      imagesList = list.map(item => ({
+        ...item,
+        selected: !item.selected,
+      }));
+    } else if (key === 2) {
+      imagesList = list.map(item => ({
+        ...item,
+        selected: false,
+      }));
+    }
+
+    dispatch(
+      setTopic({
+        imagesList,
+      }),
+    );
   };
 
   render() {
@@ -93,8 +148,14 @@ class ThumbList extends React.Component {
             options={assetOptions}
           />
           <ButtonGroup className={s.selects}>
-            <Button>全选</Button>
-            <Button>取消</Button>
+            {selectBtns.map((btn, index) => (
+              <Button
+                onClick={e => this.handleSelectClick(e, index)}
+                key={'btn' + index}
+              >
+                {btn}
+              </Button>
+            ))}
           </ButtonGroup>
           <span className={gs.btns}>
             <Button>批量删除</Button>
@@ -114,7 +175,7 @@ class ThumbList extends React.Component {
           spinning={this.props.isFetching}
           tip="加载中..."
         >
-          <Row>
+          <Row className={s.list}>
             {this.props.list.map((img, index) => (
               <Col key={img.id} span={spanSize}>
                 <Item {...img} onClick={this.handlerClickItem} />
@@ -144,4 +205,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(withStyles(s, gs)(ThumbList));
+export default withStyles(s, gs)(connect(mapStateToProps)(ThumbList));

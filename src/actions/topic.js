@@ -327,10 +327,11 @@ function fetchTopicSettingError(message) {
 export function fetchTopicSetting(creds) {
   return dispatch => {
     dispatch(requestFetchTopicSetting(creds));
-    return fetch(`/api/sitecms/topicPageSet/getPageSetdetailInfo/${creds.id}`, {
+    return fetch(`/api/sitecms/topicPageSet/getPageSet/${creds.id}`, {
       headers: {
         'Content-Type': 'application/json;charset=UTF-8',
       },
+      method: 'POST',
     })
       .then(res =>
         res.json().then(data => {
