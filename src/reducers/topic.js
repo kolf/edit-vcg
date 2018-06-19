@@ -14,7 +14,7 @@ import {
   SET_TOPIC,
 } from '../actions/topic';
 
-export default function topics(state = {}, action) {
+export default function topic(state = {}, action) {
   switch (action.type) {
     case REQUEST_CREATE_TOPIC:
       return {
@@ -76,7 +76,8 @@ export default function topics(state = {}, action) {
         isFetching: false,
       });
     case SET_TOPIC:
-      return Object.assign({}, state, action.payload);
+      console.log(action.topic);
+      return Object.assign({}, state, action.topic);
     default:
       return state;
   }

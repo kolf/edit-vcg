@@ -244,16 +244,6 @@ class NavModal extends Component {
   manuallFormRef = null;
   autoFormRef = null;
 
-  // componentWillReceiveProps(nextProps) {
-  //   if (
-  //     nextProps.visible === true &&
-  //     this.props.visible === false &&
-  //     nextProps.value
-  //   ) {
-  //     this.initialFormValue(nextProps.value);
-  //   }
-  // }
-
   initialFormValue = formRef => {
     const { value } = this.props;
     if (value) {
@@ -270,9 +260,7 @@ class NavModal extends Component {
         formRef.setFieldsValue({
           navName,
           sort,
-          beginTime: undefined,
-          endTime: undefined,
-          runTime: [moment(beginTime), moment(endTime)],
+          runTime: beginTime ? [moment(beginTime), moment(endTime)] : [],
           qualityRank: (qualityRank || '').split(','),
           providerId: undefined,
           graphicalStyle: (graphicalStyle || '').split(','),
@@ -319,11 +307,11 @@ class NavModal extends Component {
           providerId: getOptionsValue(providerId),
           graphicalStyle: (graphicalStyle || []).join(','),
           qualityRank: (qualityRank || []).join(','),
-          endTime: getTime(runTime[0]),
-          beginTime: getTime(runTime[1]),
+          endTime: getTime(runTime[1]),
+          beginTime: getTime(runTime[0]),
           keywords: undefined,
           runTime: undefined,
-          buildGroup: 0
+          buildGroup: 0,
         };
 
         dispatch(createTopicNav(creds)).then(msg => {
@@ -338,18 +326,21 @@ class NavModal extends Component {
     e.preventDefault();
     form.validateFields((err, values) => {
       if (!err) {
-        const { topicId, navLevel, dispatch, onOk, parentNavId } = this.props;
-        let navId = '0';
-        if (navLevel === '2') {
-          navId = parentNavId;
-        }
+        const {
+          topicId,
+          dispatch,
+          onOk,
+          parentNavId,
+          navLocation,
+        } = this.props;
 
         let creds = Object.assign(
           {},
           {
             ...values,
             topicId,
-            navId,
+            pNavId: parentNavId || '0',
+            location: navLocation,
           },
         );
 

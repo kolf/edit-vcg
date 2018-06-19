@@ -34,8 +34,8 @@ module.exports = {
   // https://expressjs.com/en/guide/behind-proxies.html
   trustProxy: {
     sitecms: '192.168.3.67:6550',
-    edit: '192.168.3.67:6005',
-    // edit: 'editservice.vcg.com',
+    // edit: '192.168.3.67:6005',
+    edit: 'editservice.vcg.com',
     topic: 'cms.vcg.com',
     passport: 'passportservice.vcg.com',
     cms: 'cms.vcg.com',

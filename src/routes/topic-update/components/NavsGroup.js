@@ -6,13 +6,13 @@ import s from './NavsGroup.less';
 const Navs = ({ items = [], onClick, onClose }) => {
   return items
     .map(item => (
-      <Tag onClick={() => onClick(item.navLevel, item)} key={item.navId}>
+      <Tag onClick={e => onClick(item, e)} key={item.navId}>
         {item.navName}
         <Icon type="cross" onClick={e => onClose(item, e)} />
       </Tag>
     ))
     .concat([
-      <Tag style={{ color: '#f84949' }} onClick={() => onClick()}>
+      <Tag style={{ color: '#f84949' }} onClick={e => onClick(null, e)}>
         添加三级<Icon type="plus" />
       </Tag>,
     ]);
@@ -50,7 +50,7 @@ const NavsGroup = ({ items = [], onClick, onClose }) => {
                 <Navs
                   items={item.children}
                   onClose={handleClose}
-                  onClick={nav => handleClick(3, nav, item.navId)}
+                  onClick={(nav, e) => handleClick(3, nav, item.navId, e)}
                 />
               </div>
             </div>

@@ -14,12 +14,6 @@ const confirm = Modal.confirm;
 const levels = ['', '一', '二', '三'];
 const NAVLOCATION = '1';
 
-function hasThreeLevel(navs = []) {
-  return (
-    navs.length === 1 || navs.some(t => t.children && t.children.length > 0)
-  );
-}
-
 class SideNav extends React.Component {
   static defaultProps = {
     navs: [],
@@ -43,7 +37,7 @@ class SideNav extends React.Component {
   };
 
   showNavModal = (level, nav, parentNavId = '') => {
-    console.log(level, nav, parentNavId)
+    console.log(level, nav, parentNavId);
 
     this.modalNavValue = nav;
     this.parentNavId = parentNavId;
@@ -113,14 +107,17 @@ class SideNav extends React.Component {
                 </span>
               }
             >
-              <NavsGroup
-                items={nav.children}
-                onClose={this.onDelete}
-                onClick={(level, n, parentNavId) => {
-                  let parentId = parentNavId || nav.navId;
-                  this.showNavModal(level, n, parentId);
-                }}
-              />
+              <div className={s.navGroup}>
+                <h3>{nav.navName}</h3>
+                <NavsGroup
+                  items={nav.children}
+                  onClose={this.onDelete}
+                  onClick={(level, n, parentNavId) => {
+                    let parentId = parentNavId || nav.navId;
+                    this.showNavModal(level, n, parentId);
+                  }}
+                />
+              </div>
             </SubMenu>
           ))}
           <Menu.Item
@@ -140,7 +137,7 @@ class SideNav extends React.Component {
 function mapStateToProps(state) {
   return {
     isFetching: state.topicNavs.isFetching,
-    navs: state.topicNavs.navs[0],
+    navs: state.topicNavs.navs[NAVLOCATION],
   };
 }
 

@@ -40,6 +40,8 @@ class MainNav extends React.Component {
     this.modalNavValue = nav;
     this.parentNavId = parentNavId;
 
+    console.log(parentNavId);
+
     this.setState({
       level,
       navModalVisible: true,

@@ -38,7 +38,9 @@ class Navbar extends React.Component {
 
   // setTopic
   render() {
-    const { moduleChange, topicId, title, bannerUrl } = this.props;
+    const { moduleChange, topicId, title, bannerUrl, bannerKey } = this.props;
+
+    console.log(bannerUrl)
 
     const uploadProps = {
       supportServerRender: true,
@@ -88,7 +90,7 @@ class Navbar extends React.Component {
             onChange={moduleChange}
           >
             <a className={s.logo}>
-              <img src={logoUrl} width="100" alt="视觉中国" />
+              <img key={bannerKey} src={logoUrl} width="100" alt="视觉中国" />
             </a>
           </LayoutMask>
           <h1 className={s.title}>
