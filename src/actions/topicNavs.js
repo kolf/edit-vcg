@@ -112,14 +112,16 @@ export function createTopicNav(creds, isAuto) {
     dispatch(requestCreateTopicNav(creds));
     return fetch(
       `/api/sitecms/topicNavList/${
-        isAuto ? 'autoAddTopicNavList' : 'addTopicNavList'
+        isAuto
+          ? `autoAddTopicNavList?${queryString.stringify(creds)}`
+          : 'addTopicNavList'
       }`,
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json;charset=UTF-8',
         },
-        body: JSON.stringify(creds),
+        body: isAuto ? 'null' : JSON.stringify(creds),
       },
     )
       .then(res =>

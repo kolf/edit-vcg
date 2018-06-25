@@ -35,6 +35,7 @@ module.exports = {
   trustProxy: {
     sitecms: '192.168.3.67:6550',
     // edit: '192.168.3.67:6005',
+    // sitecms: 'cmsservice.vcg.com',
     edit: 'editservice.vcg.com',
     topic: 'cms.vcg.com',
     passport: 'passportservice.vcg.com',
