@@ -8,6 +8,7 @@ class LayoutMask extends React.Component {
   static propTypes = {
     children: PropTypes.node.isRequired,
     target: PropTypes.string,
+    value: PropTypes.number,
   };
 
   static defaultProps = {
@@ -15,32 +16,44 @@ class LayoutMask extends React.Component {
   };
 
   state = {
-    show: true,
+    value: 1,
   };
 
   handleChange = () => {
     const { target, onChange } = this.props;
-    const value = !this.state.show;
 
-    this.setState({ show: value });
+    console.log(this.getValue());
 
-    onChange(target, value);
+    const value = this.getValue() === 1 ? 0 : 1;
+
+    if (this.props.value === undefined) {
+      this.setState({ value });
+    }
+
+    console.log(value);
+
+    onChange && onChange(target, value);
   };
+
+  getValue = () =>
+    this.props.value !== undefined ? this.props.value : this.state.value;
 
   render() {
     const { style, bordered } = this.props;
-    const { show } = this.state;
+    const checked = !!this.getValue();
+
+    console.log(checked);
 
     return (
       <div className={s.root + (bordered ? ' bordered' : '')} style={style}>
         {this.props.children}
         <Switch
-          value={show}
+          value={checked}
           className={s.btn}
           defaultChecked
           onChange={this.handleChange}
         />
-        {!show && <div className={s.mask} />}
+        {!checked && <div className={s.mask} />}
       </div>
     );
   }

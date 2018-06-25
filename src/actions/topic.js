@@ -308,17 +308,45 @@ function requestFetchTopicSetting() {
   };
 }
 
-function fetchTopicSettingSuccess(message) {
+function fetchTopicSettingSuccess(setting) {
   return {
     type: FETCH_TOPIC_SETTING_SUCCESS,
     isFetching: false,
-    message,
+    setting,
   };
 }
 
 function fetchTopicSettingError(message) {
   return {
     type: FETCH_TOPIC_SETTING_FAILURE,
+    isFetching: false,
+    message,
+  };
+}
+
+// 获取专题页面展示
+export const REQUEST_UPDATE_TOPIC_SETTING = 'REQUEST_UPDATE_TOPIC_SETTING';
+export const UPDATE_TOPIC_SETTING_FAILURE = 'UPDATE_TOPIC_SETTING_FAILURE';
+export const UPDATE_TOPIC_SETTING_SUCCESS = 'UPDATE_TOPIC_SETTING_SUCCESS';
+
+function requestUpdateTopicSetting() {
+  return {
+    type: REQUEST_UPDATE_TOPIC_SETTING,
+    isFetching: true,
+  };
+}
+
+function updateTopicSettingSuccess(message) {
+  return {
+    type: UPDATE_TOPIC_SETTING_SUCCESS,
+    isFetching: false,
+    message,
+  };
+}
+
+function updateTopicSettingError(message) {
+  return {
+    type: UPDATE_TOPIC_SETTING_FAILURE,
     isFetching: false,
     message,
   };
@@ -340,6 +368,30 @@ export function fetchTopicSetting(creds) {
             return Promise.reject(data);
           }
           dispatch(fetchTopicSettingSuccess(data.data));
+          return Promise.resolve(data.message);
+        }),
+      )
+      .catch(err => console.log('Error', err));
+  };
+}
+
+export function updateTopicSetting(creds) {
+  return dispatch => {
+    dispatch(requestUpdateTopicSetting(creds));
+    return fetch(`/api/sitecms/topicPageSet/publish`, {
+      headers: {
+        'Content-Type': 'application/json;charset=UTF-8',
+      },
+      method: 'POST',
+      body: JSON.stringify(creds),
+    })
+      .then(res =>
+        res.json().then(data => {
+          if (!res.ok || data.code !== 200) {
+            dispatch(updateTopicSettingError(data.message));
+            return Promise.reject(data);
+          }
+          dispatch(updateTopicSettingSuccess(data.data));
           return Promise.resolve(data.message);
         }),
       )

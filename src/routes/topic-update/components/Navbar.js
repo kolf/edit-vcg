@@ -38,9 +38,14 @@ class Navbar extends React.Component {
 
   // setTopic
   render() {
-    const { moduleChange, topicId, title, bannerUrl, bannerKey } = this.props;
-
-    console.log(bannerUrl)
+    const {
+      changeMask,
+      topicId,
+      title,
+      bannerUrl,
+      bannerKey,
+      settings: { isLogoShow, isTitleShow },
+    } = this.props;
 
     const uploadProps = {
       supportServerRender: true,
@@ -81,13 +86,14 @@ class Navbar extends React.Component {
       >
         <div className={s.header}>
           <LayoutMask
+            value={isLogoShow}
             style={{
               display: 'inline-block',
               paddingRight: 60,
               paddingTop: 10,
             }}
-            target="logo"
-            onChange={moduleChange}
+            target="isLogoShow"
+            onChange={changeMask}
           >
             <a className={s.logo}>
               <img key={bannerKey} src={logoUrl} width="100" alt="视觉中国" />
@@ -95,13 +101,14 @@ class Navbar extends React.Component {
           </LayoutMask>
           <h1 className={s.title}>
             <LayoutMask
+              value={isTitleShow}
               style={{
                 display: 'inline-block',
                 paddingRight: 60,
                 paddingTop: 10,
               }}
-              target="title"
-              onChange={moduleChange}
+              target="isTitleShow"
+              onChange={changeMask}
             >
               {title}
             </LayoutMask>
@@ -142,6 +149,8 @@ function mapStateToProps(state) {
   return {
     title: state.topic.title,
     bannerUrl: state.topic.bannerUrl,
+    settings: state.topic.setting,
+    updateKey: state.topic.updateKey,
   };
 }
 

@@ -8,13 +8,20 @@ import ThumbList from './components/ThumbList';
 import LayoutMask from 'components/LayoutMask';
 import Topbar from './components/Topbar';
 import Navbar from './components/Navbar';
-import storage from 'utils/localStorage';
-import { fetchTopicSetting } from 'actions/topic';
+import { fetchTopicSetting, setTopic } from 'actions/topic';
 import gs from 'components/App.less';
 import s from './TopicUpdate.less';
 
 class TopicUpdate extends React.Component {
   static propTypes = {};
+
+  static defaultProps = {
+    settings: {
+      isLeftNavShow: 1,
+      isMainNavShow: 1,
+      isMainContantShow: 1,
+    },
+  };
 
   componentDidMount() {
     this.fetchTopicSetting();
@@ -29,35 +36,41 @@ class TopicUpdate extends React.Component {
     );
   };
 
-  modulesValue = {
-    title: '1',
-    banner: '1',
-    sideNav: '1',
-    logo: '1',
-    mainNav: '1',
-    imgList: '1',
-  };
+  settingChange = (key, value) => {
+    let { settings, dispatch } = this.props;
 
-  changeModules = (key, checked) => {
-    const value = checked ? '1' : '0';
-    this.modulesValue[key] = value;
+    settings[key] = value;
 
-    storage.set('topicModules', JSON.stringify(this.modulesValue));
+    dispatch(
+      setTopic({
+        settings,
+      }),
+    );
   };
 
   render() {
-    const { id } = this.props;
+    const {
+      id,
+      settings: {
+        isLeftNavShow,
+        isMainNavShow,
+        isMainContantShow,
+        isTitleShow,
+        isLogoShow,
+      },
+    } = this.props;
 
     return (
       <div className={s.root}>
         <Topbar topicId={id} />
         <div className={s.container}>
-          <Navbar topicId={id} moduleChange={this.changeModules} />
+          <Navbar topicId={id} changeMask={this.settingChange} />
           <div className={s.body}>
             <LayoutMask
+              value={isLeftNavShow}
               bordered={true}
-              target="sideNav"
-              onChange={this.changeModules}
+              target="isLeftNavShow"
+              onChange={this.settingChange}
               style={{ marginRight: 16 }}
             >
               <SideNav topicId={id} />
@@ -65,16 +78,18 @@ class TopicUpdate extends React.Component {
             <div className={s.main}>
               <LayoutMask
                 bordered={true}
-                target="mainNav"
+                target="isMainNavShow"
+                value={isMainNavShow}
                 style={{ marginBottom: 16 }}
-                onChange={this.changeModules}
+                onChange={this.settingChange}
               >
                 <MainNav topicId={id} />
               </LayoutMask>
               <LayoutMask
                 bordered={true}
-                target="imgList"
-                onChange={this.changeModules}
+                value={isMainContantShow}
+                target="isMainContantShow"
+                onChange={this.settingChange}
               >
                 <ThumbList topicId={id} row={4} />
               </LayoutMask>
@@ -86,4 +101,11 @@ class TopicUpdate extends React.Component {
   }
 }
 
-export default withStyles(gs, s)(connect()(TopicUpdate));
+function stateToProps(state) {
+  return {
+    settings: state.topic.settings,
+    updateKey: state.topic.updateKey,
+  };
+}
+
+export default withStyles(gs, s)(connect(stateToProps)(TopicUpdate));

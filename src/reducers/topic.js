@@ -12,10 +12,47 @@ import {
   FETCH_TOPIC_FAILURE,
   FETCH_TOPIC_SUCCESS,
   SET_TOPIC,
+  REQUEST_UPDATE_TOPIC_SETTING,
+  UPDATE_TOPIC_SETTING_SUCCESS,
+  UPDATE_TOPIC_SETTING_FAILURE,
+  REQUEST_FETCH_TOPIC_SETTING,
+  FETCH_TOPIC_SETTING_FAILURE,
+  FETCH_TOPIC_SETTING_SUCCESS,
 } from '../actions/topic';
 
 export default function topic(state = {}, action) {
   switch (action.type) {
+    case REQUEST_UPDATE_TOPIC_SETTING:
+      return Object.assign({}, state, {
+        isUpdateing: true,
+        message: '',
+      });
+    case UPDATE_TOPIC_SETTING_SUCCESS:
+      return Object.assign({}, state, {
+        isUpdateing: false,
+        message: '',
+      });
+    case UPDATE_TOPIC_SETTING_FAILURE:
+      return Object.assign({}, state, {
+        isUpdateing: false,
+        message: '',
+      });
+    case REQUEST_FETCH_TOPIC_SETTING:
+      return Object.assign({}, state, {
+        isFetching: true,
+        message: '',
+      });
+    case FETCH_TOPIC_SETTING_FAILURE:
+      return Object.assign({}, state, {
+        isFetching: true,
+        message: '',
+      });
+    case FETCH_TOPIC_SETTING_SUCCESS:
+      return Object.assign({}, state, {
+        isFetching: true,
+        message: '',
+        settings: action.setting,
+      });
     case REQUEST_CREATE_TOPIC:
       return {
         isFetching: true,
@@ -76,8 +113,10 @@ export default function topic(state = {}, action) {
         isFetching: false,
       });
     case SET_TOPIC:
-      console.log(action.topic);
-      return Object.assign({}, state, action.topic);
+      return Object.assign({}, state, {
+        ...action.topic,
+        updateKey: Date.now(),
+      });
     default:
       return state;
   }

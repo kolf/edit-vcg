@@ -24,6 +24,7 @@ const assetOptions = [
 ];
 
 const selectBtns = ['全选', '反选', '取消'];
+const defaultThumb = require('../assets/logo-white.svg');
 
 function Item({ onClick, oss176, id, title, selected }) {
   const handleClick = e => {
@@ -37,7 +38,7 @@ function Item({ onClick, oss176, id, title, selected }) {
       onClick={handleClick}
     >
       <div className={s.picture}>
-        <img src={oss176} alt="" />
+        <img src={oss176 || defaultThumb} alt={title} />
       </div>
       <h5 className={s.title}>2018-02-09 22:43:32</h5>
       <p className={s.caption}>
@@ -74,7 +75,7 @@ class ThumbList extends React.Component {
     });
   };
 
-  handlerClickItem = (id, active) => {
+  handleItemClick = (id, active) => {
     const { dispatch } = this.props;
 
     const imagesList = this.props.list.map(item => {
@@ -178,7 +179,7 @@ class ThumbList extends React.Component {
           <Row className={s.list}>
             {this.props.list.map((img, index) => (
               <Col key={img.id} span={spanSize}>
-                <Item {...img} onClick={this.handlerClickItem} />
+                <Item {...img} onClick={this.handleItemClick} />
               </Col>
             ))}
           </Row>
