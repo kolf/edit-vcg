@@ -54,20 +54,20 @@ export default function topic(state = {}, action) {
         settings: action.setting,
       });
     case REQUEST_CREATE_TOPIC:
-      return {
+      return Object.assign({}, state, {
         isFetching: true,
         message: '',
-      };
+      });
     case CREATE_TOPIC_FAILURE:
-      return {
+      return Object.assign({}, state, {
         isFetching: false,
-        message: action.message,
-      };
+        message: '',
+      });
     case CREATE_TOPIC_SUCCESS:
-      return {
+      return Object.assign({}, state, {
         isFetching: false,
-        message: action.message,
-      };
+        message: '',
+      });
     case REQUEST_UPDATE_TOPIC:
       return Object.assign({}, state, {
         isFetching: true,

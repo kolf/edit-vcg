@@ -15,6 +15,7 @@ import logoUrl from '../assets/logo.svg';
 class Navbar extends React.Component {
   static defaultProps = {
     title: '加载中...',
+    settings: { isLogoShow: 1, isTitleShow: 1 },
   };
 
   componentDidMount() {

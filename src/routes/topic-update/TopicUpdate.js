@@ -51,13 +51,7 @@ class TopicUpdate extends React.Component {
   render() {
     const {
       id,
-      settings: {
-        isLeftNavShow,
-        isMainNavShow,
-        isMainContantShow,
-        isTitleShow,
-        isLogoShow,
-      },
+      settings: { isLeftNavShow, isMainNavShow, isMainContantShow },
     } = this.props;
 
     return (
