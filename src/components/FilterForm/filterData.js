@@ -49,6 +49,18 @@ const filters = [
         label: '旅游(非时效)',
         value: '223291',
       },
+      {
+        label: '图表',
+        value: '220727',
+      },
+      {
+        label: '漫画',
+        value: '220728',
+      },
+      {
+        label: '插画',
+        value: '220729',
+      },
     ],
   },
   {

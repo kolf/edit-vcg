@@ -8,6 +8,7 @@ import s from './Topbar.less';
 
 class Topbar extends PureComponent {
   openView = () => {
+    const { topicId } = this.props;
     window.open(`/topic/${topicId}`);
   };
 
@@ -30,7 +31,7 @@ class Topbar extends PureComponent {
       <div className={s.root}>
         <div className={s.container}>
           <div className={s.btns}>
-            <Button onClick={this.openView}>预览</Button>
+            <Button onClick={this.openView}>查看</Button>
             <Button loading={isUpdateing} type="primary" onClick={this.pulish}>
               发布
             </Button>

@@ -64,7 +64,7 @@ const tailFormItemLayout = {
 
 const statusOptions = getOptions('imageStatus');
 const rangeOptions = getOptions('ranges');
-const assetOptions = getOptions('assets');
+const assetOptions = getOptions('timelines');
 const defaultName = '---';
 
 function getTime(date) {
@@ -107,7 +107,7 @@ class TopicRuleModal extends React.Component {
       if (!topicRule) {
         return;
       }
-      let {
+      const {
         category,
         timeliness,
         resUploadBeginTime,
@@ -133,9 +133,9 @@ class TopicRuleModal extends React.Component {
         runTime: [moment(resUploadBeginTime), moment(resUploadEndTime)],
         providerId: (providers || []).map(item => ({
           label: item.name_cn,
-          key: item.id + '',
+          key: `${item.id}`,
         })),
-        category: /\d+/.test(category + '') ? category.match(/\d+/g) : [],
+        category: /\d+/.test(`${category}`) ? category.match(/\d+/g) : [],
         status: resStatus ? resStatus.match(/\d+/g) : [],
         range: resRange ? resRange.match(/\d+/g) : [],
       });
@@ -150,12 +150,12 @@ class TopicRuleModal extends React.Component {
         }),
       )
       .then(keywordMap => {
-        let keywords = [
+        const keywords = [
           'allContainKeywords',
           'anyContainKeywords',
           'notContainKeywords',
         ].reduce((result, key, index) => {
-          const ids = args[index].match(/\d+/g);
+          const ids = (args[index] || '').match(/\d+/g);
           result[key] = ids ? ids.map(id => keywordMap[id]) : [];
           return result;
         }, {});
@@ -168,7 +168,7 @@ class TopicRuleModal extends React.Component {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        let {
+        const {
           keywords,
           category,
           status,
@@ -178,7 +178,7 @@ class TopicRuleModal extends React.Component {
           providerId,
           range,
         } = values;
-        let {
+        const {
           allContainKeywords,
           anyContainKeywords,
           notContainKeywords,
@@ -198,7 +198,7 @@ class TopicRuleModal extends React.Component {
           isOnline: isOnline ? '1' : '0',
           beginTime: getTime(runTime[0]),
           endTime: getTime(runTime[1]),
-          topicId: this.props.id + '',
+          topicId: `${this.props.id}`,
           providerId: getOptionValues(providerId),
           range: range.toString(),
         };
@@ -257,7 +257,7 @@ class TopicRuleModal extends React.Component {
             <Col span="6">专题ID：{topic.topicId}</Col>
             <Col span="15">专题名称：{topic.title} </Col>
             <Col span="3">
-              状态：{getOptionName('runningStatus', topic.runningStatus + '')}
+              状态：{getOptionName('runningStatus', `${topic.runningStatus}`)}
             </Col>
             <Col span="10">
               任务抓取开始时间：{topic.uploadBeginTime || defaultName}

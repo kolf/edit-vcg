@@ -1,43 +1,58 @@
-.root{
+.root {
   background: #eee;
   padding: 32px 0;
   width: 200px;
   margin-bottom: 32px;
   margin-right: 16px;
-}
 
-.root :global{
-  .ant-menu-submenu-title{
-    height: 30px;
-    line-height: 30px;
-    font-size: 14px;
-    font-weight: 700
-  }
-
-  .ant-menu-light{
-    background-color: #eee;
-    &>.ant-menu-item{
+  :global {
+    .ant-menu-submenu-title {
+      height: 30px;
+      line-height: 30px;
       font-size: 14px;
-      font-weight: 700
+      font-weight: 700;
+    }
+
+    .ant-menu-light {
+      background-color: #eee;
+
+      & > .ant-menu-item {
+        font-size: 14px;
+        font-weight: 700;
+      }
     }
   }
 }
 
+.subMenu {
+  z-index: 950;
 
-.subMenu :global{
-  .ant-menu{
-    min-width: none;
-    padding: 10px;
-    // display: inline-block;
-    max-width: 600px;
+  :global {
+    .ant-menu {
+      // border: 1px solid #ddd;
+      border-radius: 0;
+      // min-width: 800px;
+      width: 800px;
+      min-height: 300px;
+    }
+
+    .ant-menu-item {
+      float: left;
+      line-height: 28px;
+      height: 28px;
+      padding-top: 0;
+      padding-bottom: 0;
+      margin: 0 !important;
+    }
   }
+}
 
-  .ant-menu-item{
-    float: left;
-    line-height: 28px;
-    height: 28px;
-    padding-top:0;
-    padding-bottom: 0;
-    margin: 0 !important;
+.navGroup {
+  :global {
+    h3 {
+      border-bottom: 1px solid #ddd;
+      padding: 0 12px;
+      line-height: 40px;
+    }
   }
 }

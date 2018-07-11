@@ -45,6 +45,17 @@ class FilterForm extends React.Component {
     expand: false,
   };
 
+  getTagValue = () => {
+    const { formItems, value } = this.props;
+    return formItems.reduce((result, formItem) => {
+      const key = formItem.field;
+      if (value[key]) {
+        result[key] = value[key];
+      }
+      return result;
+    }, {});
+  };
+
   handleExpendClick = () => {
     const expand = !this.state.expand;
     this.setState({
@@ -52,8 +63,10 @@ class FilterForm extends React.Component {
     });
   };
 
-  handleTagClick = () => {
-    console.log(this.props.value);
+  handleTagClick = value => {
+    console.log(value, 'handleTagClick');
+
+    this.handleChange(value);
   };
 
   handleChange = (field, value) => {
@@ -68,7 +81,11 @@ class FilterForm extends React.Component {
     return (
       <div className={s.root}>
         <div className={s.tools}>
-          <FilterTag pageId={pageId} onClick={this.handleTagClick} />
+          <FilterTag
+            pageId={pageId}
+            value={this.getTagValue()}
+            onClick={this.handleTagClick}
+          />
           <Button
             className={s.add}
             icon={expand ? 'up' : 'down'}

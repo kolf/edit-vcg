@@ -6,58 +6,39 @@ import MainNav from './components/MainNav';
 import SideNav from './components/SideNav';
 import ThumbList from './components/ThumbList';
 import Navbar from './components/Navbar';
-import storage from 'utils/localStorage';
-
+import { fetchTopicSetting } from 'actions/topic';
+import gs from 'components/App.less';
 import s from './Topic.less';
 
 class Topic extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      topicModules: {
-        title: '0',
-        banner: '1',
-        sideNav: '1',
-        mainNav: '1',
-        logo: '1',
-        imgList: '1',
-      },
-    };
-  }
-
   componentDidMount() {
-    this.updateTopicModules();
+    this.fetchTopicSetting();
   }
 
-  updateTopicModules = () => {
-    const topicModules = JSON.parse(storage.get('topicModules') || '{}');
-    // console.log(topicModules);
-    this.setState({
-      topicModules,
-    });
+  fetchTopicSetting = () => {
+    const { dispatch, id } = this.props;
+    dispatch(
+      fetchTopicSetting({
+        id,
+      }),
+    );
   };
 
   render() {
-  const { id } = this.props;
     const {
-      topicModules: { title, banner, sideNav, logo, mainNav, imgList },
-    } = this.state;
+      id,
+      settings: { isLeftNavShow, isMainNavShow, isMainContantShow },
+    } = this.props;
 
-    const showTitle = title === '1';
-    const showLogo = logo === '1';
     return (
       <div className={s.root}>
         <div className={s.container}>
-          <Navbar
-            topicId={this.props.id}
-            showTitle={showTitle}
-            showLogo={showLogo}
-          />
+          <Navbar topicId={id} showTitle={1} showLogo={1} />
           <div className={s.body}>
-            {sideNav === '1' && <SideNav />}
+            {isLeftNavShow === 1 && <SideNav topicId={id} />}
             <div className={s.main}>
-              {mainNav === '1' && <MainNav topicId={this.props.id} />}
-              {imgList === '1' && <ThumbList topicId={id} row={4} />}
+              {isMainNavShow === 1 && <MainNav topicId={id} />}
+              {isMainContantShow === 1 && <ThumbList topicId={id} row={4} />}
             </div>
           </div>
         </div>
@@ -66,4 +47,10 @@ class Topic extends React.Component {
   }
 }
 
-export default withStyles(s)(Topic);
+function stateToProps(state) {
+  return {
+    settings: state.topic.settings,
+  };
+}
+
+export default withStyles(gs, s)(connect(stateToProps)(Topic));

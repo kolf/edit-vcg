@@ -13,6 +13,10 @@ import AddTagModal from './AddTagModal';
 
 const { CheckableTag } = Tag;
 
+function isEmptyObj(obj) {
+  return obj ? Object.values(obj).length === 0 : true;
+}
+
 class FilterTag extends Component {
   static propTypes = {
     onClick: PropTypes.func.isRequired,
@@ -56,7 +60,8 @@ class FilterTag extends Component {
     this.setState({
       activeKey: tag.key,
     });
-    onClick && onClick(tag.value);
+    const value = JSON.parse(tag.value);
+    onClick && onClick(value);
   };
 
   handleClose = (key, e) => {
@@ -91,9 +96,9 @@ class FilterTag extends Component {
   };
 
   handleAddClick = () => {
-    const { value, title, formAfter } = this.props;
-
-    if (!value && !formAfter) {
+    const { value, title } = this.props;
+    console.log(isEmptyObj(value));
+    if (isEmptyObj(value)) {
       message.info(`请选择一个${title}`);
       return;
     }
@@ -104,7 +109,7 @@ class FilterTag extends Component {
   };
 
   render() {
-    const { style, title, tags, formAfter } = this.props;
+    const { style, title, tags } = this.props;
     const { modalVisible, activeKey } = this.state;
 
     return (
@@ -114,7 +119,6 @@ class FilterTag extends Component {
           onCancel={this.hideModal}
           onOk={this.createTag}
           tagTitle={title}
-          formAfter={formAfter}
         />
         <div className={s.list}>
           {tags.map(tag => (

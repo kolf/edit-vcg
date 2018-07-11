@@ -20,7 +20,12 @@ import {
   FETCH_TOPIC_SETTING_SUCCESS,
 } from '../actions/topic';
 
-export default function topic(state = {}, action) {
+export default function topic(
+  state = {
+    settings: {},
+  },
+  action,
+) {
   switch (action.type) {
     case REQUEST_UPDATE_TOPIC_SETTING:
       return Object.assign({}, state, {
@@ -84,19 +89,21 @@ export default function topic(state = {}, action) {
       });
     case REQUEST_FETCH_TOPIC_IMAGES:
       return Object.assign({}, state, {
-        isFetching: true,
-        message: '',
+        fetchImageing: true,
+        imagesMessage: '',
       });
+
     case FETCH_TOPIC_IMAGES_SUCCESS:
       return Object.assign({}, state, {
-        isFetching: false,
+        fetchImageing: false,
         imagesList: action.list,
         imagesTotal: action.total,
-        message: '',
+        imagesMessage: action.total === 0 ? '（≧﹏ ≦）暂无数据!' : '',
       });
     case FETCH_TOPIC_IMAGES_FAILURE:
       return Object.assign({}, state, {
-        isFetching: false,
+        fetchImageing: false,
+        imagesMessage: action.message,
       });
     case REQUEST_FETCH_TOPIC:
       return Object.assign({}, state, {

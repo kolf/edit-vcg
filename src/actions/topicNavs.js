@@ -1,53 +1,39 @@
 const queryString = require('query-string');
 
-function toTree(data, parentId) {
-  let result = [];
-  let temp;
-
-  for (let item of data) {
-    if (item.parentNavId === parentId) {
-      temp = toTree(data, item.navId);
-      if (temp.length > 0) {
-        item.children = temp;
-      }
-      result.push(item);
-    }
-  }
-
-  return result;
-}
 // 查询专题导航
 export const REQUEST_FETCH_TOPIC_NAVS = 'REQUEST_FETCH_TOPIC_NAVS';
 export const FETCH_TOPIC_NAVS_FAILURE = 'FETCH_TOPIC_NAVS_FAILURE';
 export const FETCH_TOPIC_NAVS_SUCCESS = 'FETCH_TOPIC_NAVS_SUCCESS';
 
-function requestFetchTopicNavs(navs) {
+function requestFetchTopicNavs(navLocation) {
   return {
     type: REQUEST_FETCH_TOPIC_NAVS,
     isFetching: true,
-    navs,
+    navLocation,
   };
 }
 
-function fetchTopicNavsSuccess(navs) {
+function fetchTopicNavsSuccess(navLocation, navs) {
   return {
     type: FETCH_TOPIC_NAVS_SUCCESS,
     isFetching: false,
+    navLocation,
     navs,
   };
 }
 
-function fetchTopicNavsError(message) {
+function fetchTopicNavsError(navLocation, message) {
   return {
     type: FETCH_TOPIC_NAVS_FAILURE,
     isFetching: false,
+    navLocation,
     message,
   };
 }
 
 export function fetchTopicNavs(creds) {
   return dispatch => {
-    dispatch(requestFetchTopicNavs(creds));
+    dispatch(requestFetchTopicNavs(creds.navLocation));
     return fetch(
       `/api/sitecms/topicNavList/getEidtOrPreviewNavList?${queryString.stringify(
         creds,
@@ -59,23 +45,18 @@ export function fetchTopicNavs(creds) {
         },
         body: JSON.stringify(creds),
       },
-    )
-      .then(res =>
-        res.json().then(data => {
-          console.log(data);
-          if (!res.ok || data.code !== 200) {
-            dispatch(fetchTopicNavsError(data.message || '查询失败'));
-            return Promise.reject(data.message);
-          }
+    ).then(res =>
+      res.json().then(data => {
+        if (!res.ok || data.code !== 200) {
           dispatch(
-            fetchTopicNavsSuccess({
-              [creds.navLocation]: data.data ? toTree(data.data, '1') : [],
-            }),
+            fetchTopicNavsError(creds.navLocation, data.message || '查询失败'),
           );
-          return Promise.resolve(data.message);
-        }),
-      )
-      .catch(err => console.log('Error', err));
+          return Promise.reject(data.message);
+        }
+        dispatch(fetchTopicNavsSuccess(creds.navLocation, data.data || []));
+        return Promise.resolve(data.message);
+      }),
+    );
   };
 }
 
@@ -123,18 +104,16 @@ export function createTopicNav(creds, isAuto) {
         },
         body: isAuto ? 'null' : JSON.stringify(creds),
       },
-    )
-      .then(res =>
-        res.json().then(data => {
-          if (!res.ok) {
-            dispatch(createTopicNavError(data.message));
-            return Promise.reject(data);
-          }
-          dispatch(createTopicNavSuccess(data.message));
-          return Promise.resolve(data.message || '添加成功');
-        }),
-      )
-      .catch(err => console.log('Error', err));
+    ).then(res =>
+      res.json().then(data => {
+        if (!res.ok) {
+          dispatch(createTopicNavError(data.message));
+          return Promise.reject(data);
+        }
+        dispatch(createTopicNavSuccess(data.message));
+        return Promise.resolve(data.message || '添加成功');
+      }),
+    );
   };
 }
 // 删除专题导航
@@ -173,17 +152,24 @@ export function deleteTopicNav(creds) {
       headers: {
         'Content-Type': 'application/json;charset=UTF-8',
       },
-    })
-      .then(res =>
-        res.json().then(data => {
-          if (!res.ok || data.code !== 200) {
-            dispatch(deleteTopicNavError(data.message));
-            return Promise.reject(data);
-          }
-          dispatch(deleteTopicNavSuccess(data.message));
-          return Promise.resolve(data.message || '删除成功');
-        }),
-      )
-      .catch(err => console.log('Error', err));
+    }).then(res =>
+      res.json().then(data => {
+        if (!res.ok || data.code !== 200) {
+          dispatch(deleteTopicNavError(data.message));
+          return Promise.reject(data);
+        }
+        dispatch(deleteTopicNavSuccess(data.message));
+        return Promise.resolve(data.message || '删除成功');
+      }),
+    );
+  };
+}
+
+export const ACTIVE_TOPIC_NAV = 'ACTIVE_TOPIC_NAV';
+// 修改专题导航
+export function activeTopicNav(navId) {
+  return {
+    type: ACTIVE_TOPIC_NAV,
+    navId,
   };
 }

@@ -2,26 +2,15 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { Row, Col, Radio, Tabs, Pagination, Button, Icon, Spin } from 'antd';
+import { Row, Col, Button, Spin } from 'antd';
 import FilterPager from 'components/FilterPager';
+import FetchPlaceholder from 'components/FetchPlaceholder';
 import gs from 'components/App.less';
 import s from './ThumbList.less';
 
 import { fetchTopicImages, setTopic } from 'actions/topic';
 
-const RadioGroup = Radio.Group;
 const ButtonGroup = Button.Group;
-
-const assetOptions = [
-  {
-    value: 1,
-    label: '已编译',
-  },
-  {
-    value: 2,
-    label: '全部',
-  },
-];
 
 const selectBtns = ['全选', '反选', '取消'];
 const defaultThumb = require('../assets/logo-white.svg');
@@ -34,7 +23,7 @@ function Item({ onClick, oss176, id, title, selected }) {
 
   return (
     <div
-      className={s.item + (selected ? ' ' + s.active : '')}
+      className={s.item + (selected ? ` ${s.active}` : '')}
       onClick={handleClick}
     >
       <div className={s.picture}>
@@ -54,11 +43,12 @@ class ThumbList extends React.Component {
   static defaultProps = {
     list: [],
     total: 0,
+    message: '加载中...',
   };
 
   state = {
     query: {
-      topicIds: this.props.topicId,
+      topicId: this.props.topicId,
       pageNum: 1,
       pageSize: 60,
     },
@@ -84,9 +74,8 @@ class ThumbList extends React.Component {
           ...item,
           selected: !active,
         };
-      } else {
-        return item;
       }
+      return item;
     });
 
     dispatch(
@@ -135,24 +124,17 @@ class ThumbList extends React.Component {
   };
 
   render() {
-    const { row } = this.props;
+    const { errorMessage } = this.props;
     const { query } = this.state;
-
-    const spanSize = row;
 
     return (
       <div className={s.root}>
         <div className={s.bar}>
-          <RadioGroup
-            defaultValue={1}
-            onChange={this.handleChangeAsset}
-            options={assetOptions}
-          />
           <ButtonGroup className={s.selects}>
             {selectBtns.map((btn, index) => (
               <Button
                 onClick={e => this.handleSelectClick(e, index)}
-                key={'btn' + index}
+                key={`btn${index}`}
               >
                 {btn}
               </Button>
@@ -160,7 +142,6 @@ class ThumbList extends React.Component {
           </ButtonGroup>
           <span className={gs.btns}>
             <Button>批量删除</Button>
-            <Button>批量上线</Button>
           </span>
           <FilterPager
             isRight
@@ -176,13 +157,17 @@ class ThumbList extends React.Component {
           spinning={this.props.isFetching}
           tip="加载中..."
         >
-          <Row className={s.list}>
-            {this.props.list.map((img, index) => (
-              <Col key={img.id} span={spanSize}>
-                <Item {...img} onClick={this.handleItemClick} />
-              </Col>
-            ))}
-          </Row>
+          {errorMessage ? (
+            <FetchPlaceholder text={errorMessage} />
+          ) : (
+            <Row className={s.list}>
+              {this.props.list.map(img => (
+                <Col key={img.id} span={4}>
+                  <Item {...img} onClick={this.handleItemClick} />
+                </Col>
+              ))}
+            </Row>
+          )}
         </Spin>
         <div className="ant-row">
           <FilterPager
@@ -200,9 +185,10 @@ class ThumbList extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    isFetching: state.topic.isFetching,
+    isFetching: state.topic.fetchImageing,
     list: state.topic.imagesList,
     total: state.topic.imagesTotal,
+    errorMessage: state.topic.imagesMessage,
   };
 }
 

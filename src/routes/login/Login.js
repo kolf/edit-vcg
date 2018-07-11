@@ -1,19 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Redirect } from 'react-router';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import {
-  Form,
-  Input,
-  Tabs,
-  Button,
-  Icon,
-  Checkbox,
-  Row,
-  Col,
-  Alert,
-} from 'antd';
+import { Form, Input, Button, Icon, Checkbox } from 'antd';
 import { loginUser } from 'actions/user';
 import history from '../../history';
 
@@ -57,7 +46,7 @@ class Login extends React.Component {
         console.log('Received values of form: ', values);
       }
 
-      let { userName, password } = values;
+      const { userName, password } = values;
 
       this.props.dispatch(
         loginUser({
@@ -69,14 +58,14 @@ class Login extends React.Component {
   };
 
   render() {
-    const { form, location, isAuthenticated, route } = this.props;
+    const { form, location, isAuthenticated } = this.props;
     const { getFieldDecorator } = form;
 
     const { from } = location.state || {
       from: { pathname: '/' },
     };
 
-    if (this.props.isAuthenticated) {
+    if (isAuthenticated) {
       history.push(from);
     }
 

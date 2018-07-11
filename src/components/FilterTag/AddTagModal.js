@@ -28,20 +28,20 @@ class AddTagModal extends React.PureComponent {
   };
 
   render() {
-    const { visible, onCancel, form, tagTitle, formAfter } = this.props;
+    const { visible, onCancel, form, tagTitle } = this.props;
     const { getFieldDecorator } = form;
     return (
       <Modal
-        width={800}
+        width={540}
         visible={visible}
-        title={'添加' + tagTitle}
+        title={`添加${tagTitle}`}
         okText="确认"
         cancelText="取消"
         onCancel={onCancel}
         onOk={this.handleSubmit}
       >
         <Form>
-          <FormItem {...formItemLayout} label={tagTitle + '名称'}>
+          <FormItem {...formItemLayout} label={`${tagTitle}名称`}>
             {getFieldDecorator('name', {
               rules: [
                 {
@@ -51,7 +51,6 @@ class AddTagModal extends React.PureComponent {
               ],
             })(<Input placeholder="请输入名称" />)}
           </FormItem>
-          {formAfter || formAfter}
         </Form>
       </Modal>
     );

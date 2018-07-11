@@ -36,8 +36,8 @@ class TopicUpdate extends React.Component {
     );
   };
 
-  settingChange = (key, value) => {
-    let { settings, dispatch } = this.props;
+  changeSetting = (key, value) => {
+    const { settings, dispatch } = this.props;
 
     settings[key] = value;
 
@@ -58,34 +58,34 @@ class TopicUpdate extends React.Component {
       <div className={s.root}>
         <Topbar topicId={id} />
         <div className={s.container}>
-          <Navbar topicId={id} changeMask={this.settingChange} />
+          <Navbar topicId={id} layoutMaskChange={this.changeSetting} />
           <div className={s.body}>
             <LayoutMask
               value={isLeftNavShow}
-              bordered={true}
+              bordered
               target="isLeftNavShow"
-              onChange={this.settingChange}
+              onChange={this.changeSetting}
               style={{ marginRight: 16 }}
             >
               <SideNav topicId={id} />
             </LayoutMask>
             <div className={s.main}>
               <LayoutMask
-                bordered={true}
+                bordered
                 target="isMainNavShow"
                 value={isMainNavShow}
                 style={{ marginBottom: 16 }}
-                onChange={this.settingChange}
+                onChange={this.changeSetting}
               >
                 <MainNav topicId={id} />
               </LayoutMask>
               <LayoutMask
-                bordered={true}
+                bordered
                 value={isMainContantShow}
                 target="isMainContantShow"
-                onChange={this.settingChange}
+                onChange={this.changeSetting}
               >
-                <ThumbList topicId={id} row={4} />
+                <ThumbList topicId={id} />
               </LayoutMask>
             </div>
           </div>

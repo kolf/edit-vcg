@@ -44,14 +44,26 @@ const optionsMap = {
       label: '旅游(非时效)',
       value: '223291',
     },
+    {
+      label: '图表',
+      value: '220727',
+    },
+    {
+      label: '漫画',
+      value: '220728',
+    },
+    {
+      label: '插画',
+      value: '220729',
+    },
   ],
   timelines: [
     {
-      value: '1',
+      value: '0',
       label: '时效',
     },
     {
-      value: '2',
+      value: '1',
       label: '资料',
     },
   ],
@@ -95,16 +107,6 @@ const optionsMap = {
     {
       value: '3',
       label: '图片说明',
-    },
-  ],
-  assets: [
-    {
-      value: '1',
-      label: '时效',
-    },
-    {
-      value: '2',
-      label: '资料',
     },
   ],
   imageStatus: [
@@ -176,9 +178,8 @@ function getOptionName(options, value) {
 
   if (names.length > 0) {
     return names.join(',');
-  } else {
-    return '---';
   }
+  return '---';
 }
 
 export { getOptions, getOptionName };

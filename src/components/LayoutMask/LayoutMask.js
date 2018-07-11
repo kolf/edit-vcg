@@ -22,15 +22,11 @@ class LayoutMask extends React.Component {
   handleChange = () => {
     const { target, onChange } = this.props;
 
-    console.log(this.getValue());
-
     const value = this.getValue() === 1 ? 0 : 1;
 
     if (this.props.value === undefined) {
       this.setState({ value });
     }
-
-    console.log(value);
 
     onChange && onChange(target, value);
   };
@@ -42,15 +38,12 @@ class LayoutMask extends React.Component {
     const { style, bordered } = this.props;
     const checked = !!this.getValue();
 
-    console.log(checked);
-
     return (
       <div className={s.root + (bordered ? ' bordered' : '')} style={style}>
         {this.props.children}
         <Switch
-          value={checked}
+          checked={checked}
           className={s.btn}
-          defaultChecked
           onChange={this.handleChange}
         />
         {!checked && <div className={s.mask} />}

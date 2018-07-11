@@ -40,66 +40,6 @@ function requestLogout() {
   };
 }
 
-function getTGT(creds) {
-  const config = {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-    credentials: 'include',
-    body: JSON.stringify(creds),
-  };
-
-  return dispatch => {
-    return fetch('/api/passport/vcglogin/access', config)
-      .then(res =>
-        res.json().then(data => {
-          if (data.status !== '200') {
-            return Promise.reject(data);
-          }
-          return Promise.resolve(data);
-        }),
-      )
-      .catch(err => console.error('Error: ', err));
-  };
-}
-
-function TGTLogin(creds) {
-  const config = {
-    headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-    credentials: 'include',
-  };
-
-  return dispatch => {
-    return fetch(`/api/edit/user/viewByToken?token=${creds.token}`, config)
-      .then(res => {
-        return res.json().then(data => {
-          if (data.code !== 200) {
-            dispatch(loginError(data.message));
-            return Promise.reject(data);
-          }
-
-          const user = {
-            userName: data.data.name,
-            userId: data.data.ucId,
-            id_token: creds.token,
-          };
-          localStorage.setItem('id_token', user.id_token);
-          localStorage.setItem('user', JSON.stringify(user));
-          dispatch(receiveLogin(user));
-          return Promise.resolve(user);
-        });
-      })
-      .catch(err => console.error('Error: ', err));
-  };
-}
-
-export function receiveLogout() {
-  return {
-    type: LOGOUT_SUCCESS,
-    isFetching: false,
-    isAuthenticated: false,
-  };
-}
-
 // Logs the user out
 export function logoutUser() {
   return dispatch => {
@@ -112,22 +52,80 @@ export function logoutUser() {
   };
 }
 
+function getTGT(creds) {
+  const config = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+    credentials: 'include',
+    body: JSON.stringify(creds),
+  };
+
+  return () =>
+    fetch('/api/passport/vcglogin/access', config)
+      .then(res =>
+        res.json().then(data => {
+          if (data.status !== '200') {
+            return Promise.reject(data);
+          }
+          return Promise.resolve(data);
+        }),
+      )
+      .catch(err => console.error('Error: ', err));
+}
+
+function TGTLogin(creds) {
+  const config = {
+    headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+    credentials: 'include',
+  };
+
+  return dispatch =>
+    fetch(`/api/edit/user/viewByToken?token=${creds.token}`, config)
+      .then(res =>
+        res.json().then(data => {
+          if (data.code !== 200) {
+            dispatch(loginError(data.message));
+            dispatch(logoutUser());
+            return Promise.reject(data);
+          }
+
+          const user = {
+            userName: data.data.name,
+            userId: data.data.ucId,
+            id_token: creds.token,
+          };
+          localStorage.setItem('id_token', user.id_token);
+          localStorage.setItem('user', JSON.stringify(user));
+          dispatch(receiveLogin(user));
+          return Promise.resolve(user);
+        }),
+      )
+      .catch(err => console.error('Error: ', err));
+}
+
+export function receiveLogout() {
+  return {
+    type: LOGOUT_SUCCESS,
+    isFetching: false,
+    isAuthenticated: false,
+  };
+}
+
 export function loginUser(creds) {
   return dispatch => {
     if (creds.token) {
       dispatch(requestLogin(creds));
       return dispatch(TGTLogin(creds));
-    } else {
-      dispatch(requestLogin(creds));
-      return dispatch(getTGT(creds))
-        .then(data => {
-          dispatch(
-            TGTLogin({
-              token: data.TGT,
-            }),
-          );
-        })
-        .catch(err => dispatch(loginError(err)));
     }
+    dispatch(requestLogin(creds));
+    return dispatch(getTGT(creds))
+      .then(data => {
+        dispatch(
+          TGTLogin({
+            token: data.TGT,
+          }),
+        );
+      })
+      .catch(err => dispatch(loginError(err)));
   };
 }

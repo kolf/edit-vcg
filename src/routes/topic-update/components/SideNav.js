@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { Menu, Icon, Modal } from 'antd';
+import { Menu, Icon, Modal, Spin } from 'antd';
 import NavModal from './NavModal';
 import NavsGroup from './NavsGroup';
 import s from './SideNav.less';
@@ -17,6 +17,7 @@ const NAVLOCATION = '1';
 class SideNav extends React.Component {
   static defaultProps = {
     navs: [],
+    isFetching: true,
   };
 
   componentDidMount() {
@@ -77,7 +78,7 @@ class SideNav extends React.Component {
   };
 
   render() {
-    const { navs, topicId } = this.props;
+    const { navs, topicId, isFetching } = this.props;
     const { navModalVisible, level } = this.state;
 
     return (
@@ -92,43 +93,44 @@ class SideNav extends React.Component {
           value={this.modalNavValue}
           parentNavId={this.parentNavId}
         />
-        <Menu mode="vertical" selectable={false}>
-          {navs.map(nav => (
-            <SubMenu
-              className={s.subMenu}
-              key={nav.navId}
-              title={
-                <span
-                  onClick={() => this.showNavModal(1, nav)}
-                  className={s.title}
-                >
-                  {nav.navName}
-                  <Icon type="cross" onClick={() => this.onDelete(nav)} />
-                </span>
-              }
+        <Spin spinning={isFetching}>
+          <Menu mode="vertical" selectable={false}>
+            {navs.map(nav => (
+              <SubMenu
+                className={s.subMenu}
+                key={nav.navId}
+                title={
+                  <span
+                    onClick={() => this.showNavModal(1, nav)}
+                    className={s.title}
+                  >
+                    {nav.navName}
+                    <Icon type="cross" onClick={() => this.onDelete(nav)} />
+                  </span>
+                }
+              >
+                <div className={s.navGroup}>
+                  <h3>{nav.navName}</h3>
+                  <NavsGroup
+                    items={nav.children}
+                    onClose={this.onDelete}
+                    onClick={(level, n, parentNavId) => {
+                      const parentId = parentNavId || nav.navId;
+                      this.showNavModal(level, n, parentId);
+                    }}
+                  />
+                </div>
+              </SubMenu>
+            ))}
+            <Menu.Item
+              key="add"
+              className={s.add}
+              onClick={() => this.showNavModal(1)}
             >
-              <div className={s.navGroup}>
-                <h3>{nav.navName}</h3>
-                <NavsGroup
-                  items={nav.children}
-                  onClose={this.onDelete}
-                  onClick={(level, n, parentNavId) => {
-                    let parentId = parentNavId || nav.navId;
-                    this.showNavModal(level, n, parentId);
-                  }}
-                />
-              </div>
-            </SubMenu>
-          ))}
-          <Menu.Item
-            key="add"
-            className={s.add}
-            onClick={() => this.showNavModal(1)}
-          >
-            添加一级
-            <Icon type="plus" />
-          </Menu.Item>
-        </Menu>
+              <Icon type="plus-circle" />添加一级
+            </Menu.Item>
+          </Menu>
+        </Spin>
       </div>
     );
   }
@@ -136,8 +138,8 @@ class SideNav extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    isFetching: state.topicNavs.isFetching,
-    navs: state.topicNavs.navs[NAVLOCATION],
+    isFetching: state.topicNavs[NAVLOCATION].isFetching,
+    navs: state.topicNavs[NAVLOCATION].tree,
   };
 }
 

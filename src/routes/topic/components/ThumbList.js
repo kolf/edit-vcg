@@ -25,7 +25,7 @@ const assetOptions = [
   },
 ];
 
-function Item({oss176, id, title, selected }) {
+function Item({ oss176, id, title, selected }) {
   return (
     <div className={s.item}>
       <div className={s.picture}>
@@ -77,10 +77,7 @@ class ThumbList extends React.Component {
   };
 
   render() {
-    const { row } = this.props;
     const { query } = this.state;
-
-    const spanSize = row;
 
     return (
       <div className={s.root}>
@@ -105,8 +102,8 @@ class ThumbList extends React.Component {
           tip="加载中..."
         >
           <Row>
-            {this.props.list.map((img, index) => (
-              <Col key={img.id} span={spanSize}>
+            {this.props.list.map(img => (
+              <Col key={img.id} span={4}>
                 <Item {...img} />
               </Col>
             ))}
@@ -128,9 +125,10 @@ class ThumbList extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    isFetching: state.topic.isFetching,
+    isFetching: state.topic.fetchImageing,
     list: state.topic.imagesList,
     total: state.topic.imagesTotal,
+    errorMessage: state.topic.imagesMessage,
   };
 }
 

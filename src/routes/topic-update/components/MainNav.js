@@ -2,11 +2,16 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { Tabs, Tag, Icon, Button, Modal } from 'antd';
+import { Tabs, Icon, Modal, Spin, message } from 'antd';
 import NavModal from './NavModal';
 import NavsGroup from './NavsGroup';
 import s from './MainNav.less';
-import { fetchTopicNavs, deleteTopicNav } from 'actions/topicNavs';
+import { fetchTopicImages } from 'actions/topic';
+import {
+  fetchTopicNavs,
+  deleteTopicNav,
+  activeTopicNav,
+} from 'actions/topicNavs';
 
 const TabPane = Tabs.TabPane;
 const confirm = Modal.confirm;
@@ -16,6 +21,7 @@ const NAVLOCATION = '0';
 class MainNav extends React.Component {
   static defaultProps = {
     navs: [],
+    isFetching: true,
   };
 
   componentDidMount() {
@@ -23,6 +29,7 @@ class MainNav extends React.Component {
   }
 
   state = {
+    tabActiveKey: '0',
     navModalVisible: false,
     level: 1, // 1 一级导航， 2， 二级导航
   };
@@ -39,8 +46,6 @@ class MainNav extends React.Component {
   showNavModal = (level, nav, parentNavId = '') => {
     this.modalNavValue = nav;
     this.parentNavId = parentNavId;
-
-    console.log(parentNavId);
 
     this.setState({
       level,
@@ -76,9 +81,34 @@ class MainNav extends React.Component {
     this.fetchTopicNavs();
   };
 
+  onTabClick = key => {
+    this.setState({
+      tabActiveKey: key,
+    });
+
+    if (key === '0') {
+      this.showNavModal(1);
+    }
+
+    this.handleClick(key);
+  };
+
+  handleClick = id => {
+    const { dispatch, topicId } = this.props;
+    dispatch(activeTopicNav(id));
+    dispatch(
+      fetchTopicImages({
+        navId: id,
+        topicId,
+        pageNum: 1,
+        pageSize: 60,
+      }),
+    );
+  };
+
   render() {
-    const { navs, topicId } = this.props;
-    const { navModalVisible, level } = this.state;
+    const { navs, topicId, isFetching, activeId } = this.props;
+    const { navModalVisible, level, tabActiveKey } = this.state;
 
     return (
       <div className={s.root}>
@@ -92,41 +122,60 @@ class MainNav extends React.Component {
           value={this.modalNavValue}
           parentNavId={this.parentNavId}
         />
-        <Tabs animated={false}>
-          {navs.map(nav => (
+        <Spin spinning={isFetching}>
+          <Tabs
+            activeKey={tabActiveKey}
+            animated={false}
+            onTabClick={this.onTabClick}
+          >
+            {navs.map(nav => (
+              <TabPane
+                tab={
+                  <span
+                    onDoubleClick={e => {
+                      e.stopPropagation();
+                      if (nav.isAuto === '1') {
+                        message.info('自动导航不可修改！');
+                        return false;
+                      }
+                      this.showNavModal(1, nav);
+                    }}
+                  >
+                    {nav.navName}
+                    <Icon type="cross" onClick={() => this.onDelete(nav)} />
+                  </span>
+                }
+                key={nav.navId}
+              >
+                <NavsGroup
+                  activeKey={activeId}
+                  hideAdd={nav.isAuto === '1'}
+                  items={nav.children}
+                  onClose={this.onDelete}
+                  onClick={this.handleClick}
+                  onDoubleClick={(level, n, parentNavId) => {
+                    if (n && n.isAuto === '1') {
+                      message.info('自动导航不可修改！');
+                      return false;
+                    }
+                    const parentId = parentNavId || nav.navId;
+                    this.showNavModal(level, n, parentId);
+                  }}
+                />
+              </TabPane>
+            ))}
             <TabPane
               tab={
-                <span onDoubleClick={() => this.showNavModal(1, nav)}>
-                  {nav.navName}
-                  <Icon type="cross" onClick={() => this.onDelete(nav)} />
+                <span style={{ color: '#f84949' }}>
+                  <Icon type="plus-circle" />添加一级
                 </span>
               }
-              key={nav.navId}
+              key="0"
             >
-              <NavsGroup
-                items={nav.children}
-                onClose={this.onDelete}
-                onClick={(level, n, parentNavId) => {
-                  let parentId = parentNavId || nav.navId;
-                  this.showNavModal(level, n, parentId);
-                }}
-              />
+              <div className={s.empty}>请添加一级导航~</div>
             </TabPane>
-          ))}
-          <TabPane
-            tab={
-              <span
-                style={{ color: '#f84949' }}
-                onClick={() => this.showNavModal(1)}
-              >
-                添加一级<Icon type="plus" />
-              </span>
-            }
-            key="0"
-          >
-            <div className={s.empty}>请添加一级导航~</div>
-          </TabPane>
-        </Tabs>
+          </Tabs>
+        </Spin>
       </div>
     );
   }
@@ -134,8 +183,9 @@ class MainNav extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    isFetching: state.topicNavs.isFetching,
-    navs: state.topicNavs.navs[NAVLOCATION],
+    isFetching: state.topicNavs[NAVLOCATION].isFetching,
+    navs: state.topicNavs[NAVLOCATION].tree,
+    activeId: state.topicNavs.activeId,
   };
 }
 

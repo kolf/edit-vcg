@@ -15,7 +15,8 @@ import logoUrl from '../assets/logo.svg';
 class Navbar extends React.Component {
   static defaultProps = {
     title: '加载中...',
-    settings: { isLogoShow: 1, isTitleShow: 1 },
+    isLogoShow: 0,
+    isTitleShow: 0,
   };
 
   componentDidMount() {
@@ -40,13 +41,16 @@ class Navbar extends React.Component {
   // setTopic
   render() {
     const {
-      changeMask,
+      layoutMaskChange,
       topicId,
       title,
       bannerUrl,
       bannerKey,
-      settings: { isLogoShow, isTitleShow },
+      isLogoShow,
+      isTitleShow,
     } = this.props;
+
+    console.log(isLogoShow, isTitleShow);
 
     const uploadProps = {
       supportServerRender: true,
@@ -69,7 +73,7 @@ class Navbar extends React.Component {
           const res = info.file.response;
           if (res && res.code === 200 && res.data) {
             message.success('banner上传成功');
-            let bannerUrl = `${res.data}?now=${Date.now()}`;
+            const bannerUrl = `${res.data}?now=${Date.now()}`;
             this.changeBanner(bannerUrl);
           } else {
             message.error(res.message);
@@ -83,7 +87,7 @@ class Navbar extends React.Component {
     return (
       <div
         className={s.root}
-        style={bannerUrl ? { backgroundImage: 'url(' + bannerUrl + ')' } : null}
+        style={bannerUrl ? { backgroundImage: `url(${bannerUrl})` } : null}
       >
         <div className={s.header}>
           <LayoutMask
@@ -94,7 +98,7 @@ class Navbar extends React.Component {
               paddingTop: 10,
             }}
             target="isLogoShow"
-            onChange={changeMask}
+            onChange={layoutMaskChange}
           >
             <a className={s.logo}>
               <img key={bannerKey} src={logoUrl} width="100" alt="视觉中国" />
@@ -109,7 +113,7 @@ class Navbar extends React.Component {
                 paddingTop: 10,
               }}
               target="isTitleShow"
-              onChange={changeMask}
+              onChange={layoutMaskChange}
             >
               {title}
             </LayoutMask>
@@ -146,13 +150,14 @@ class Navbar extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
+function stateToProps(state) {
   return {
     title: state.topic.title,
     bannerUrl: state.topic.bannerUrl,
-    settings: state.topic.setting,
+    isTitleShow: state.topic.settings.isTitleShow,
+    isLogoShow: state.topic.settings.isLogoShow,
     updateKey: state.topic.updateKey,
   };
 }
 
-export default withStyles(s)(connect(mapStateToProps)(Navbar));
+export default withStyles(s)(connect(stateToProps)(Navbar));

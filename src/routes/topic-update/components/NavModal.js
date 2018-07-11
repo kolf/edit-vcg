@@ -5,14 +5,11 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import {
   Form,
   DatePicker,
-  TimePicker,
   Button,
   Modal,
   Input,
-  Select,
   Divider,
   Radio,
-  Icon,
   Tabs,
   Checkbox,
   message,
@@ -21,16 +18,16 @@ import {
 import KeywordGroup from 'components/KeywordGroup';
 import SearchSelect from 'components/SearchSelect';
 import { getOptions } from 'data/optionsMaps';
+
 import moment from 'moment';
 
 import { createTopicNav } from 'actions/topicNavs';
+import { fetchKeywordDict } from 'actions/keywordDict';
 import s from './NavModal.less';
 
 const FormItem = Form.Item;
-const MonthPicker = DatePicker.MonthPicker;
 const RangePicker = DatePicker.RangePicker;
 const RadioGroup = Radio.Group;
-const RadioButton = Radio.Button;
 const TabPane = Tabs.TabPane;
 const CheckboxGroup = Checkbox.Group;
 
@@ -241,11 +238,9 @@ class NavModal extends Component {
     isFetching: false,
   };
 
-  manuallFormRef = null;
-  autoFormRef = null;
-
   initialFormValue = formRef => {
     const { value } = this.props;
+
     if (value) {
       const {
         endTime,
@@ -254,9 +249,41 @@ class NavModal extends Component {
         graphicalStyle,
         navName,
         sort,
+        allContainKeywords,
+        anyContainKeywords,
+        notContainKeywords,
       } = value;
 
-      formRef &&
+      console.log(
+        allContainKeywords,
+        anyContainKeywords,
+        notContainKeywords,
+        '-------',
+      );
+
+      if (formRef) {
+        const initKeywordValue = (...args) => {
+          this.props
+            .dispatch(
+              fetchKeywordDict({
+                data: args.toString(),
+              }),
+            )
+            .then(keywordMap => {
+              const keywords = [
+                'allContainKeywords',
+                'anyContainKeywords',
+                'notContainKeywords',
+              ].reduce((result, key, index) => {
+                const ids = (args[index] || '').match(/\d+/g);
+                result[key] = ids ? ids.map(id => keywordMap[id]) : [];
+                return result;
+              }, {});
+
+              formRef.setFieldsValue({ keywords });
+            });
+        };
+
         formRef.setFieldsValue({
           navName,
           sort,
@@ -266,6 +293,15 @@ class NavModal extends Component {
           graphicalStyle: (graphicalStyle || '').split(','),
           cId: undefined,
         });
+
+        if (allContainKeywords || anyContainKeywords || notContainKeywords) {
+          initKeywordValue(
+            allContainKeywords,
+            anyContainKeywords,
+            notContainKeywords,
+          );
+        }
+      }
     }
   };
 
@@ -282,7 +318,7 @@ class NavModal extends Component {
           parentNavId,
           value,
         } = this.props;
-        let {
+        const {
           keywords: {
             allContainKeywords,
             anyContainKeywords,
@@ -294,7 +330,7 @@ class NavModal extends Component {
           graphicalStyle,
         } = values;
 
-        let creds = {
+        const creds = {
           ...values,
           allContainKeywords: getOptionsValue(allContainKeywords),
           anyContainKeywords: getOptionsValue(anyContainKeywords),
@@ -305,13 +341,16 @@ class NavModal extends Component {
           navLocation,
           parentNavId,
           providerId: getOptionsValue(providerId),
-          graphicalStyle: (graphicalStyle || []).join(','),
+          graphicalStyle: (graphicalStyle || [])
+            .sort((a, b) => a - b)
+            .join(','),
           qualityRank: (qualityRank || []).join(','),
           endTime: getTime(runTime[1]),
           beginTime: getTime(runTime[0]),
           keywords: undefined,
           runTime: undefined,
           buildGroup: 0,
+          isAuto: '0',
         };
 
         dispatch(createTopicNav(creds)).then(msg => {
@@ -334,15 +373,13 @@ class NavModal extends Component {
           navLocation,
         } = this.props;
 
-        let creds = Object.assign(
-          {},
-          {
-            ...values,
-            topicId,
-            pNavId: parentNavId || '0',
-            location: navLocation,
-          },
-        );
+        const creds = {
+          ...values,
+          topicId,
+          pNavId: parentNavId || '0',
+          location: navLocation,
+          isAuto: '1',
+        };
 
         dispatch(createTopicNav(creds, true)).then(msg => {
           message.success(msg);
@@ -357,7 +394,7 @@ class NavModal extends Component {
 
     const props = {
       width: 800,
-      title: (value ? '编辑' : '添加') + levels[navLevel] + '级导航',
+      title: `${(value ? '编辑' : '添加') + levels[navLevel]}级导航`,
       visible,
       onCancel,
       footer: null,
