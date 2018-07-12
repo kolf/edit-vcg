@@ -20,6 +20,7 @@ import { getOptionName } from 'data/optionsMaps';
 import TopicRuleModal from './components/TopicRuleModal';
 import TopicModal from './components/TopicModal';
 import SearchInput from 'components/SearchInput';
+import getApiPrefix from 'utils/getApiPrefix';
 
 import gs from 'components/App.less';
 import s from './Topics.less';
@@ -163,8 +164,10 @@ class Topics extends React.Component {
     this.setState({ topicModalVisible: true });
   };
 
-  handleOpenTopicClick = topicId => {
-    window.open(`//dev-edit.vcg.com/zh/edit/all?topicIds=${topicId}`);
+  openTopicUrl = topicId => {
+    window.open(
+      `//${getApiPrefix()}edit.vcg.com/zh/edit/all?topicIds=${topicId}`,
+    );
   };
 
   handleFilterClick = ({ field, value }) => {
@@ -275,7 +278,7 @@ class Topics extends React.Component {
             </Button>
             <Button
               size="small"
-              onClick={() => this.handleOpenTopicClick(record.topicId)}
+              onClick={() => this.openTopicUrl(record.topicId)}
             >
               查看组照
             </Button>

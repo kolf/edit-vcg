@@ -58,6 +58,7 @@ class MainNav extends React.Component {
       const { dispatch } = this.props;
       dispatch(deleteTopicNav({ navId })).then(msg => {
         this.fetchTopicNavs();
+        this.state.tabActiveKey = '0';
       });
     };
 

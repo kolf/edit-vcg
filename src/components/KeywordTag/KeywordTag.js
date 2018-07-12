@@ -204,9 +204,9 @@ class KeywordTag extends Component {
             <ul className={s.tags}>
               {value.map(v => (
                 <Tag
+                  {...v}
                   onClick={e => this.handleClick(v, e)}
                   onClose={this.changeValue.bind(this, [], v)}
-                  {...v}
                 />
               ))}
               <li className="ant-select-search ant-select-search--inline">

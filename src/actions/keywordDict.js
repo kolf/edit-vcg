@@ -26,11 +26,11 @@ function fetchKeywordDictSuccess(list) {
   };
 }
 
-function keywordToOtions(data, keys) {
+function keywordToOptions(data, keys) {
   return keys.reduce((result, key) => {
     const keyword = JSON.parse(data[key]);
     result.push({
-      label: key,
+      label: keyword.length === 1 ? keyword[0].cnname || key : key,
       value: keyword.map(k => k.id).join(','),
     });
     return result;
@@ -88,7 +88,7 @@ export function fetchKeywordDict(creds) {
             }
 
             dispatch(fetchKeywordDictSuccess(keywordToList(data)));
-            return Promise.resolve(keywordToOtions(data, creds.name));
+            return Promise.resolve(keywordToOptions(data, creds.name));
           }),
         )
         .catch(err => console.error('error', err));

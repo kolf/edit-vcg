@@ -170,7 +170,7 @@ class TopicModal extends React.Component {
 
           <FormItem {...formItemLayout} label="时效/资料">
             {getFieldDecorator('timeliness', {
-              initial: '1',
+              initial: '0',
               rules: [
                 {
                   required: true,

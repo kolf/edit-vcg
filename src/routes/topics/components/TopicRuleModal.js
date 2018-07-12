@@ -295,7 +295,7 @@ class TopicRuleModal extends React.Component {
                     message: '请选择抓取分类',
                   },
                 ],
-              })(<CategorySelect />)}
+              })(<CategorySelect oneCategoryMultiple={true} />)}
             </FormItem>
             <FormItem {...formItemLayout} label="抓取供应商">
               {getFieldDecorator('providerId', {
@@ -348,7 +348,7 @@ class TopicRuleModal extends React.Component {
 
             <FormItem {...formItemLayout} label="抓取时效/资料">
               {getFieldDecorator('timeliness', {
-                initialValue: ['1', '2'],
+                initialValue: ['0', '1'],
                 rules: [
                   {
                     required: true,

@@ -20,16 +20,16 @@ function toLabelInValue(value, map) {
     v =>
       typeof v === 'string'
         ? {
-          value: v + '',
-          label: map[v].label,
-        }
+            value: v + '',
+            label: map[v].label,
+          }
         : v,
   );
 }
 class CategorySelect extends React.Component {
   static defaultProps = {
     treeData: [],
-    mapData: {}
+    mapData: {},
   };
 
   state = {
@@ -43,29 +43,38 @@ class CategorySelect extends React.Component {
   }
 
   handleChange = (val, label, { triggerValue, checked } = extra) => {
-    const { mapData, oneCategorys } = this.props;
+    const { mapData, oneCategorys, oneCategoryMultiple, ss } = this.props;
     let values = val.map(v => v.value);
     let oneCategory = oneCategorys.find(o => values.find(s => s === o));
 
     const { pid, key, value, cid } = mapData[triggerValue];
 
-    if (pid === '0') {
-      // 一级菜单
-      values = checked ? [value] : [];
-    } else {
-      if (checked) {
-        let curKeys = key.split(',');
-        if (oneCategory && curKeys.indexOf(oneCategory) === -1) {
-          values = curKeys;
-        } else {
-          values = values.concat(curKeys)
-        }
+    console.log(oneCategoryMultiple, ss, 'oneCategoryMultiple');
+
+    if (!oneCategoryMultiple) {
+      if (pid === '0') {
+        // 一级菜单
+        values = checked ? [value] : [];
       } else {
-        values = values.filter(s => cid.indexOf(s) === -1);
+        if (checked) {
+          let curKeys = key.split(',');
+          if (oneCategory && curKeys.indexOf(oneCategory) === -1) {
+            values = curKeys;
+          } else {
+            values = values.concat(curKeys);
+          }
+        } else {
+          values = values.filter(s => cid.indexOf(s) === -1);
+        }
       }
     }
 
-    const labelInValues = toLabelInValue(_.uniq(values).sort((val1, val2) => mapData[val1].level - mapData[val2].level), mapData);
+    const labelInValues = toLabelInValue(
+      _.uniq(values).sort(
+        (val1, val2) => mapData[val1].level - mapData[val2].level,
+      ),
+      mapData,
+    );
 
     if (this.props.value) {
       this.props.onChange(labelInValues);
@@ -99,7 +108,7 @@ function mapStateToProps(state) {
   return {
     treeData: state.category.treeData,
     mapData: state.category.mapData,
-    oneCategorys: state.category.treeData.map(c => c.value)
+    oneCategorys: state.category.treeData.map(c => c.value),
   };
 }
 

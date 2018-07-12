@@ -1,163 +1,163 @@
-const queryString = require('query-string')
+const queryString = require('query-string');
 
 // 获取专题规则
-export const REQUEST_FETCH_AUTO_GROUP_RULE = 'REQUEST_FETCH_AUTO_GROUP_RULE'
-export const FETCH_AUTO_GROUP_RULE_FAILURE = 'FETCH_AUTO_GROUP_RULE_FAILURE'
-export const FETCH_AUTO_GROUP_RULE_SUCCESS = 'FETCH_AUTO_GROUP_RULE_SUCCESS'
+export const REQUEST_FETCH_AUTO_GROUP_RULE = 'REQUEST_FETCH_AUTO_GROUP_RULE';
+export const FETCH_AUTO_GROUP_RULE_FAILURE = 'FETCH_AUTO_GROUP_RULE_FAILURE';
+export const FETCH_AUTO_GROUP_RULE_SUCCESS = 'FETCH_AUTO_GROUP_RULE_SUCCESS';
 
-function requestFetchAutoGroupRule (autoGroupRule) {
+function requestFetchAutoGroupRule(autoGroupRule) {
   return {
     type: REQUEST_FETCH_AUTO_GROUP_RULE,
     isFetching: true,
-    autoGroupRule
-  }
+    autoGroupRule,
+  };
 }
 
-function fetchAutoGroupRuleSuccess (autoGroupRule) {
+function fetchAutoGroupRuleSuccess(autoGroupRule) {
   return {
     type: FETCH_AUTO_GROUP_RULE_SUCCESS,
     isFetching: false,
-    autoGroupRule
-  }
+    autoGroupRule,
+  };
 }
 
-function fetchAutoGroupRuleError (message) {
+function fetchAutoGroupRuleError(message) {
   return {
     type: FETCH_AUTO_GROUP_RULE_FAILURE,
     isFetching: false,
-    message
-  }
+    message,
+  };
 }
 
-export function fetchAutoGroupRule (creds) {
+export function fetchAutoGroupRule(creds) {
   return dispatch => {
-    dispatch(requestFetchAutoGroupRule(creds))
+    dispatch(requestFetchAutoGroupRule(creds));
     return fetch(
       `/api/sitecms/autoGroup/findTopicNewGroupRuleByTopicId/${creds.id}`,
       {
         headers: {
-          'Content-Type': 'application/json;charset=UTF-8'
-        }
-      }
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+      },
     )
       .then(res =>
         res.json().then(data => {
           if (!res.ok) {
-            dispatch(fetchAutoGroupRuleError(data.message))
-            return Promise.reject(data)
+            dispatch(fetchAutoGroupRuleError(data.message));
+            return Promise.reject(data);
           }
-          const payload = data.data
-          dispatch(fetchAutoGroupRuleSuccess(payload))
-          return Promise.resolve(payload)
-        })
+          const payload = data.data;
+          dispatch(fetchAutoGroupRuleSuccess(payload));
+          return Promise.resolve(payload);
+        }),
       )
-      .catch(err => console.log('Error', err))
-  }
+      .catch(err => console.log('Error', err));
+  };
 }
 
 // 更新专题规则
-export const UPDATE_AUTO_GROUP_RULE_REQUEST = 'UPDATE_AUTO_GROUP_RULE_REQUEST'
-export const UPDATE_AUTO_GROUP_RULE_FAILURE = 'UPDATE_AUTO_GROUP_RULE_FAILURE'
-export const UPDATE_AUTO_GROUP_RULE_SUCCESS = 'UPDATE_AUTO_GROUP_RULE_SUCCESS'
+export const UPDATE_AUTO_GROUP_RULE_REQUEST = 'UPDATE_AUTO_GROUP_RULE_REQUEST';
+export const UPDATE_AUTO_GROUP_RULE_FAILURE = 'UPDATE_AUTO_GROUP_RULE_FAILURE';
+export const UPDATE_AUTO_GROUP_RULE_SUCCESS = 'UPDATE_AUTO_GROUP_RULE_SUCCESS';
 
-function requestUpdateAutoGroupRule (autoGroupRule) {
+function requestUpdateAutoGroupRule(autoGroupRule) {
   return {
     type: UPDATE_AUTO_GROUP_RULE_REQUEST,
     isFetching: true,
-    autoGroupRule
-  }
+    autoGroupRule,
+  };
 }
 
-function updateAutoGroupRuleSuccess (autoGroupRule) {
+function updateAutoGroupRuleSuccess(autoGroupRule) {
   return {
     type: UPDATE_AUTO_GROUP_RULE_SUCCESS,
     isFetching: false,
-    autoGroupRule
-  }
+    autoGroupRule,
+  };
 }
 
-function updateAutoGroupRuleError (message) {
+function updateAutoGroupRuleError(message) {
   return {
     type: UPDATE_AUTO_GROUP_RULE_FAILURE,
     isFetching: false,
-    message
-  }
+    message,
+  };
 }
 
-export function updateAutoGroupRule (creds) {
+export function updateAutoGroupRule(creds) {
   return dispatch => {
-    dispatch(requestUpdateAutoGroupRule(creds))
+    dispatch(requestUpdateAutoGroupRule(creds));
     return fetch(`/api/sitecms/autoGroup/addAutoGroupRule`, {
       headers: {
-        'Content-Type': 'application/json;charset=UTF-8'
+        'Content-Type': 'application/json;charset=UTF-8',
       },
       method: 'POST',
-      body: JSON.stringify(creds)
+      body: JSON.stringify(creds),
     })
       .then(res =>
         res.json().then(data => {
           if (!res.ok || data.code !== 200) {
-            dispatch(updateAutoGroupRuleError(data.message))
-            return Promise.reject(data)
+            dispatch(updateAutoGroupRuleError(data.message));
+            return Promise.reject(data);
           }
-          const payload = data.data
-          dispatch(updateAutoGroupRuleSuccess(payload))
-          return Promise.resolve(payload)
-        })
+          const payload = data.data;
+          dispatch(updateAutoGroupRuleSuccess(payload));
+          return Promise.resolve(payload);
+        }),
       )
-      .catch(err => console.log('Error', err))
-  }
+      .catch(err => console.log('Error', err));
+  };
 }
 
 // 结束组规则
-export const REQUEST_STOP_AUTO_GROUP_RULE = 'REQUEST_STOP_AUTO_GROUP_RULE'
-export const STOP_AUTO_GROUP_RULE_FAILURE = 'STOP_AUTO_GROUP_RULE_FAILURE'
-export const STOP_AUTO_GROUP_RULE_SUCCESS = 'STOP_AUTO_GROUP_RULE_SUCCESS'
+export const REQUEST_STOP_AUTO_GROUP_RULE = 'REQUEST_STOP_AUTO_GROUP_RULE';
+export const STOP_AUTO_GROUP_RULE_FAILURE = 'STOP_AUTO_GROUP_RULE_FAILURE';
+export const STOP_AUTO_GROUP_RULE_SUCCESS = 'STOP_AUTO_GROUP_RULE_SUCCESS';
 
-function requestStopAutoGroupRule (topic) {
+function requestStopAutoGroupRule(topic) {
   return {
     type: REQUEST_STOP_AUTO_GROUP_RULE,
     isFetching: true,
-    topic
-  }
+    topic,
+  };
 }
 
-function stopAutoGroupRuleSuccess (message) {
+function stopAutoGroupRuleSuccess(message) {
   return {
     type: STOP_AUTO_GROUP_RULE_SUCCESS,
     isFetching: false,
-    message
-  }
+    message,
+  };
 }
 
-function stopAutoGroupRuleError (message) {
+function stopAutoGroupRuleError(message) {
   return {
     type: STOP_AUTO_GROUP_RULE_FAILURE,
     isFetching: false,
-    message
-  }
+    message,
+  };
 }
 
-export function stopAutoGroupRule (creds) {
+export function stopAutoGroupRule(creds) {
   return dispatch => {
-    dispatch(requestStopAutoGroupRule(creds))
+    dispatch(requestStopAutoGroupRule(creds));
     return fetch(`/api/sitecms/autoGroup/grabingStop/${creds.id}`, {
       headers: {
-        'Content-Type': 'application/json;charset=UTF-8'
-      }
+        'Content-Type': 'application/json;charset=UTF-8',
+      },
     })
       .then(res =>
         res.json().then(data => {
-          console.log(res, data)
+          console.log(res, data);
           if (!res.ok) {
-            dispatch(stopAutoGroupRuleError(data.message))
-            return Promise.reject(data)
+            dispatch(stopAutoGroupRuleError(data.message));
+            return Promise.reject(data);
           }
 
-          dispatch(stopAutoGroupRuleSuccess(data.message))
-          return Promise.resolve(data.message)
-        })
+          dispatch(stopAutoGroupRuleSuccess(data.message));
+          return Promise.resolve(data.message);
+        }),
       )
-      .catch(err => console.log('Error', err))
-  }
+      .catch(err => console.log('Error', err));
+  };
 }

@@ -18,6 +18,7 @@ import s from './AutoGroups.less';
 import { fetchAutoGroups } from 'actions/autoGroups';
 import { fetchCategory } from 'actions/category';
 import { fetchKeywordDict } from 'actions/keywordDict';
+import getApiPrefix from 'utils/getApiPrefix';
 
 const confirm = Modal.confirm;
 const Option = Select.Option;
@@ -163,9 +164,9 @@ class AutoGroups extends React.Component {
     });
   };
 
-  handleClickOpenGroup = item => {
+  openGroupUrl = groupId => {
     window.open(
-      'https://edit.vcg.com/zh/group/update/edit/503808611?groupId=503808611',
+      `//${getApiPrefix()}edit.vcg.com/zh/group/update/edit/${groupId}?groupId=${groupId}`,
     );
   };
 
@@ -298,7 +299,10 @@ class AutoGroups extends React.Component {
             >
               抓取设置
             </Button>
-            <Button size="small" onClick={this.handleClickOpenGroup}>
+            <Button
+              size="small"
+              onClick={() => this.openGroupUrl(record.groupId)}
+            >
               查看组照
             </Button>
           </div>

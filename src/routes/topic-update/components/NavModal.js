@@ -252,6 +252,7 @@ class NavModal extends Component {
         allContainKeywords,
         anyContainKeywords,
         notContainKeywords,
+        providers,
       } = value;
 
       console.log(
@@ -289,9 +290,11 @@ class NavModal extends Component {
           sort,
           runTime: beginTime ? [moment(beginTime), moment(endTime)] : [],
           qualityRank: (qualityRank || '').split(','),
-          providerId: undefined,
+          providerId: (providers || []).map(item => ({
+            label: item.name_cn,
+            key: `${item.id}`,
+          })),
           graphicalStyle: (graphicalStyle || '').split(','),
-          cId: undefined,
         });
 
         if (allContainKeywords || anyContainKeywords || notContainKeywords) {
@@ -329,6 +332,8 @@ class NavModal extends Component {
           runTime,
           graphicalStyle,
         } = values;
+
+        console.log(providerId, getOptionsValue(providerId), 'providerId');
 
         const creds = {
           ...values,
