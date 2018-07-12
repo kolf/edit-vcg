@@ -29,7 +29,7 @@ class SideNav extends React.Component {
   }
   state = {
     nav: null,
-    tabActiveKey: '0',
+    tabActiveKey: [],
     navModalVisible: false,
     level: 1, // 1 一级导航， 2， 二级导航
   };
@@ -81,9 +81,11 @@ class SideNav extends React.Component {
     this.fetchTopicNavs();
   };
 
-  onTabClick = ({ key }) => {
+  onTabClick = nav => {
+    const key = nav.navId;
     this.setState({
-      tabActiveKey: key,
+      nav,
+      tabActiveKey: [key],
     });
 
     this.handleClick(key);
@@ -106,6 +108,8 @@ class SideNav extends React.Component {
     const { navs, topicId, isFetching, activeId } = this.props;
     const { navModalVisible, level, tabActiveKey, nav } = this.state;
 
+    console.log(nav);
+
     return (
       <div className={s.root}>
         <NavModal
@@ -119,26 +123,14 @@ class SideNav extends React.Component {
           parentNavId={this.parentNavId}
         />
         <Spin spinning={isFetching}>
-          <Menu mode="vertical" selectable={false}>
+          <Menu mode="vertical" selectedKeys={tabActiveKey}>
             {navs.map(nav => (
               <SubMenu
-                className={
-                  tabActiveKey === nav.navId
-                    ? s.subMenu + ' ' + s.active
-                    : s.subMenu
-                }
+                className={s.subMenu}
                 key={nav.navId}
-                onTitleClick={this.onTabClick}
                 title={
                   <span
-                    onDoubleClick={e => {
-                      e.stopPropagation();
-                      if (nav.isAuto === '1') {
-                        message.info('自动导航不可修改！');
-                        return false;
-                      }
-                      this.showNavModal(1, nav);
-                    }}
+                    onClick={() => this.showNavModal(1, nav)}
                     className={s.title}
                   >
                     {nav.navName}
@@ -149,16 +141,9 @@ class SideNav extends React.Component {
                 <div className={s.navGroup}>
                   <h3>{nav.navName}</h3>
                   <NavsGroup
-                    activeKey={activeId}
-                    hideAdd={nav.isAuto === '1'}
                     items={nav.children}
                     onClose={this.onDelete}
-                    onClick={this.handleClick}
-                    onDoubleClick={(level, n, parentNavId) => {
-                      if (n && n.isAuto === '1') {
-                        message.info('自动导航不可修改！');
-                        return false;
-                      }
+                    onClick={(level, n, parentNavId) => {
                       const parentId = parentNavId || nav.navId;
                       this.showNavModal(level, n, parentId);
                     }}
@@ -176,6 +161,26 @@ class SideNav extends React.Component {
             </Menu.Item>
           </Menu>
         </Spin>
+        {nav && (
+          <div className={s.navGroup}>
+            <h3>{nav.navName}</h3>
+            <NavsGroup
+              activeKey={activeId}
+              hideAdd={nav.isAuto === '1'}
+              items={nav.children}
+              onClose={this.onDelete}
+              onClick={this.handleClick}
+              onDoubleClick={(level, n, parentNavId) => {
+                if (n && n.isAuto === '1') {
+                  message.info('自动导航不可修改！');
+                  return false;
+                }
+                const parentId = parentNavId || nav.navId;
+                this.showNavModal(level, n, parentId);
+              }}
+            />
+          </div>
+        )}
       </div>
     );
   }

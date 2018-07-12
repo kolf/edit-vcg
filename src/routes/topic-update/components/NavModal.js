@@ -411,7 +411,7 @@ class NavModal extends Component {
               submit={this.manuallFormSubmit}
             />
           </TabPane>
-          <TabPane tab="自动" key="auto">
+          <TabPane tab="自动" key="auto" disabled={!!value}>
             <AutoForm
               wrappedComponentRef={f => (this.autoFormRef = f)}
               navLevel={navLevel}

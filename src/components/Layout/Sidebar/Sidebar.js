@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import toRegExp from 'path-to-regexp';
 import { Menu, Icon } from 'antd';
 import s from './Sidebar.less';
 import Link from 'components/Link';

@@ -279,6 +279,8 @@ class TopicRuleModal extends React.Component {
                 ],
               })(
                 <RangePicker
+                  format="YYYY-MM-DD HH:mm:ss"
+                  showTime
                   style={{ width: '100%' }}
                   placeholder={['起始日期', '结束日期']}
                 />,

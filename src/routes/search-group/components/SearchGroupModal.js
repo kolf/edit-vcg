@@ -137,7 +137,6 @@ class SearchGroupModal extends React.Component {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         const { groupId, parentId, value } = this.props;
-        console.log(parentId);
         let creds = Object.assign({}, values, {
           keywords: getOptionValues(values.keywords),
           scope: getScopeValue(values.scope),

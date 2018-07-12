@@ -5,6 +5,13 @@ export function searchName(rule, value, callback) {
   callback();
 }
 
+export function topicName(rule, value, callback) {
+  if (value && value.length > 40) {
+    callback('专题名称不能超过40个字符');
+  }
+  callback();
+}
+
 export function everyKeywordId(rule, value, callback) {
   if (
     !Object.values(value).every(v => {

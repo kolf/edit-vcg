@@ -1,6 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Provider as ReduxProvider } from 'react-redux';
+import { LocaleProvider } from 'antd';
+import zh_CN from 'antd/lib/locale-provider/zh_CN';
+import 'moment/locale/zh-cn';
 
 const ContextType = {
   insertCss: PropTypes.func.isRequired,
@@ -45,7 +48,11 @@ class App extends React.PureComponent {
   }
 
   render() {
-    return React.Children.only(this.props.children);
+    return (
+      <LocaleProvider locale={zh_CN}>
+        {React.Children.only(this.props.children)}
+      </LocaleProvider>
+    );
   }
 }
 

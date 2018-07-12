@@ -46,6 +46,9 @@ class SearchGroup extends React.Component {
 
   loadGroups = groupIds => {
     this.props.dispatch(fetchSearchGroups(groupIds)).then(groups => {
+      if (!groups && groups.length === 0) {
+        return false;
+      }
       const keywordIds = groups.reduce((result, group) => {
         const { searchItems } = group;
         if (searchItems) {
