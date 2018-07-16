@@ -1,0 +1,8 @@
+{
+  "@dark": "#404040",
+  "@primary-color": "#b74635",
+  "@border-radius-base": "2px",
+  "@body-background": "#fff",
+  "@layout-header-background": "404040",
+  "@font-size-base": "12px"
+}

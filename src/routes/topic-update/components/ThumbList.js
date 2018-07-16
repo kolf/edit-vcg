@@ -2,13 +2,14 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { Row, Col, Button, Spin } from 'antd';
+import { Row, Col, Button, Spin, message } from 'antd';
 import FilterPager from 'components/FilterPager';
 import FetchPlaceholder from 'components/FetchPlaceholder';
+import withList from 'HOC/withList';
 import gs from 'components/App.less';
 import s from './ThumbList.less';
 
-import { fetchTopicImages, setTopic } from 'actions/topic';
+import { fetchTopicImages, setTopic, deleteTopicImages } from 'actions/topic';
 
 const ButtonGroup = Button.Group;
 
@@ -16,27 +17,28 @@ const selectBtns = ['全选', '反选', '取消'];
 const defaultThumb = require('../assets/logo-white.svg');
 
 function Item({ onClick, oss176, id, title, selected }) {
-  const handleClick = e => {
-    e.stopPropagation();
-    onClick && onClick(id, selected);
-  };
-
   return (
-    <div
-      className={s.item + (selected ? ` ${s.active}` : '')}
-      onClick={handleClick}
-    >
-      <div className={s.picture}>
-        <img src={oss176 || defaultThumb} alt={title} />
+    <Col span={4} key={id}>
+      <div
+        className={s.item + (selected ? ` ${s.active}` : '')}
+        onClick={onClick}
+      >
+        <div className={s.picture}>
+          <img src={oss176 || defaultThumb} alt={title} />
+        </div>
+        <h5 className={s.title}>2018-02-09 22:43:32</h5>
+        <p className={s.caption}>
+          ID：{id}
+          <br />
+          {title}
+        </p>
       </div>
-      <h5 className={s.title}>2018-02-09 22:43:32</h5>
-      <p className={s.caption}>
-        ID：{id}
-        <br />
-        {title}
-      </p>
-    </div>
+    </Col>
   );
+}
+
+function getSelected(list) {
+  return list.filter(item => item.selected);
 }
 
 class ThumbList extends React.Component {
@@ -65,7 +67,7 @@ class ThumbList extends React.Component {
     });
   };
 
-  handleItemClick = (id, active) => {
+  handleClick = ({ id, active }) => {
     const { dispatch } = this.props;
 
     const imagesList = this.props.list.map(item => {
@@ -123,9 +125,32 @@ class ThumbList extends React.Component {
     );
   };
 
+  onDelete = e => {
+    e.stopPropagation();
+    const selectedIds = getSelected(this.props.list).map(item => item.groupId);
+    if (!selectedIds.length) {
+      message.info('请选择组照！');
+      return false;
+    }
+
+    const { topicId } = this.props;
+    deleteTopicImages({
+      groupIds: selectedIds,
+      topicId,
+    }).then(msg => {
+      message.success('删除组照成功！');
+      const timer = setTimeout(() => {
+        clearTimeout(timer);
+        this.fetchTopicImages();
+      }, 300);
+    });
+  };
+
   render() {
-    const { errorMessage } = this.props;
+    const { errorMessage, isFetching, list } = this.props;
     const { query } = this.state;
+
+    const List = withList(Item);
 
     return (
       <div className={s.root}>
@@ -141,43 +166,16 @@ class ThumbList extends React.Component {
             ))}
           </ButtonGroup>
           <span className={gs.btns}>
-            <Button>批量删除</Button>
+            <Button onClick={this.onDelete}>批量删除</Button>
           </span>
-          <FilterPager
-            isRight
-            pageSize={query.pageSize}
-            pageNum={query.pageNum}
-            className={gs.fRight}
-            onChange={this.fetchTopicImages}
-            total={this.props.total}
-          />
         </div>
-        <Spin
-          wrapperClassName={s.list}
-          spinning={this.props.isFetching}
-          tip="加载中..."
-        >
-          {errorMessage ? (
-            <FetchPlaceholder text={errorMessage} />
-          ) : (
-            <Row className={s.list}>
-              {this.props.list.map(img => (
-                <Col key={img.id} span={4}>
-                  <Item {...img} onClick={this.handleItemClick} />
-                </Col>
-              ))}
-            </Row>
-          )}
-        </Spin>
-        <div className="ant-row">
-          <FilterPager
-            pageSize={query.pageSize}
-            pageNum={query.pageNum}
-            className={gs.fRight}
-            onChange={this.fetchTopicImages}
-            total={this.props.total}
-          />
-        </div>
+        <List
+          onClick={this.handleClick}
+          isLoading={isFetching}
+          error={errorMessage}
+          items={list}
+          className={s.list + ' ant-row'}
+        />
       </div>
     );
   }

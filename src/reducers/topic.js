@@ -96,9 +96,12 @@ export default function topic(
     case FETCH_TOPIC_IMAGES_SUCCESS:
       return Object.assign({}, state, {
         fetchImageing: false,
-        imagesList: action.list,
+        imagesList: (action.list || []).map(item => ({
+          ...item,
+          id: item.id || item.groupId,
+        })),
         imagesTotal: action.total,
-        imagesMessage: action.total === 0 ? '（≧﹏ ≦）暂无数据!' : '',
+        imagesMessage: action.message,
       });
     case FETCH_TOPIC_IMAGES_FAILURE:
       return Object.assign({}, state, {

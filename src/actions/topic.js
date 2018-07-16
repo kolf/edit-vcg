@@ -273,7 +273,7 @@ export function fetchTopicImages(creds) {
   return dispatch => {
     dispatch(requestFetchTopicImages(creds));
     return fetch(
-      `/api/sitecms/topicNavList/getPreGroupPageList?token=${localStorage.getItem(
+      `/api/edit/group/pageList?token=${localStorage.getItem(
         'id_token',
       )}`,
       {
@@ -290,7 +290,14 @@ export function fetchTopicImages(creds) {
             dispatch(fetchTopicImagesError(data.message));
             return Promise.reject(data);
           }
-          dispatch(fetchTopicImagesSuccess(data.data));
+          dispatch(
+            fetchTopicImagesSuccess(
+              data.data || {
+                list: [],
+                total: 0,
+              },
+            ),
+          );
           return Promise.resolve(data.message);
         }),
       )
@@ -299,32 +306,27 @@ export function fetchTopicImages(creds) {
 }
 
 export function deleteTopicImages(creds) {
-  return dispatch => {
-    dispatch(requestFetchTopicImages(creds));
-    return fetch(
-      `/api/sitecms/topicNavList/getPreGroupPageList?token=${localStorage.getItem(
-        'id_token',
-      )}`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
-        },
-        body: JSON.stringify(creds),
+  return fetch(
+    `/api/sitecms/topic/deleteTopicRelation?token=${localStorage.getItem(
+      'id_token',
+    )}`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json;charset=UTF-8',
       },
+      body: JSON.stringify(creds),
+    },
+  )
+    .then(res =>
+      res.json().then(data => {
+        if (!res.ok || data.code !== 200) {
+          return Promise.reject(data);
+        }
+        return Promise.resolve(data.message);
+      }),
     )
-      .then(res =>
-        res.json().then(data => {
-          if (!res.ok || data.code !== 200) {
-            dispatch(fetchTopicImagesError(data.message));
-            return Promise.reject(data);
-          }
-          dispatch(fetchTopicImagesSuccess(data.data));
-          return Promise.resolve(data.message);
-        }),
-      )
-      .catch(err => console.log('Error', err));
-  };
+    .catch(err => console.log('Error', err));
 }
 
 // 获取专题页面展示
