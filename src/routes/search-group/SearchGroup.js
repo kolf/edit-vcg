@@ -105,7 +105,7 @@ class SearchGroup extends React.Component {
   };
 
   handleFilterTagClick = groupSearch => {
-    this.groupSearchModalValue = JSON.parse(groupSearch);
+    this.groupSearchModalValue = groupSearch;
     this.setState({
       tagModalVisible: true,
     });

@@ -79,7 +79,12 @@ export function fetchKeywordDict(creds) {
     };
 
     if (creds.name) {
-      return fetch(`/api/edit/proxy/post?url=cfp/kw/find/batch`, config)
+      return fetch(
+        `/api/edit/proxy/post?token=${localStorage.getItem(
+          'id_token',
+        )}&url=cfp/kw/find/batch`,
+        config,
+      )
         .then(res =>
           res.json().then(data => {
             if (!res.ok) {
@@ -93,7 +98,12 @@ export function fetchKeywordDict(creds) {
         )
         .catch(err => console.error('error', err));
     } else if (creds.data) {
-      return fetch(`/api/edit/proxy/post?url=cfp/keyword/get/ids`, config)
+      return fetch(
+        `/api/edit/proxy/post?token=${localStorage.getItem(
+          'id_token',
+        )}&url=cfp/keyword/get/ids`,
+        config,
+      )
         .then(res => res.json())
         .then(data => {
           if (!data) {

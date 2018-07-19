@@ -24,6 +24,7 @@ import moment from 'moment';
 import { createTopicNav } from 'actions/topicNavs';
 import { fetchKeywordDict } from 'actions/keywordDict';
 import s from './NavModal.less';
+import { isUrl } from 'utils/validates';
 
 const FormItem = Form.Item;
 const RangePicker = DatePicker.RangePicker;
@@ -85,7 +86,8 @@ function getTime(date) {
 }
 
 const ManuallForm = Form.create()(props => {
-  const { getFieldDecorator } = props.form;
+  const { getFieldDecorator, getFieldValue } = props.form;
+
   return (
     <Form>
       <FormItem {...formItemLayout} label="显示名称">
@@ -177,11 +179,19 @@ const ManuallForm = Form.create()(props => {
           initialValue: [],
         })(<CheckboxGroup options={qualityRankOptions} />)}
       </FormItem>
+
       <FormItem {...formItemLayout} label="外链">
-        {getFieldDecorator('link', {})(
+        {getFieldDecorator('link', {
+          rules: [
+            {
+              validator: isUrl,
+            },
+          ],
+        })(
           <Input addonBefore="https://" placeholder="www.vcg.com/topic/:id" />,
         )}
       </FormItem>
+
       <FormItem {...tailFormItemLayout}>
         <div className="btns">
           <Button
@@ -253,14 +263,8 @@ class NavModal extends Component {
         anyContainKeywords,
         notContainKeywords,
         providers,
+        link,
       } = value;
-
-      console.log(
-        allContainKeywords,
-        anyContainKeywords,
-        notContainKeywords,
-        '-------',
-      );
 
       if (formRef) {
         const initKeywordValue = (...args) => {
@@ -286,6 +290,7 @@ class NavModal extends Component {
         };
 
         formRef.setFieldsValue({
+          link,
           navName,
           sort,
           runTime: beginTime ? [moment(beginTime), moment(endTime)] : [],
@@ -331,9 +336,8 @@ class NavModal extends Component {
           qualityRank,
           runTime,
           graphicalStyle,
+          link,
         } = values;
-
-        console.log(providerId, getOptionsValue(providerId), 'providerId');
 
         const creds = {
           ...values,
@@ -349,9 +353,9 @@ class NavModal extends Component {
           graphicalStyle: (graphicalStyle || [])
             .sort((a, b) => a - b)
             .join(','),
-          qualityRank: (qualityRank || []).join(','),
-          endTime: getTime(runTime[1]),
-          beginTime: getTime(runTime[0]),
+          qualityRank: link ? undefined : (qualityRank || []).join(','),
+          endTime: link ? undefined : getTime(runTime[1]),
+          beginTime: link ? undefined : getTime(runTime[0]),
           keywords: undefined,
           runTime: undefined,
           buildGroup: 0,

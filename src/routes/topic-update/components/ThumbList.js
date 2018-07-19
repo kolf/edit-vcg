@@ -2,9 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { Row, Col, Button, Spin, message } from 'antd';
+import { Col, Button, message } from 'antd';
 import FilterPager from 'components/FilterPager';
-import FetchPlaceholder from 'components/FetchPlaceholder';
 import withList from 'HOC/withList';
 import gs from 'components/App.less';
 import s from './ThumbList.less';
@@ -16,12 +15,11 @@ const ButtonGroup = Button.Group;
 const selectBtns = ['全选', '反选', '取消'];
 const defaultThumb = require('../assets/logo-white.svg');
 
-function Item({ onClick, oss176, id, title, selected }) {
+function Item({  oss176, id, title, selected }) {
   return (
     <Col span={4} key={id}>
       <div
         className={s.item + (selected ? ` ${s.active}` : '')}
-        onClick={onClick}
       >
         <div className={s.picture}>
           <img src={oss176 || defaultThumb} alt={title} />
@@ -147,8 +145,7 @@ class ThumbList extends React.Component {
   };
 
   render() {
-    const { errorMessage, isFetching, list } = this.props;
-    const { query } = this.state;
+    const { errorMessage, isFetching, list, query } = this.props;
 
     const List = withList(Item);
 

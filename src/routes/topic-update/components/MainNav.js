@@ -17,6 +17,7 @@ const TabPane = Tabs.TabPane;
 const confirm = Modal.confirm;
 const levels = ['', '一', '二', '三'];
 const NAVLOCATION = '0';
+let timer = null;
 
 class MainNav extends React.Component {
   static defaultProps = {
@@ -44,6 +45,7 @@ class MainNav extends React.Component {
   };
 
   showNavModal = (level, nav, parentNavId = '') => {
+    clearTimeout(timer);
     this.modalNavValue = nav;
     this.parentNavId = parentNavId;
 
@@ -82,33 +84,46 @@ class MainNav extends React.Component {
     this.fetchTopicNavs();
   };
 
-  onTabClick = key => {
-    this.setState({
-      tabActiveKey: key,
-    });
+  onTabClick = nav => {
+    const { navId } = nav;
 
-    if (key === '0') {
+    if (!navId) {
       this.showNavModal(1);
+    } else {
+      this.handleClick(nav, () => {
+        this.setState({
+          tabActiveKey: navId,
+        });
+      });
     }
-
-    this.handleClick(key);
   };
 
-  handleClick = id => {
-    const { dispatch, topicId } = this.props;
-    dispatch(activeTopicNav(id));
-    dispatch(
-      fetchTopicImages({
-        navId: id,
-        topicId,
-        pageNum: 1,
-        pageSize: 60,
-      }),
-    );
+  handleClick = ({ navId, link, buildGroup }, callback) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      if (link) {
+        window.open('//' + link);
+        return;
+      }
+
+      const { dispatch, topicId } = this.props;
+      dispatch(activeTopicNav(navId, NAVLOCATION));
+      dispatch(
+        fetchTopicImages({
+          buildGroup,
+          navId,
+          topicId,
+          pageNum: 1,
+          pageSize: 60,
+        }),
+      );
+
+      callback && callback();
+    }, 300);
   };
 
   render() {
-    const { navs, topicId, isFetching, activeId } = this.props;
+    const { navs, topicId, isFetching, activeId, currentLocation } = this.props;
     const { navModalVisible, level, tabActiveKey } = this.state;
 
     return (
@@ -125,14 +140,33 @@ class MainNav extends React.Component {
         />
         <Spin spinning={isFetching}>
           <Tabs
-            activeKey={tabActiveKey}
+            activeKey={currentLocation === NAVLOCATION ? tabActiveKey : '0'}
             animated={false}
-            onTabClick={this.onTabClick}
           >
+            <TabPane
+              tab={
+                <span
+                  onClick={e => {
+                    e.stopPropagation();
+                    this.onTabClick({});
+                  }}
+                  style={{ color: '#f84949' }}
+                >
+                  <Icon type="plus-circle" />添加一级
+                </span>
+              }
+              key="0"
+            >
+              <div className={s.empty}>请添加一级导航~</div>
+            </TabPane>
             {navs.map(nav => (
               <TabPane
                 tab={
                   <span
+                    onClick={e => {
+                      e.stopPropagation();
+                      this.onTabClick(nav);
+                    }}
                     onDoubleClick={e => {
                       e.stopPropagation();
                       if (nav.isAuto === '1') {
@@ -143,7 +177,13 @@ class MainNav extends React.Component {
                     }}
                   >
                     {nav.navName}
-                    <Icon type="cross" onClick={() => this.onDelete(nav)} />
+                    <Icon
+                      type="cross"
+                      onClick={e => {
+                        e.stopPropagation();
+                        this.onDelete(nav);
+                      }}
+                    />
                   </span>
                 }
                 key={nav.navId}
@@ -165,16 +205,6 @@ class MainNav extends React.Component {
                 />
               </TabPane>
             ))}
-            <TabPane
-              tab={
-                <span style={{ color: '#f84949' }}>
-                  <Icon type="plus-circle" />添加一级
-                </span>
-              }
-              key="0"
-            >
-              <div className={s.empty}>请添加一级导航~</div>
-            </TabPane>
           </Tabs>
         </Spin>
       </div>
@@ -187,6 +217,7 @@ function mapStateToProps(state) {
     isFetching: state.topicNavs[NAVLOCATION].isFetching,
     navs: state.topicNavs[NAVLOCATION].tree,
     activeId: state.topicNavs.activeId,
+    currentLocation: state.topicNavs.currentLocation,
   };
 }
 

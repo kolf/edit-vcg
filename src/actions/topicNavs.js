@@ -167,9 +167,10 @@ export function deleteTopicNav(creds) {
 
 export const ACTIVE_TOPIC_NAV = 'ACTIVE_TOPIC_NAV';
 // 修改专题导航
-export function activeTopicNav(navId) {
+export function activeTopicNav(navId, navLocation) {
   return {
     type: ACTIVE_TOPIC_NAV,
     navId,
+    navLocation,
   };
 }

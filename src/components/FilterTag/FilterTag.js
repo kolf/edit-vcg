@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { Button, Modal, Input, message, Tag, Icon, Form, Divider } from 'antd';
+import { Button, Modal, message, Tag, Icon } from 'antd';
 import {
   fetchUserSearch,
   createUserSearch,
@@ -57,11 +57,23 @@ class FilterTag extends Component {
 
   handleClick = tag => {
     const { onClick } = this.props;
-    this.setState({
-      activeKey: tag.key,
-    });
-    const value = JSON.parse(tag.value);
-    onClick && onClick(value);
+    const { activeKey } = this.state;
+    let nextValue = {};
+
+    if (activeKey === tag.key) {
+      this.setState({
+        activeKey: '',
+      });
+    } else {
+      this.setState({
+        activeKey: tag.key,
+      });
+      nextValue = JSON.parse(tag.value);
+    }
+
+    console.log(nextValue, 'nextValue------------');
+
+    onClick && onClick(nextValue);
   };
 
   handleClose = (key, e) => {
@@ -97,7 +109,6 @@ class FilterTag extends Component {
 
   handleAddClick = () => {
     const { value, title } = this.props;
-    console.log(isEmptyObj(value));
     if (isEmptyObj(value)) {
       message.info(`请选择一个${title}`);
       return;

@@ -60,14 +60,14 @@ const NavsGroup = ({
   hideAdd,
   activeKey,
 }) => {
-  function handleClose(item, e) {
+  function handleClose(nav, e) {
     e.stopPropagation();
-    onClose && onClose(item);
+    onClose && onClose(nav);
   }
 
-  function handleClick(id, e) {
+  function handleClick(nav, e) {
     e.stopPropagation();
-    onClick && onClick(id);
+    onClick && onClick(nav);
   }
 
   function handleDbClick(level, item, parentId, e) {
@@ -85,7 +85,7 @@ const NavsGroup = ({
                 color={activeKey === item.navId ? '#b74635' : '#333'}
                 key={item.navId}
                 title={item.navName}
-                onClick={e => handleClick(item.navId, e)}
+                onClick={e => handleClick(item, e)}
                 onDoubleClick={e => handleDbClick(2, item, '', e)}
                 style={
                   onClose
@@ -108,7 +108,7 @@ const NavsGroup = ({
                   hideAdd={item.isAuto === '1'}
                   items={item.children}
                   onClose={handleClose}
-                  onClick={(nav, e) => handleClick(nav.navId, e)}
+                  onClick={(nav, e) => handleClick(nav, e)}
                   onDoubleClick={(nav, e) =>
                     handleDbClick(3, nav, item.navId, e)
                   }

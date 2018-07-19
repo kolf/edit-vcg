@@ -4,7 +4,12 @@ import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { Input, Button, Icon, Upload, message } from 'antd';
 import LayoutMask from 'components/LayoutMask';
-import { fetchTopic, setTopic, deteleTopicBanner } from 'actions/topic';
+import {
+  fetchTopic,
+  setTopic,
+  deteleTopicBanner,
+  fetchTopicImages,
+} from 'actions/topic';
 
 const Search = Input.Search;
 const ButtonGroup = Button.Group;
@@ -38,6 +43,19 @@ class Navbar extends React.Component {
     });
   };
 
+  queryTopicImageByKeyword = keyword => {
+    const { topicId } = this.props;
+
+    this.props.dispatch(
+      fetchTopicImages({
+        keyword,
+        topicId,
+        pageNum: 1,
+        pageSize: 60,
+      }),
+    );
+  };
+
   // setTopic
   render() {
     const {
@@ -63,6 +81,8 @@ class Navbar extends React.Component {
       },
       beforeUpload: file => {
         const isJPG = /[jpeg|png]/.test(file.type);
+        // const is1200*200 =
+        console.log(file);
         if (!isJPG) {
           message.error('只能上传 JPG/PNG 文件！');
         }
@@ -121,7 +141,7 @@ class Navbar extends React.Component {
           <div className={s.search}>
             <Search
               placeholder="专题内搜索"
-              onSearch={value => console.log(value)}
+              onSearch={this.queryTopicImageByKeyword}
               enterButton
             />
           </div>

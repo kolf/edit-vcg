@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { Row, Col, Radio, Tabs, Pagination, Button, Icon, Spin } from 'antd';
 import FilterPager from 'components/FilterPager';
+import withList from 'HOC/withList';
 import gs from 'components/App.less';
 import s from './ThumbList.less';
 
@@ -25,31 +26,41 @@ const assetOptions = [
   },
 ];
 
-function Item({ oss176, id, title, selected }) {
+function Item({ onClick, oss176, id, title, selected }) {
   return (
-    <div className={s.item}>
-      <div className={s.picture}>
-        <img src={oss176} alt="" />
+    <Col span={4} key={id}>
+      <div
+        className={s.item + (selected ? ` ${s.active}` : '')}
+        onClick={onClick}
+      >
+        <div className={s.picture}>
+          <img src={oss176 || defaultThumb} alt={title} />
+        </div>
+        <h5 className={s.title}>2018-02-09 22:43:32</h5>
+        <p className={s.caption}>
+          ID：{id}
+          <br />
+          {title}
+        </p>
       </div>
-      <h5 className={s.title}>2018-02-09 22:43:32</h5>
-      <p className={s.caption}>
-        ID：{id}
-        <br />
-        {title}
-      </p>
-    </div>
+    </Col>
   );
+}
+
+function getSelected(list) {
+  return list.filter(item => item.selected);
 }
 
 class ThumbList extends React.Component {
   static defaultProps = {
     list: [],
     total: 0,
+    message: '加载中...',
   };
 
   state = {
     query: {
-      topicIds: this.props.topicId,
+      topicId: this.props.topicId,
       pageNum: 1,
       pageSize: 60,
     },
@@ -77,7 +88,10 @@ class ThumbList extends React.Component {
   };
 
   render() {
+    const { errorMessage, isFetching, list } = this.props;
     const { query } = this.state;
+
+    const List = withList(Item);
 
     return (
       <div className={s.root}>
@@ -96,19 +110,13 @@ class ThumbList extends React.Component {
             total={this.props.total}
           />
         </div>
-        <Spin
-          wrapperClassName={s.list}
-          spinning={this.props.isFetching}
-          tip="加载中..."
-        >
-          <Row>
-            {this.props.list.map(img => (
-              <Col key={img.id} span={4}>
-                <Item {...img} />
-              </Col>
-            ))}
-          </Row>
-        </Spin>
+        <List
+          onClick={this.handleClick}
+          isLoading={isFetching}
+          error={errorMessage}
+          items={list}
+          className={s.list + ' ant-row'}
+        />
         <div className="ant-row">
           <FilterPager
             pageSize={query.pageSize}

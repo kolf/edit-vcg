@@ -17,6 +17,7 @@ const SubMenu = Menu.SubMenu;
 const confirm = Modal.confirm;
 const levels = ['', '一', '二', '三'];
 const NAVLOCATION = '1';
+let timer = null;
 
 class SideNav extends React.Component {
   static defaultProps = {
@@ -28,7 +29,6 @@ class SideNav extends React.Component {
     this.fetchTopicNavs();
   }
   state = {
-    nav: null,
     tabActiveKey: '0',
     navModalVisible: false,
     level: 1, // 1 一级导航， 2， 二级导航
@@ -44,6 +44,7 @@ class SideNav extends React.Component {
   };
 
   showNavModal = (level, nav, parentNavId = '') => {
+    clearTimeout(timer);
     this.modalNavValue = nav;
     this.parentNavId = parentNavId;
 
@@ -58,6 +59,7 @@ class SideNav extends React.Component {
       const { dispatch } = this.props;
       dispatch(deleteTopicNav({ navId })).then(msg => {
         this.fetchTopicNavs();
+        this.state.tabActiveKey = '0';
       });
     };
 
@@ -81,30 +83,46 @@ class SideNav extends React.Component {
     this.fetchTopicNavs();
   };
 
-  onTabClick = ({ key }) => {
-    this.setState({
-      tabActiveKey: key,
-    });
+  onTabClick = nav => {
+    const { navId } = nav;
 
-    this.handleClick(key);
+    if (!navId) {
+      this.showNavModal(1);
+    } else {
+      this.handleClick(nav, () => {
+        this.setState({
+          tabActiveKey: navId,
+        });
+      });
+    }
   };
 
-  handleClick = id => {
-    const { dispatch, topicId } = this.props;
-    dispatch(activeTopicNav(id));
-    dispatch(
-      fetchTopicImages({
-        navId: id,
-        topicId,
-        pageNum: 1,
-        pageSize: 60,
-      }),
-    );
+  handleClick = ({ navId, link }, callback) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      if (link) {
+        window.open('//' + link);
+        return;
+      }
+
+      const { dispatch, topicId } = this.props;
+      dispatch(activeTopicNav(navId, NAVLOCATION));
+      dispatch(
+        fetchTopicImages({
+          navId,
+          topicId,
+          pageNum: 1,
+          pageSize: 60,
+        }),
+      );
+
+      callback && callback();
+    }, 300);
   };
 
   render() {
-    const { navs, topicId, isFetching, activeId } = this.props;
-    const { navModalVisible, level, tabActiveKey, nav } = this.state;
+    const { navs, topicId, isFetching, activeId, currentLocation } = this.props;
+    const { navModalVisible, level, tabActiveKey } = this.state;
 
     return (
       <div className={s.root}>
@@ -120,60 +138,98 @@ class SideNav extends React.Component {
         />
         <Spin spinning={isFetching}>
           <Menu mode="vertical" selectable={false}>
-            {navs.map(nav => (
-              <SubMenu
-                className={
-                  tabActiveKey === nav.navId
-                    ? s.subMenu + ' ' + s.active
-                    : s.subMenu
-                }
-                key={nav.navId}
-                onTitleClick={this.onTabClick}
-                title={
-                  <span
-                    onDoubleClick={e => {
-                      e.stopPropagation();
-                      if (nav.isAuto === '1') {
-                        message.info('自动导航不可修改！');
-                        return false;
-                      }
-                      this.showNavModal(1, nav);
-                    }}
-                    className={s.title}
-                  >
-                    {nav.navName}
-                    <Icon type="cross" onClick={() => this.onDelete(nav)} />
-                  </span>
-                }
-              >
-                <div className={s.navGroup}>
-                  <h3>{nav.navName}</h3>
-                  <NavsGroup
-                    activeKey={activeId}
-                    hideAdd={nav.isAuto === '1'}
-                    items={nav.children}
-                    onClose={this.onDelete}
-                    onClick={this.handleClick}
-                    onDoubleClick={(level, n, parentNavId) => {
-                      if (n && n.isAuto === '1') {
-                        message.info('自动导航不可修改！');
-                        return false;
-                      }
-                      const parentId = parentNavId || nav.navId;
-                      this.showNavModal(level, n, parentId);
-                    }}
-                  />
-                </div>
-              </SubMenu>
-            ))}
-
             <Menu.Item
               key="0"
               className={s.add}
-              onClick={() => this.showNavModal(1)}
+              onClick={() => {
+                this.onTabClick({});
+              }}
             >
               <Icon type="plus-circle" />添加一级
             </Menu.Item>
+            {navs.map(
+              nav =>
+                nav.isAuto === '1' ? (
+                  <Menu.Item
+                    className={
+                      tabActiveKey === nav.navId &&
+                      currentLocation === NAVLOCATION
+                        ? s.subMenu + ' ' + s.active
+                        : s.subMenu
+                    }
+                    onClick={e => {
+                      this.onTabClick(nav);
+                    }}
+                    onDoubleClick={e => {
+                      message.info('自动导航不可修改！');
+                    }}
+                    key={nav.navId}
+                  >
+                    {nav.navName}
+                    <Icon
+                      type="cross"
+                      onClick={e => {
+                        e.stopPropagation();
+                        this.onDelete(nav);
+                      }}
+                    />
+                  </Menu.Item>
+                ) : (
+                  <SubMenu
+                    className={
+                      tabActiveKey === nav.navId
+                        ? s.subMenu + ' ' + s.active
+                        : s.subMenu
+                    }
+                    key={nav.navId}
+                    title={
+                      <span
+                        onClick={e => {
+                          e.stopPropagation();
+                          this.onTabClick(nav);
+                        }}
+                        onDoubleClick={e => {
+                          e.stopPropagation();
+                          if (nav.isAuto === '1') {
+                            message.info('自动导航不可修改！');
+                            return false;
+                          }
+                          this.showNavModal(1, nav);
+                        }}
+                        className={s.title}
+                      >
+                        {nav.navName}
+                        <Icon
+                          type="cross"
+                          onClick={e => {
+                            e.stopPropagation();
+                            this.onDelete(nav);
+                          }}
+                        />
+                      </span>
+                    }
+                  >
+                    <div className={s.navGroup}>
+                      <h3>{nav.navName}</h3>
+                      <NavsGroup
+                        activeKey={activeId}
+                        hideAdd={nav.isAuto === '1'}
+                        items={nav.children}
+                        onClose={this.onDelete}
+                        onClick={this.handleClick}
+                        onDoubleClick={(level, n, parentNavId) => {
+                          if (n && n.isAuto === '1') {
+                            message.info('自动导航不可修改！');
+                            return false;
+                          }
+                          const parentId = parentNavId || nav.navId;
+                          this.showNavModal(level, n, parentId);
+                        }}
+                      />
+                    </div>
+                  </SubMenu>
+                ),
+            )}
           </Menu>
         </Spin>
       </div>
@@ -186,6 +242,7 @@ function mapStateToProps(state) {
     isFetching: state.topicNavs[NAVLOCATION].isFetching,
     navs: state.topicNavs[NAVLOCATION].tree,
     activeId: state.topicNavs.activeId,
+    currentLocation: state.topicNavs.currentLocation,
   };
 }
 

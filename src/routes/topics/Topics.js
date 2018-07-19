@@ -170,10 +170,10 @@ class Topics extends React.Component {
     );
   };
 
-  handleFilterClick = ({ field, value }) => {
+  handleFilterClick = props => {
     this.fetchTopics({
       pageNum: 1,
-      [field]: value,
+      ...props,
     });
   };
 

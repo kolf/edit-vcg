@@ -12,6 +12,18 @@ export function topicName(rule, value, callback) {
   callback();
 }
 
+export function isUrl(rule, value, callback) {
+  if (
+    value &&
+    !/((http|ftp|https):\/\/)?[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/.test(
+      value,
+    )
+  ) {
+    callback('请输入正确的网址');
+  }
+  callback();
+}
+
 export function everyKeywordId(rule, value, callback) {
   if (
     !Object.values(value).every(v => {

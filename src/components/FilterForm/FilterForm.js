@@ -24,7 +24,7 @@ const formItemLayout = {
 const emptyValue = '';
 
 export function getFormValue(formItems, values) {
-  return formItems.reduce((result, { field }) => {
+  return formItems.reduce((result, {}) => {
     result[field] = values[field];
     return result;
   }, {});
@@ -63,15 +63,21 @@ class FilterForm extends React.Component {
     });
   };
 
-  handleTagClick = value => {
-    console.log(value, 'handleTagClick');
+  handleTagClick = props => {
+    const { formItems, onClick } = this.props;
 
-    this.handleChange(value);
+    const nextValue = formItems.reduce((result, formItem) => {
+      const key = formItem.field;
+      result[key] = result[key] || '';
+      return result;
+    }, props);
+
+    onClick && onClick(nextValue);
   };
 
-  handleChange = (field, value) => {
+  handleChange = (key, value) => {
     const { onClick } = this.props;
-    onClick({ field, value });
+    onClick({ [key]: value });
   };
 
   render() {

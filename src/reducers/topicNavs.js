@@ -30,6 +30,7 @@ const defaultState = {
     tree: [],
   },
   activeId: '0',
+  currentLocation: '',
 };
 
 export default function topicNavs(state = defaultState, action) {
@@ -56,6 +57,7 @@ export default function topicNavs(state = defaultState, action) {
     case ACTIVE_TOPIC_NAV:
       return Object.assign({}, state, {
         activeId: action.navId,
+        currentLocation: action.navLocation,
       });
     default:
       return state;

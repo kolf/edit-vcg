@@ -17,7 +17,9 @@ const TagGroup = ({ items = [], onClick, onClose, placeholder }) => {
     onClick && onClick(item, level, parentId);
   }
 
-  if (items.length === 0) {
+  console.log(items);
+
+  if (!items || items.length === 0) {
     return (
       <Placeholder
         text={placeholder || '该组照没有筛选项，请点击右上角进行添加'}
